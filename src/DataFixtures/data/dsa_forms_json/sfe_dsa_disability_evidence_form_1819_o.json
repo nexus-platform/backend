@@ -1,0 +1,614 @@
+[
+	{
+		"title": "About this form",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "To get DSAs a medical professional (for example, your GP) needs to provide information about your disability on this form.<br /><strong>Don't</strong> complete this form if you have a specific learning difficulty. You need to send us a diagnostic report from a suitably qualified Psychologist or Specialist Teacher instead."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>What you need to do</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "You need to complete your details in section <strong>1</strong>.<br />Then pass the form to the medical professional to complete, sign and date the declaration.<br />Once they have completed the form, make sure you return it to the address on page 4."
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 1: Personal details",
+		"components": [
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Customer Reference Number",
+						"name": "Customer Reference Number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 11,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Forename(s)",
+						"name": "Forename(s)",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Surname",
+						"name": "Surname",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date of Birth",
+						"name": "Date of Birth",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Day of birth", "start": 1, "length":2}, {"name": "Month of birth", "start": 4, "length":2}, {"name": "Year of birth", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Title"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Mr",
+						"name": "Select Mr",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Mrs",
+						"name": "Mrs",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Miss",
+						"name": "Miss",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Ms",
+						"name": "Ms",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color:red;'>Now pass this form to the medical professional.</span>"
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 2: Medical professional details",
+		"status": 0,
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span class='text-center'><strong>Sections 2, 3 and 4 should be completed by a medical professional</strong></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "To support the student’s DSAs application we need you to give us information about the nature of the student’s disability. Complete the rest of the form, read, sign and date the declaration, then pass the form back to the student. As the student can’t reclaim any charge made for completing this form via DSAs, we ask that it is provided free of charge."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "2.1 Your details"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Full name",
+						"name": "Enter your Full name",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 150,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Job title",
+						"name": "Enter your Job title",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 150,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Certificate or registration number (GMC, HPC, NMC)",
+						"name": "Enter your Certificate or registration number",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "2.2 Practice or organisation details"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "GP Practice",
+						"name": "GP Practice tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Primary Care Team",
+						"name": "Primary care Team tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Secondary Care Team",
+						"name": "Secondary Care Team tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Hospital",
+						"name": "Hospital tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Other",
+						"name": "Other tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "Details",
+						"name": "Details of other text box",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Name of practice or organisation",
+						"name": "Name of practice or organisation text box",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Address",
+						"name": "Address text box",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Postcode",
+						"name": "Postcode text box",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Contact number",
+						"name": "Enter Contact number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 15,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md6",
+					"content_type": "html",
+					"html": "2.3 What is your professional involvement with the student?"
+				}
+			],
+			[
+				{
+					"class": "md6",
+					"content_type": "input",
+					"input": {
+						"title": "You only need to give details if this isn’t apparent from your job title",
+						"name": "Enter What your professional involment with the student is",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 510,
+						"rows": 5,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 3: About the student's disability",
+		"status": 0,
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "In your professional opinion, complete the following questions about the student."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "3.1 Does the student have a physical, sensory or mental disability which has a substantial* and long term adverse effect on their ability to carry out normal day-to-day activities (including education)?<br/>To be considered long term, the effect of the disability must have lasted or be likely to last at least 12 months or for the rest of the student’s life.<br/><span style='font-style: italic;'>* more than minor or trivial.<span>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "No physical, sensory or mental disability which has a substantial and long term adverse effect on their ability to carry out normal day-to-day activities including education tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - give details",
+						"name": "Yes, physical, sensory or mental disability which has a substantial and long term adverse effect on their ability to carry out normal day-to-day activities including education tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md8",
+					"content_type": "input",
+					"input": {
+						"title": "Details",
+						"name": "If yes, enter details",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 510,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "3.2 Diagnosis / working diagnosis (including any relevant dates)<br/><span style='font-style: italic;'>If it’s not possible to give either, explain why.</span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Diagnosis / working diagnosis",
+						"name": "Enter diagnosis or working diagnosis",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 510,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date of diagnosis",
+						"name": "Date of diagnosis",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "day of diagnosis", "start": 1, "length":2}, {"name": "Month of diagnosis", "start": 4, "length":2}, {"name": "year of diagnosis", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 4: Medical professional declaration",
+		"status": 0,
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Sign and date below to confirm that to the best of your knowledge the information you’ve provided is true and complete."
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Today's date",
+						"name": "Today's date",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "todays day date", "start": 1, "length":2}, {"name": "Todays month date", "start": 4, "length":2}, {"name": "Todays year date", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>Now pass this form back to the student</b>."
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Additional information",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Do you need help?</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you have any questions about your application you can email us:<br/><br/>DSA_team@slc.co.uk<br/><br/>You should include your Customer Reference Number on any emails you send."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Do you need this form in braille, large print or audio format?</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Email us:<br/>brailleandlargefonts@slc.co.uk<br/><br/>or call us on 0141 243 3686<br/><br/>Please note the above email address and telephone number can only deal with requests for alternative formats of forms and guides."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Before you send your form</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "We recommend you keep a copy of this form for your own records. You may require it later for your needs assessment."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Where to send your form</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Once the form is complete you can email it to:<br/><br/>DSA_team@slc.co.uk<br/><br/>You can also send it by post to:<br/><br/>Student Finance England<br/>PO Box 210<br/>Darlington<br/>DL1 9HJ<br/><br/>Remember to pay the correct postage"
+				}
+			]
+		]
+	}
+	
+]

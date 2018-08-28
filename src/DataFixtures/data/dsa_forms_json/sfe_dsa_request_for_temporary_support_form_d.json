@@ -1,0 +1,351 @@
+[
+	{
+		"title": "About this form",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "This form should be used when your university or college has decided that they‘re unable to provide the support you require and you’ve submitted a formal appeal to your university or college."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>Ask your university or college to scan and email your completed form to disability_adviser@slc.co.uk</b>."
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Personal details",
+		"components": [
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Customer Reference Number",
+						"name": "Student Declaration - Student Customer Reference Number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 11,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "First name(s)",
+						"name": "Student Declaration - Student First Name(s)",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Surname",
+						"name": "Student Declaration - Student Surname(s)",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date of Birth",
+						"name": "Date of Birth",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Student Declaration - Date of Birth - Day", "start": 1, "length":2}, {"name": "Student Declaration - Date of Birth - Month", "start": 4, "length":2}, {"name": "Student Declaration - Date of Birth - Year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "Type of support needed",
+						"name": "Student Declaration - Type of Support Needed",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Student Declaration",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "I confirm that I have discussed my support needs with the disability adviser at my university or college and have shared the relevant parts of my Disabled Students’ Allowances study needs assessment report with them. The support that I have requested is not deemed a reasonable adjustment by my university or college under their current policy. I have now made a formal appeal to my university or college.<br/>If my appeal is successful and it is determined that the support is a reasonable adjustment within the meaning of the Equality Act 2010, I agree that the Student Loans Company Limited (SLC) may seek repayment of these costs directly from the university or college on my behalf and I will offer reasonable support and assistance to help with this process."
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Your full name",
+						"name": "Student Declaration - Full Name",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Today's date",
+						"name": "Today's date",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Student Declaration - Todays Date - Day", "start": 1, "length":2}, {"name": "Student Declaration - Todays Date - Month", "start": 4, "length":2}, {"name": "Student Declaration - Todays Date - Year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "University or College Declaration",
+		"status": 0,
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "I confirm that after discussing the student’s support needs, we are unable to provide the support requested, as it is not deemed a reasonable adjustment within our current policy. I confirm that the student has submitted a formal appeal to request that the support is made available to them.<br />If the student’s appeal is successful (either with ourselves as the university or college, or with the Office for the Independent Adjudicator (OIA)) and it is determined that it is our responsibility to provide the support identified in this form, we agree to reimburse SLC for the cost of the temporary support identified in this form."
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "First name(s)",
+						"name": "University or College Declaration - First Name(s)",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Surname",
+						"name": "University or College Declaration - Surname",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "University or college name",
+						"name": "University or College Declaration - University or college name",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 150,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Job title",
+						"name": "University or College Declaration - Job title",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 150,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Telephone number",
+						"name": "University or College Declaration - Telephone number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Email address",
+						"name": "University or College Declaration - Email address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date appeal submitted",
+						"name": "Date appeal submitted",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "University or College Declaration - Date appeal submitted - Day", "start": 1, "length":2}, {"name": "University or College Declaration - Date appeal submitted - Month", "start": 4, "length":2}, {"name": "University or College Declaration - Date appeal submitted - Year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Today's date",
+						"name": "University or College Declaration - Todays Date",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "University or College Declaration - Todays Date - Day", "start": 1, "length":2}, {"name": "University or College Declaration - Todays Date - Month", "start": 4, "length":2}, {"name": "University or College Declaration - Todays Date - Year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "SLC Declaration",
+		"status": 0,
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>To be completed by SLC when the case is deemed eligible for interim funding under the Exceptional Case Process.</b><br />Having received details of the support required and on receipt of the declarations made in this form, we agree to fund the costs of this support on an interim basis pending the outcome of the appeal process.<br />Should the university or college appeals process or OIA decide that the requested support should be provided as a reasonable adjustment, it will then be the responsibility of SLC to seek repayment from the university or college for the interim period. This will be done on the student’s behalf."
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Your full name",
+						"name": "SLC Declaration - Your Full Name",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Today's date",
+						"name": "SLC Declaration - Todays Date",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "SLC Declaration - Todays Date - Day", "start": 1, "length":2}, {"name": "SLC Declaration - Todays Date - Month", "start": 4, "length":2}, {"name": "SLC Declaration - Todays Date - Year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Signature",
+        "components": [
+			[
+				{
+                    "class": "md12",
+                    "content_type": "input",
+                    "input": {
+                        "title": "Sign Document",
+                        "name": "Student Declaration - Signature",
+                        "comments": [], "commentable": true, "type": "signature",
+						"metadata": {"page": 1, "x": 30, "y": 272.5, "width": 39, "height": 6.5},
+                        "required": true,
+                        "value": "",
+                        "disabled": false,
+                        "read_only": false
+                    }
+                }
+			]
+		]
+	}
+	
+]

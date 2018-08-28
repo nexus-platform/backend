@@ -1,0 +1,4025 @@
+[
+	{
+		"title": "Who should complete this form",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>What type of course are you/will you be studying?</b>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Full-time undergraduate course</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Full-time undergratuare tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Full-time undergratuare tickbox - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Have you applied for other student finance (Maintenance Loan or Tuition Fee Loan)?"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Yes – You should complete a DSA Slim form",
+						"name": "yes - complete dsa slim form",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "No – You should complete this form",
+						"name": "no - complete this form",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Part-time undergraduate course</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - Complete this form",
+						"name": "part time undergrad",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "part time undergrad - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Postgraduate course</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - Complete this form",
+						"name": "postgraduate course",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "postgraduate course - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Postgraduate healthcare course</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - Complete this form",
+						"name": "Postgrad healthcare course",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Postgrad healthcare course - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Are you professionally registered in the subject you are/will be studying?"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Yes – You should not complete this form",
+						"name": "Professionally registered in the subject - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "No - You should complete this form",
+						"name": "Professionally registered in the subject - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "You can download a DSA Slim form from <a href='http://www.gov.uk/studentfinance' target='_blank'>www.gov.uk/studentfinance</a>.<br /><b>If you're a full time undergraduate student and you want to apply for other student finance as well as DSAs</b>, you should complete a student finance application form and a DSA Slim application form, both are available to download from <a href='http://www.gov.uk/studentfinance' target='_blank'>www.gov.uk/studentfinance</a>."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Application deadline</b></span><br />You should return your application as soon as possible and no later than 9 months after the start of your academic year. See page 7 of the DSA1 notes for academic year dates. If you are unable to return your application by this date use the 'Additional notes' pages at the end of this form to tell us why."
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "How to get Disabled Students' Allowances (DSAs) in 3 easy steps",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "1. <b>Apply for DSAs</b><br />Complete all sections in this form, and return it with all the evidence we need. The sooner we receive your completed form with all evidence the quicker we'll be able to tell you if you could get DSAs.<br />Make sure you sign and date the declaration at the end of this form."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "2. <b>Find out exactly what equipment and support you need</b><br />If you are eligible for DSAs you may need to attend a Study Needs Assessment to make sure you get the right specialist equipment and/or services to help you complete your course. If you need to attend a Study Needs Assessment we'll send you a letter to tell you how to do this.<br />If you do need to attend a Study Needs Assessment the Assessment Centre will send us a report. This will recommend equipment and other support you may need, how much it will cost and who can provide it. You will also receive a copy of this report. We will review their recommendations and make our final decision.<br />This process can take some time – make sure you book your Study Needs Assessment as soon as you get our letter so that you can get all the necessary equipment and support before your course starts."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "3. <b>Get your equipment and support</b><br />We'll send you a DSA entitlement letter to tell you what equipment and other support you will receive DSAs for. The letter will also provide instructions on how to arrange delivery of your equipment and/or arrange other support. Don't buy or arrange equipment or support before you receive your DSA entitlement letter because we won't be able to reimburse you for these costs."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> Where you see this icon you should check the guidance notes for help to complete a question."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div> Where you see this icon you need to send evidence with your application. Use the guidance notes to find out what you need to send."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>You can order forms and guides in Braille, large print or audio. For more information on how to do this please refer to the notes</b>."
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 1: Personal details",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='padding: 5px 8px; background-color: red; color: white; font-size: 14px;'>!</span> <b>If you will be studying a postgraduate healthcare course in a discipline you're already professionally registered in, you should not complete this form.</b>."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you have applied for student finance before, please provide your Customer Reference Number."
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Customer Reference Number",
+						"name": "Section 1 Customer reference number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 11,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Personal details</b></span>."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Title"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Mr",
+						"name": "Section 1 Personal details Mr tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Mrs",
+						"name": "Section 1 Personal details Mrs tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Miss",
+						"name": "Section 1 Personal details Miss tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Ms",
+						"name": "Section 1 Personal details Ms tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Forename(s)",
+						"name": "Section 1 Personal details Forename textbox",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Surname",
+						"name": "Section 1 Personal details Surname textbox",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date of Birth",
+						"name": "Section 1 - Date of Birth",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 1 Personal details date of birth - day", "start": 1, "length": 2}, {"name": "Section 1 Personal details date of birth - month", "start": 4, "length":2}, {"name": "Section 1 Personal details date of birth - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Male",
+						"name": "Section 1 Personal details male tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Female",
+						"name": "Section 1 Personal details female tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Please complete these questions with the details exactly as stated on your birth certificate or passport."
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Place of birth (the name of the town or village)",
+						"name": "Section 1 Personal details Place of birth",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 55,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Nationality",
+						"name": "Section 1 Personal details nationality",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 55,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Identity evidence details</b></span>."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b1</b></span> Do you hold a UK passport? (if 'No', <b>go to b3</b>)"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 1 Personal details uk passport - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 1 Personal details uk passport - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b2</b></span> Provide the following details from your <b>UK passport</b>, which must be <b>currently valid and not expired</b> (this is the easiest way for you to verify your identity and means you <b>do not need to send us your passport).<br />If your passport is not valid or has expired go to b3</b>."
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Passport number",
+						"name": "Section 1 Personal details UK passport number",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 55,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Forename(s)",
+						"name": "Section 1 Personal details forename on passport",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Surname",
+						"name": "Section 1 Personal details surname on passport",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date of issue",
+						"name": "Date of issue",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 1 Personal details date of issue - day", "start": 1, "length": 2}, {"name": "Section 1 Personal details date of issue - month", "start": 4, "length":2}, {"name": "Section 1 Personal details date of issue - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date of expiry",
+						"hint": "Date of expiry <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>",
+						"name": "Date of expiry",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 1 Personal details date of expiry - day", "start": 1, "length": 2}, {"name": "Section 1 Personal details date of expiry - month", "start": 4, "length":2}, {"name": "Section 1 Personal details date of expiry - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b3</b></span> Send your original <b>non-UK passport</b> or <b>Biometric Residence Permit </b><span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div> or send your original <b>UK birth or adoption certificate</b> and a completed Birth/Adoption Certificate form. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Previous loans</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>c</b></span> Have you ever had any other loans from the Student Loans Company (SLC)? (if 'No' <b>go to d</b>)"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 1 any other loans from the student loans company - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 1 any other loans from the student loans company - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', are you behind with the repayments? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 1 are you behind with repayments - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 1 are you behind with repayments - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Armed Forces</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>d1</b></span> Are you a member of the Armed Forces serving outside England? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 1 are you a member of the armed forces - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 1 are you a member of the armed forces - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>d2</b></span> Are you a family member of someone in the Armed Forces serving outside England? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div><br />(for example: spouse or child)"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 1 are you a family member of someone in the armed forces - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 1 are you a family member of someone in the armed forces - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Contact details</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>e</b></span> Please give your current home address. If you know it, please also give your term-time correspondence address. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>HOME ADDRESS</b>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Home address",
+						"name": "Section 1 Contact details home address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 250,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Postcode",
+						"name": "Section 1 Contact details home post code",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Home phone number",
+						"name": "Section 1 Contact details home phone number",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>TERM-TIME ADDRESS</b>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Term-time address",
+						"name": "Section 1 Contact details term time address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 250,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Postcode",
+						"name": "Section 1 Contact details term time post code",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Date you will move to this address",
+						"name": "Date you will move to this address",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 1 Contact details date moving to term-time address day", "start": 1, "length": 2}, {"name": "Section 1 Contact details date moving to term-time address month", "start": 4, "length":2}, {"name": "Section 1 Contact details date moving to term-time address year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Mobile phone number",
+						"name": "Section 1 Contact details mobile phone number",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Email address",
+						"hint": "Email address",
+						"name": "Section 1 Contact details email address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "The DSA team may contact you by email, so please put your main email address."
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 2: Other financial support",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Bursaries and awards</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you are an <b>undergraduate student</b> in this academic year will you be eligible to apply for?"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "a1 - A Department of Health or NHS Bursary (excluding the Social Work Bursary paid by the NHS Business Services Authority)"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 2 Will you be eligible for a department of helth or nhs bursary yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 2 Will you be eligible for a department of helth or nhs bursary no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "a2 - A bursary from Student Awards Agency Scotland (SAAS)"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 2 Will you be eligible for a SAAS bursary yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 2 Will you be eligible for a SAAS bursary no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "a3 - A Healthcare Bursary from the Department of Health (DoH) for Northern Ireland"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 2 Will you be eligible for a Healthcare bursary from the DoH for Northern Ireland yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 2 Will you be eligible for a Healthcare bursary from the DoH for Northern Ireland no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='padding: 5px 8px; background-color: red; color: white; font-size: 14px;'>!</span> <b>If you've answered yes to any of the above questions, do not continue with this application unless you are starting a part-time course on or after 1st August 2017 at a university or college in England. If you're not continuing with this application, you should contact your bursary provider for advice on any extra support you may be entitled to</b>."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you are a <b>postgraduate student</b> in this academic year will you be eligible to apply for?"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b1</b></span> A Department of Health, NHS, SAAS or other healthcare bursary"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 2 are you a Postgraduate student eligible to apply for Department of health, NHS, SAAS or other helthcare bursary yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 2 are you a Postgraduate student eligible to apply for Department of health, NHS, SAAS or other helthcare bursary no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b2</b></span> A Research Council bursary"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 2 are you a Postgraduate student eligible to apply for a research council bursary yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 2 are you a Postgraduate student eligible to apply for a research council bursary no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b3</b></span> An NHS Business Services Authority bursary for students studying an approved postgraduate social work course that includes extra support because of your disability"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 2 are you a Postgraduate student eligible to apply for an NHS business services authority bursary for students studying an approved postgraduate social work course that includes extra support because of your disability yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 2 are you a Postgraduate student eligible to apply for an NHS business services authority bursary for students studying an approved postgraduate social work course that includes extra support because of your disability no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b4</b></span> A bursary from your college or university that includes extra support because of your disability, mental health condition or specific learning difficulty (do not count any payment you get from your university or college's hardship fund)."
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 2 are you a postgraduate student eligible to apply for a bursary from your college or university that includes extra support because of your disability, mental health condition or specific learning difficulty yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 2 are you a postgraduate student eligible to apply for a bursary from your college or university that includes extra support because of your disability, mental health condition or specific learning difficulty no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='padding: 5px 8px; background-color: red; color: white; font-size: 14px;'>!</span> <b>If you have answered 'Yes' to any of the above questions in this section do not continue with this application. You should contact the provider of your bursary for advice on any extra support you may be entitled to.</b>"
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 3: Residence",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Nationality</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a1</b></span> Are you a UK national? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - go to b1",
+						"name": "Section 3 are you a uk national yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 3 are you a uk national no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a2</b></span> Are you an EU national? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 are you an EU national yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a4",
+						"name": "Section 3 are you an EU national no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', have you lived in the UK and Islands for five years before the first day of the first academic year of your course?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - go to b4",
+						"name": "Section 3 If EU national have you lived in the UK and Islands for five years before the first day of the academic year of your course yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a3",
+						"name": "Section 3 If EU national have you lived in the UK and Islands for five years before the first day of the academic year of your course no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a3</b></span> Are you a Postgraduate student?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 are you a postgraduate student yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a4",
+						"name": "Section 3 are you a postgraduate student no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', have you lived in the UK and Islands for three years before the first day of the first academic year of your course?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - go to b2",
+						"name": "Section 3 are you a postgraduate student and lived in the UK and Islands for three years before the first day of the first academic year of your course yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a4",
+						"name": "Section 3 are you a postgraduate student and lived in the UK and Islands for three years before the first day of the first academic year of your course no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a4</b></span> Are you the child of a Swiss national?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - go to a6",
+						"name": "Section 3 are you a child of swiss national yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a6",
+						"name": "Section 3 are you a child of swiss national no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a5</b></span> Will your Swiss national parent be living in the UK on the first day of the academic year? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes - go to b2",
+						"name": "Section 3 will your swiss national parent be in uk on the first day of the academic year yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 3 will your swiss national parent be in uk on the first day of the academic year no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Residence status</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a6</b></span> Are you or your:<br /><ul><li>husband, wife, civil partner; or</li><li>parent(s), step-parent; or</li><li>child, son or daughter-in-law, child's civil partner</li></ul><br />a European Economic Area (EEA) national or Swiss national who is working, has worked or is looking for work in the UK? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 Qa6 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a7",
+						"name": "Section 3 Qa6 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', please give details below.<br />You should also give details of your previous studies"
+				}
+			],
+			[
+				{
+					"class": "md6",
+					"content_type": "input",
+					"input": {
+						"title": "Previous studies",
+						"name": "Section 3 Qa6 if yes give details",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 5,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you are currently working, are you going to continue working during your studies?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 are you going to continue working during your studies yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 3 are you going to continue working during your studies no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', please give details. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md6",
+					"content_type": "input",
+					"input": {
+						"title": "Work During Study",
+						"name": "Section 3 please give detials",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a7</b></span> Do you have 'settled status' in the UK? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 Qa7 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a8",
+						"name": "Section 3 Qa7 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date you received this status",
+						"name": "Date you received this status",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 Qa7 date recevied - day", "start": 1, "length": 2}, {"name": "Section 3 Qa7 date received - month", "start": 4, "length":2}, {"name": "Section 3 Qa7 date received - year", "start": 7, "length":4}], 
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a8</b></span> Have you or your:<br /><ul><li>husband, wife, civil partner; or</li><li>parent(s), step-parent</li></ul><br />been granted 'refugee status' by the UK Government? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 Qa7 refugee stats - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to a9",
+						"name": "Section 3 Qa7 refugee stats - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', and if applicable, please give the following:"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Home Office reference number",
+						"name": "Section 3 Qa8 home office number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 8,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date this status is due to expire",
+						"name": "Date this status is due to expire",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 Qa8 expire date - day", "start": 1, "length": 2}, {"name": "Section 3 Qa8 expire date - month", "start": 4, "length":2}, {"name": "Section 3 Qa8 expire date - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a9</b></span> Have you or your:<br /><ul><li>husband, wife, civil partner; or</li><li>parent(s), step-parent</li></ul><br />been granted Humanitarian Protection? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 Qa9 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to b2",
+						"name": "Section 3 Qa9 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', and if applicable, please give the following:"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Home Office reference number",
+						"name": "Section 3 Qa9 home office number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 8,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date this status is due to expire",
+						"name": "Date this status is due to expire",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 Qa9 expire date - day", "start": 1, "length": 2}, {"name": "Section 3 Qa9 expire date - month", "start": 4, "length":2}, {"name": "Section 3 Qa9 expire date - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a10</b></span> Have you or your:<br /><ul><li>husband, wife, civil partner; or</li><li>parent(s), step-parent</li></ul><br />been granted 'leave to remain' as a Stateless Person? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section Qa10 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to b2",
+						"name": "Section Qa10 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If 'Yes', and if applicable, please give the following:"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Home Office reference number",
+						"name": "Section Qa10 home office number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 8,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Date this status is due to expire",
+						"name": "Date this status is due to expire",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section Qa10 expire date - day", "start": 1, "length": 2}, {"name": "Section Qa10 expire date - month", "start": 4, "length":2}, {"name": "Section Qa10 expire date - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a11</b></span> On the first day of the first academic year of your course will you be under 18 and will you have been living in the UK and islands for seven years? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 Qa11 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 3 Qa12 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a11</b></span> On the first day of the first academic year of your course will you be over 18 and will you have lived in the UK for at least 20 years, or at least half of your life? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 Qa11 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 3 Qa12 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b1</b></span> In the three years prior to the start of the first academic year of your course, <b>did you live outside the UK and Islands</b> at any time?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 b1 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to b3",
+						"name": "Section 3 b1 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b2</b></span> Give details of your residence for the three years before the first academic year of your course. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Full address",
+						"name": "Section 3 b2 reason for stay address 1",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Why were you there?",
+						"name": "Why",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "From",
+						"name": "From",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b2 date from day address 1", "start": 1, "length": 2}, {"name": "Section 3 b2 date from month address 1", "start": 4, "length":2}, {"name": "Section 3 b2 date from year address 1", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "To",
+						"name": "To",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b2 date to day address 1", "start": 1, "length": 2}, {"name": "Section 3 b2 date to month address 1", "start": 4, "length":2}, {"name": "Section 3 b2 date to year address 1", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Full address",
+						"name": "Section 3 b2 full address 2 textbox",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Why were you there?",
+						"name": "Section 3 b2 reason for stay address 2",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "From",
+						"name": "From 2",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b2 date from day address 2", "start": 1, "length": 2}, {"name": "Section 3 b2 date from month address 2", "start": 4, "length":2}, {"name": "Section 3 b2 date from year address 2", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "To",
+						"name": "To 2",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b2 date to day address 2", "start": 1, "length": 2}, {"name": "Section 3 b2 date to month address 2", "start": 4, "length":2}, {"name": "Section 3 b2 date to year address 2", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<i>If you require further space to provide your answer, please give the details requested above on the Additional notes section at the end of this form.</i>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b3</b></span> At any time since 1 September 2015 has:<br /><ul><li>either of your parents, step-parents, guardians; or</li><li>your husband, wife, civil partner</li></ul><br />lived or worked outside the UK and Islands or, in the case of an EU, EEA or Swiss national, outside the EEA or Switzerland?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 3 b3 yes tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "No - go to Section 4",
+						"name": "Section 3 b3 no tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Full address",
+						"name": "Section 3 b3 Full address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Why were you there?",
+						"name": "Section 3 b3 reason for living there",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "From",
+						"name": "From 3",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b3 date from - day", "start": 1, "length": 2}, {"name": "Section 3 b3 date from - month", "start": 4, "length":2}, {"name": "Section 3 b3 date from - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "To",
+						"name": "To 3",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b3 date to - day", "start": 1, "length": 2}, {"name": "Section 3 b3 date to - month", "start": 4, "length":2}, {"name": "Section 3 b3 date to - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b4</b></span> Give details of your residence for the five years before the first academic year of your course. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Full address",
+						"name": "Section 3 b4 full address one",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Why were you there?",
+						"name": "Section 3 b4 reason for living there address 1",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "From",
+						"name": "From 4",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b4 date from - day address 1", "start": 1, "length": 2}, {"name": "Section 3 b4 date from - month address 1", "start": 4, "length":2}, {"name": "Section 3 b4 date from - year address 1", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "To",
+						"name": "To 4",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b4 date to - day address 1", "start": 1, "length": 2}, {"name": "Section 3 b4 date to - month address 1", "start": 4, "length":2}, {"name": "Section 3 b4 date to - year address 1", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Full address",
+						"name": "Section 3 b4 full adress 2",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Why were you there?",
+						"name": "Section 3 b4 reason for living there address 2",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 3,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "From",
+						"name": "From 5",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b4 date from - day address 2", "start": 1, "length": 2}, {"name": "Section 3 b4 date from - month address 2", "start": 4, "length":2}, {"name": "Section 3 b4 date from - year address 2", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "To",
+						"name": "To 5",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 3 b4 date to - day address 2", "start": 1, "length": 2}, {"name": "Section 3 b4 date to - month address 2", "start": 4, "length":2}, {"name": "Section 3 b4 date to - year address 2", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<i>If you require further space to provide your answer, please give the details requested above on the Additional notes section at the end of this form.</i>"
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 4: About your course and university or college",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>In this section, please give details of your first choice university or college and course.</b>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>University or college details</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a</b></span> University or college name and address"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "University or college name and address",
+						"name": "Section 4 a university or college name and address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 250,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Postcode",
+						"name": "Section 4 a University or college post code",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Course details</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b</b></span> Course name <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Course name",
+						"name": "Section 4 b course name",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "List all subjects being studied",
+						"hint": "If you are following a combined studies or modular course, list all subjects being studied",
+						"name": "Section 4 b all subjects being studied in course",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Qualification you expect to gain",
+						"hint": "Qualification you expect to gain (for example, <b>BSc Physics</b>)",
+						"name": "Section 4 b qualifications expected to gain",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 510,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Course start date",
+						"name": "Course start date",
+						"comments": [], "commentable": true, "type": "month",
+						"format": "MM-YYYY",
+						"chunks": [{"name": "Section 4 b course start date - month", "start": 1, "length": 2}, {"name": "Section 4 b course start date - year", "start": 4, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input" : {
+						"title": "Course end date",
+						"name": "Course end date",
+						"comments": [], "commentable": true, "type": "month",
+						"format": "MM-YYYY",
+						"chunks": [{"name": "Section 4 b course end date - month", "start": 1, "length": 2}, {"name": "Section 4 b course end date - year", "start": 4, "length":4}],
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Course length (years)",
+						"hint": "Course length (years) <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>",
+						"name": "Section 4 b course length - years",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 2,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Year of course"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Foundation year",
+						"name": "Section 4 b foundation year",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "First year",
+						"name": "Section 4 b first year",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Section 4 b second year",
+						"name": "Tick 53",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Third year",
+						"name": "Section 4 b third year",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Fourth year",
+						"name": "Section 4 b fourth year",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md9",
+					"content_type": "input",
+					"input": {
+						"title": "Other (give details)",
+						"name": "Section 4 b other year give details",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 510,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If the course is franchised to another university or college, give the address of the other university or college."
+				}
+			],
+			[
+				{
+					"class": "md6",
+					"content_type": "input",
+					"input": {
+						"title": "Address of the other university or college",
+						"name": "Section 4 b give address of other university or college",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 250,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Postcode",
+						"name": "Section 4 b  other university or college post code",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='padding: 5px 8px; background-color: red; color: white; font-size: 14px;'>!</span> <b>Remember to read, sign and date the declaration at the end of this form</b>."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Term details</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>c</b></span> Where will you spend most of your time this academic year? <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>TERM 1</b>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "University or college",
+						"name": "Section 4 c term 1 university or collge",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Study abroad",
+						"name": "Section 4 c term 1 study abroad",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Work placement",
+						"name": "Section 4 c term 1 work placement",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>TERM 2</b>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "University or college",
+						"name": "Section 4 c term 2 university or college",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Study abroad",
+						"name": "Section 4 c term 2 study abroad",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Work placement",
+						"name": "Section 4 c term 2 work placement",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>TERM 3</b>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "University or college",
+						"name": "Section 4 c term 3 university or college",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Study abroad",
+						"name": "Section 4 c term 3 study abroad",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Work placement",
+						"name": "Section 4 c term 3 work placement",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<i>If you have ticked 'University or college' for all 3 terms, <b>go to section 5</b></i>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>d</b></span> Have you been accepted onto the Erasmus exchange scheme?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Section 4 d awarded erasmus - yes",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Section 4 d awarded erasmus - no",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<i>If 'Yes' or you'll be studying abroad, <b>go to section 5</b></i>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Placement details</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>e</b></span> Where will your placement be? Placement name and address if known <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Abroad",
+						"name": "Section 4 e where is placement - abroad tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "UK",
+						"name": "Section 4 e where is placement - uk tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Don't know",
+						"name": "Section 4 e where is placement - dont know tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md6",
+					"content_type": "input",
+					"input": {
+						"title": "Name and address",
+						"name": "Section 4 e placement name and address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 250,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Postcode",
+						"name": "Section 4 e placement post code",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Is the placement paid or unpaid?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Paid",
+						"name": "Section 4 e placement paid tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Unpaid",
+						"name": "Section 4 e placement unpaid tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div> If 'Unpaid', please tick which type"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "a hospital, Public Health Service Laboratory or with a Clinical Commissioning group in the UK;",
+						"name": "Section 4 e hospital, PHS lab, clinical commissioning tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "a Special Health Authority, the National Health Service Commissioning Board, the National Institute for Health and Care Excellence, the Health and Social Care Information Centre, Local Health Board, Health Board, Special Health Board or Health and Social Services Board in the UK;",
+						"name": "Section 4 e special health authority, NHS, special health  board tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "a Local Authority carrying out its duties relating to health, welfare or caring for children and young people, a voluntary organisation providing facilities or carrying out similar activities or a Local Authority acting in the exercise of public health functions in the UK;",
+						"name": "Section 4 e local authority carrying out it duties to health tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "the prison or probation sector or after-care services in the UK;",
+						"name": "Section 4 e prison, probation sector, aftercare services tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "unpaid research in a UK or overseas institution;",
+						"name": "Section 4 e unpaid research in uk or overseas tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "an unpaid placement in the Houses of Parliament;",
+						"name": "Section 4 e unpaid placement in houses of parliament tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "an unpaid placement that is not listed above.",
+						"name": "Section 4 e unpaid placement that is not listed above tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 5: Your university or college",
+		"status": 0,
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>Please ask your university or college to complete this section.</b>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you do not want to tell your university or college about your disability, mental health condition or specific learning difficulty, please read section 5 of the notes for further instructions and then go to section 6. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>To be completed by the student's university or college.</b></span><br />Complete this section for all students, <b>unless</b> they are on a full-time undergraduate course <b>and</b> are applying for other finance.<br />- Complete the SLC or UCAS university or college code.<br />- Tick the box that applies to the student.<br />- Complete the university or college declaration."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "SLC or UCAS university or college code"
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Code",
+						"name": "Section 5 SLC or UCAS university or college code",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 4,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Part-time undergraduate students</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "Tick if applicable",
+						"name": "Section 5 parttime undergrade - tick if applicable",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "I confirm to the best of my knowledge and belief that:<br /><ul><li>the student named in section 1 is studying or applying for the course named in section 4;</li><li>the student started their course <b>before 1 September 2012</b> and plans to complete the course at an average rate of study of at least <b>50%</b> of that needed to complete the course, or</li><li>the student started their course <b>on or after 1 September 2012</b> and plans to complete the course at an average rate of study of at least <b>25%</b> of that needed to complete the course, or an equivalent course, on a full-time basis; and</li><li>the student's rate of study is the following percent of the equivalent full-time course:</li></ul>"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Percent",
+						"name": "Section 5 students rate of study percent",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 4,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Full-time undergraduate students, (who are not applying for other finance) and full-time undergraduate distance learning students.</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "Tick if applicable",
+						"name": "Section 5 full time undergraduate - tick if applicable",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "I confirm to the best of my knowledge and belief that:<br /><ul><li>the student named in section 1 is studying or applying for the course named in section 4; and</li><li>the student named in section 1 plans to complete the course on a full-time basis either attending their course or by distance learning methods.</li></ul>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Part-time postgraduate students</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "Tick if applicable",
+						"name": "Section 5 part time postgradute - tick if applicable",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "I confirm to the best of my knowledge and belief that:<br /><ul><li>the student named in section 1 is studying or applying for a part-time postgraduate course; and</li><li>the student started their course <b>before 1 September 2012</b> which will not take more than twice as long to complete as an equivalent full-time course; or</li><li>the student started their course <b>on or after the 1 September 2012</b> which will not take more than four times as long to complete as an equivalent full-time course.</li><li>the student's rate of study is the following percent of the equivalent full-time course:</li></ul>"
+				}
+			],
+			[
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Percent",
+						"name": "Section 5 rate of study percent",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 4,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Postgraduate students</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "Tick if applicable",
+						"name": "Section 5 postgraduate students - tick if applicable",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "I confirm to the best of my knowledge and belief that:<br /><ul><li>the student named in section 1 is studying or applying for the course named in section 4;</li><li>this course has usual entry qualification of a first degree or higher; and</li><li>the student will not receive an award from their institution (not including any payment from the institution's hardship fund) to meet the extra course-related costs they have to pay because of their disability.</li></ul>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>University or college declaration</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Your full name (in BLOCK CAPITALS)",
+						"name": "Section 5 your name block capitals",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Position",
+						"name": "Section 5 position in college or university",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Your phone number (including area code)",
+						"name": "Section 5 your phone number",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Your email address",
+						"name": "Section 5 your email address",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Date",
+						"name": "Todays date full",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "Section 5 todays date - day", "start": 1, "length": 2}, {"name": "Section 5 todays date - month", "start": 4, "length":2}, {"name": "Section 5 todays date - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "University signature",
+						"name": "Section 5 your signature",
+						"comments": [], "commentable": true, "type": "signature",
+						"metadata": {"page": 15, "x": 110, "y": 191, "width": 39, "height": 6.5},
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "University or College stamp",
+						"name": "University or College stamp",
+						"comments": [], "commentable": true, "type": "image",
+						"metadata": {"page": 15, "x": 106, "y": 243, "width": 117, "height": 24},
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 6: Your disability",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>DSAs information and evidence</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a</b></span> Please give the name or diagnosis and provide <b>photocopied</b> evidence of your disability. See the notes for what evidence you need to send. You can also download and complete the Disability Evidence form from <a href='http://www.gov.uk/studentfinance' target='_blank'>www.gov.uk/studentfinance</a>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Your evidence must confirm that you meet the definition of a person who has a disability under the Equality Act 2010. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: red; color: white;'>e</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-red'>Provide evidence here</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input" : {
+						"title": "Evidence",
+						"name": "Section 6 name and diagnosis of disability",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 1024,
+						"rows": 5,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<i>If you require further space to provide your answer, please give the details requested above on the Additional notes section at the end of this form.</i>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>c</b></span> Consent to share DSA"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='padding: 5px 8px; background-color: red; color: white; font-size: 14px;'>!</span> <b>Please mark the boxes below to give consent to the following DSAs arrangements. This will allow us to make sure you get the help you need by exchanging information with the necessary organisations. If you do not give consent it may delay any support you need.<br />You have the right to withdraw your consent to us processing your personal information in relation to this application form. To withdraw your consent, please contact us.</b>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "I agree that Student Finance England and the disability service at my university or college may exchange information about my application for DSAs where this is necessary to make sure I get the help I need.",
+						"name": "Section 6 c agree to SFE and disability service to exchange information",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "I agree that Student Finance England and my DSAs Needs Assessor may exchange information about my application for DSAs where this is necessary to make sure I get the help I need.",
+						"name": "Section 6 c I agree that Student Finance England and my DSAs Needs Assessor exchange information",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "I agree that Student Finance England and my DSAs suppliers may exchange information about my application for DSAs where this is necessary to make sure I get the help I need.",
+						"name": "Section 6 c I agree that Student Finance England and my DSAs suppliers may exchange in formation",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Section 7: Your UK bank or building society account details",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>UK bank or building society account details</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>The account must be in your own name and be able to accept direct credits.</b>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Sort code",
+						"name": "Sort code full",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 6,
+						"chunks": [{"name": "Section 7 sort code first two digets", "start": 1, "length": 2}, {"name":"Section 7 sort code middle two digets", "start": 3, "length": 2}, {"name":"Section 7 sort code last two digets", "start": 5, "length": 2}],
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Account number",
+						"name": "Section 7 account number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 8,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Building society roll number (if applicable)",
+						"name": "Section 7 roll number if applicable",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 12,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>Student Declaration</b> <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Before signing and returning your completed form, you should read the Privacy Notice in the accompanying notes. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "This declaration covers all of the student finance available to students for academic year 2018/19."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "You should read the specific terms and conditions about loans, Childcare Grant and Disabled Students' Allowances because they will affect you if you apply for them at any time in this academic year. If you don't apply for these in the academic year their specific terms and conditions will not affect you."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>Your application for financial support may be delayed unless you sign and date this declaration.<br /><br />General Declaration</b>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<ul><li>I confirm that to the best of my knowledge and belief, the information I have provided is true and complete. If it is not I understand I may not receive financial support, any support I have received may be withdrawn and I could be prosecuted.</li><li>I agree to give SLC any information they require to process my application and agree to tell them immediately if my circumstances change in any way that might affect my entitlement to financial support. I understand that if I do not do this, I may not receive any further payments, and may have to repay the financial support I have already received.</li><li>I agree that in the event of receiving an overpayment of financial support, I am obliged to repay this in full.</li><li>I understand that if I have provided details of my UK passport on this form, SLC will verify those details with Her Majesty's Passport Office.</li><li>I confirm where I have provided any personal information in relation to a third party, I have informed them of this</li></ul>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Loan Contract</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>a</b></span> - I confirm I have read and understood the guide to terms and conditions available online at <a href='http://www.gov.uk/studentfinance' target='_blank'>www.gov.uk/studentfinance</a>."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>b</b></span> - I acknowledge and agree that any loan(s) made to me by the Secretary of State for Education, 'the lender' (which includes any persons exercising functions on behalf of the Secretary of State pursuant to section 23(4) of the Teaching and Higher Education Act 1998 as amended from time to time or successor legislation, 'the Act') will be on the terms set out in these declarations and in Regulations."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>c</b></span> - I undertake to repay the lender any loan(s) made to me, together with all and any interest, penalties and charges which apply."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>d</b></span> - I acknowledge and agree that in the event that I have: (i) reached the age of 18 years; and (ii) have entered into one or more agreements for a loan under section 22 of the Teaching and Higher Education Act 1998 (and relative secondary legislation) before I reached the age of 18 years, upon signing this declaration I am agreeing to ratify any and all such student loans. I understand that ratification of any agreement for a loan made with me before I reached the age of 18 years is a statutory precondition of my eligibility for student support after attaining the age of 18 years."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>e</b></span> - I agree that any loan(s) made to me as a consequence of the acceptance of my application by the lender is a/are contract(s) between me and the lender which binds me from the payment to me of the first loan advance and that the repayment of any such loan(s), together with all and any interest, penalties and charges which apply, will be due by me to the lender as a debt."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>f</b></span> - I agree that I shall be obliged to make repayment of my loan(s), together with all and any interest, penalties and charges which apply, to such address as shall be notified to me in writing and that any services in respect of my loan(s) may be provided at such address or other address(es) as the lender may from time to time determine and that the service of providing the loan is provided at the lender's principal address."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>g</b></span> - I agree that any action for repayment and/or in respect of or in connection with my loan(s) and/or all and any interest, penalties and charges which apply, will be brought before the ordinary civil courts and shall be governed by the general rules of civil procedure."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>h</b></span> - I agree that my request for a loan, the loan and the contract between me and the lender shall be governed by the law of the place of my home address as stated in this application form (or, if my address is outside the United Kingdom, English law)."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>i</b></span> - I irrevocably agree that the courts of the part of the United Kingdom in which my home address stated in this application form is situated (or the English, Scottish and Northern Ireland courts where my address is outside the United Kingdom) shall have non-exclusive jurisdiction to hear any action or proceedings arising out of or in connection with the loan and the contract between me and the lender and I irrevocably submit to the jurisdiction of those courts and waive any objection to the jurisdiction of those courts, provided that this shall not limit the lender's rights to take proceedings against me in any other court of competent jurisdiction."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>j</b></span> - I agree that from the date I submit this form until the date when my loan(s), together with all and any interest, penalties and charges which apply, is fully repaid I will notify the lender of any changes in the personal details (including National Insurance Number) and contact details I have provided."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>k</b></span> - In the event that I leave the United Kingdom to reside outside the United Kingdom or that for any other reason I am outside the UK tax system, I undertake to inform the lender in accordance with the regulations referred to in paragraph b and I undertake to provide the lender with my new and any subsequent contact details until my loan, together with all and any interest, penalties and charges which apply, is fully repaid."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>l</b></span> - I agree to take all future action requested by the lender and provide the lender with all information required to ensure repayment, in accordance with the regulations referred to in paragraph b."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>m</b></span> - If I breach any of the terms under which any loan(s) will be made I agree that I will be obliged to pay any charges and penalties which may apply under the Teaching and Higher Education Act 1998 and the regulations made under that Act, as amended from time to time or successor legislation and/or regulations."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>n</b></span> - I understand that the Student Loans Company (SLC) will check my National Insurance number and personal details with the Department for Work and Pensions (DWP). If I do not know my National Insurance Number, or if the number I provide cannot be authenticated, DWP will trace and give my number to the lender."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>o</b></span> - If I have broken the terms of this contract I agree that the lender may share information held about me and my account with any person, including the government or a government agency of another country, who may assist in establishing my whereabouts and/or in taking action to recover outstanding loan amounts."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Disabled Students' Allowances (DSAs)</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<ul><li>I understand that any equipment I receive through DSAs must be used for my course of study and SLC is not responsible for paying any repair costs.</li><li>I understand Student Finance England will pay the suppliers of any equipment and support directly.</li></ul>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Childcare Grant</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<ul><li>I understand that if I do not take up my childcare, or if I change to a childcare provider who is not registered or approved, I will have to pay back any overpayment.</li><li>I understand that if I do not provide the evidence of childcare costs within the timescales set, I might lose my entitlement. Also if my payments to my childcare provider are different from the estimates I provide, I understand that further payment will increase or decrease accordingly, or if no further Childcare Grant payments are due to be paid to me, I may be liable to repay any difference.</li></ul>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Customer Reference Number",
+						"name": "Customer Reference Number",
+						"comments": [], "commentable": true, "type": "number",
+						"max_length": 11,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Your full name (in BLOCK CAPITALS)",
+						"name": "full name in block capitals",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 255,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Today's date",
+						"name": "Todays date full",
+						"comments": [], "commentable": true, "type": "date",
+						"format": "DD-MM-YYYY",
+						"chunks": [{"name": "todays date - day", "start": 1, "length":2}, {"name": "todays date - month", "start": 4, "length":2}, {"name": "todays date - year", "start": 7, "length":4}],
+						"max_length": 10,
+						"required": true,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>Your decision about Bursary and Scholarship data sharing consent will not affect your entitlement to any other financial support available.</b>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "You may be eligible for a bursary or scholarship. In order for your university or college to determine and pay any bursary or scholarship to which you may be entitled, we will share some of your personal, financial and course details as well as information about your eligibility for student finance with them. <span onmouseover='toggleTooltip(false)' onmouseout='toggleTooltip(true)' style='padding: 5px 8px; background-color: black; color: white;'>n</span><div class='tooltip vue-tooltip-theme' role='tooltip' aria-hidden='true' x-placement='top' style='position: absolute; will-change: transform; top: 0px; left: 0px;'><div class='tooltip-inner tooltip-black'>Check the guidance notes for help</div></div>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you <b>do not<b> wish your details to be shared for this purpose, please tick this box:"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "I do not wish my details to be shared",
+						"name": "tick if you do not wish your details to be shared",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Checklist",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Before returning this form please make sure that:"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "you've answered all the questions that apply to you",
+						"name": "answered all questions that apply to you tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "your university or college has completed section 5 (if this applies to you)",
+						"name": "university or college complete section 5 tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "you've read, signed and dated the declaration",
+						"name": "read,signed and dated the declaration tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "you've included all the evidence, including medical evidence, we need with this form",
+						"name": "included all evidence, including medical evidence tickbox",
+						"comments": [], "commentable": true, "type": "checkbox",
+						"required": true,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='padding: 5px 8px; background-color: red; color: white; font-size: 14px;'>!</span> If you don't send all the evidence we need, your application may be delayed."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<b>Remember, you don't need to send your UK passport</b> as proof of your identity. You only need to <b>complete your UK passport details in section 1</b>.<br />If you send your passport it may take several weeks before we can return it to you."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<p style='color: orange; text-align: center'><b>Please remember to pay the correct postage fee</b></p>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Once you have completed this form, and signed and dated the declaration, please return it to:<br /><br/><b>Student Finance England<br />PO Box 210<br />Darlington<br />DL1 9HJ</b>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "You can also return your completed form and evidence to the DSA team by email at <a href='mailto:dsa_team@slc.co.uk'>dsa_team@slc.co.uk</a></b>"
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Additional notes",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "If you are providing extra information please clearly mark what section and question the information is about."
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input": {
+						"title": "Additional notes",
+						"name": "additional notes 1",
+						"comments": [], "commentable": true, "type": "text",
+						"max_length": 4096,
+						"rows": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Signature",
+        "components": [
+			[
+				{
+                    "class": "md12",
+                    "content_type": "input",
+                    "input": {
+                        "title": "Sign Document",
+                        "name": "Your signature",
+                        "comments": [], "commentable": true, "type": "signature",
+						"metadata": {"page": 21, "x": 30, "y": 160, "width": 39, "height": 8},
+                        "required": true,
+                        "value": "",
+                        "disabled": false,
+                        "read_only": false
+                    }
+                }
+			]
+		]
+	}
+	
+]
