@@ -100,6 +100,7 @@ class AuthController extends MyRestController {
             'name' => $request->get('name'),
             'last_name' => $request->get('last_name'),
             'address' => $request->get('address'),
+            'postcode' => $request->get('postcode'),
             'email' => $request->get('email'),
             'password' => $request->get('password'),
             'activation_url' => $request->get('activation_url'),
@@ -119,6 +120,7 @@ class AuthController extends MyRestController {
             $user->setEmail($params['email']);
             $user->setLastname($params['last_name']);
             $user->setName($params['name']);
+            $user->setPostcode($params['postcode']);
             $user->setPassword(sha1($params['password']));
             $user->setRoles(["student"]);
             $user->setStatus(0);

@@ -143,6 +143,7 @@ class ApiController extends MyRestController {
                     'address' => $ac->getAddress(),
                     'phone' => $ac->getTelephone(),
                     'registered' => $registered,
+                    'is_admin' => $admin->getUser() === $user,
                     'admin' => $admin ? $admin->getUser()->__toString() : null,
                     'user_data' => $userData,
                 ];
@@ -1338,12 +1339,52 @@ class ApiController extends MyRestController {
         try {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
+            $acParams = json_decode($request->get('ac'));
             $data = null;
+            $userOk = false;
+            $entityManager = $this->getDoctrine()->getManager();
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
                 $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($request->get('id'));
+                $userOk = !is_null($payload);
+            } else {
+                $userParams = $acParams->user_data;
+                $params = [
+                    'name' => $userParams->name,
+                    'last_name' => $userParams->last_name,
+                    'postcode' => $userParams->postcode,
+                    'address' => $userParams->address,
+                    'email' => $userParams->email,
+                    'password' => $userParams->password,
+                    'activation_url' => $request->get('url'),
+                ];
+                $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $params['email']]);
+
+                if ($user) {
+                    $code = 'warning';
+                    $msg = 'The email address you entered is already registered';
+                    $userOk = false;
+                } else {
+                    $user = new User();
+                    $user->setAddress($params['address']);
+                    $user->setPostcode($params['postcode']);
+                    $user->setCreatedAt(time());
+                    $user->setEmail($params['email']);
+                    $user->setLastname($params['last_name']);
+                    $user->setName($params['name']);
+                    $user->setPassword(sha1($params['password']));
+                    $user->setRoles(["student"]);
+                    $user->setStatus(0);
+                    $user->setToken(sha1(StaticMembers::random_str()));
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    $userOk = true;
+                }
+            }
+
+            if ($userOk) {
+                $files = $request->files;
+                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acParams->id);
                 if ($ac) {
                     $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $user]);
                     if (!$acUser) {
@@ -1354,16 +1395,16 @@ class ApiController extends MyRestController {
                         $entityManager->persist($acUser);
                         $entityManager->flush();
                         $code = 'success';
-                        $msg = 'AC registered';
+                        $msg = 'You have registered with this Centre.' . ($payload ? '' : ' Redirecting to login page...');
                         $data = true;
+                    } else {
+                        $code = 'warning';
+                        $msg = 'You have already registered with this Centre.';
                     }
                 } else {
                     $code = 'error';
-                    $msg = 'Invalid id supplied.';
+                    $msg = 'Invalid user.';
                 }
-            } else {
-                $code = 'error';
-                $msg = 'Invalid parameter supplied. You may need to renew your session';
             }
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
