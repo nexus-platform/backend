@@ -94,12 +94,12 @@ class User implements UserInterface, \Serializable {
      * @Assert\NotBlank
      */
     private $university;
-    
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterUser", mappedBy="user")
      * */
     private $assessment_center_users;
-    
+
     function getAssessmentCentres($returnType = 'full') {
         $acUsers = $this->getAssessment_center_users();
         $res = [];
@@ -116,7 +116,7 @@ class User implements UserInterface, \Serializable {
         }
         return $res;
     }
-    
+
     function hasRegisteredWith($ac) {
         $acUsers = $this->getAssessment_center_users();
         foreach ($acUsers as $acUser) {
@@ -126,7 +126,7 @@ class User implements UserInterface, \Serializable {
         }
         return false;
     }
-    
+
     function getAssessment_center_users() {
         return $this->assessment_center_users;
     }
@@ -135,7 +135,7 @@ class User implements UserInterface, \Serializable {
         $this->assessment_center_users = $assessment_center_users;
     }
 
-        function getPre_register() {
+    function getPre_register() {
         return $this->pre_register;
     }
 
@@ -376,6 +376,10 @@ class User implements UserInterface, \Serializable {
 
     public function isDO() {
         return in_array('do', $this->getRoles());
+    }
+    
+    public function isNA() {
+        return in_array('na', $this->getRoles());
     }
 
     public function getFullname() {

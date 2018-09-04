@@ -218,13 +218,6 @@ class AssessmentCenter {
     }
 
     /**
-     * @param User $admin
-     */
-    public function setAdmin(User $admin) {
-        $this->admin = $admin;
-    }
-
-    /**
      * @return mixed
      */
     public function getLabels() {
@@ -236,5 +229,14 @@ class AssessmentCenter {
      */
     public function setLabels(Label $labels) {
         $this->labels = $labels;
+    }
+    
+    public function getAdmin() {
+        $acUsers = $this->getAssessment_center_users();
+        foreach ($acUsers as $acUser) {
+            if ($acUser->getIs_admin())
+                return $acUser->getUser();
+        }
+        return null;
     }
 }

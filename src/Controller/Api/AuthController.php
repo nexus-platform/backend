@@ -15,11 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/**
- * Auth controller.
- *
- * @Route("/")
- */
 class AuthController extends MyRestController {
 
     private $dbRepository = null;
