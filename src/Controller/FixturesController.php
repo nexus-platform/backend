@@ -100,6 +100,20 @@ class FixturesController extends Controller {
             $entityManager->persist($user);
             $res .= ', 1 AC Manager';
         }
+        $users = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('na')) = 1");
+        if (!$users) {
+            $user = new User();
+            $user->setCreatedAt(time());
+            $user->setEmail('na@nexus.uk');
+            $user->setName('Paul');
+            $user->setLastname('McCartney');
+            $user->setPassword($pass);
+            $user->setRoles(["na"]);
+            $user->setStatus(1);
+            $user->setToken(sha1(StaticMembers::random_str(32)));
+            $entityManager->persist($user);
+            $res .= ', 1 Needs Assessor';
+        }
         $users = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('admin')) = 1");
         if (!$users) {
             $user = new User();

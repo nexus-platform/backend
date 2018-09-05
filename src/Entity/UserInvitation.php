@@ -39,6 +39,11 @@ class UserInvitation {
     private $token;
 
     /**
+     * @ORM\Column(type="string", nullable=false)
+     */
+    private $role;
+
+    /**
      * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="sender_id", referencedColumnName="id")
@@ -51,6 +56,14 @@ class UserInvitation {
      * @ORM\JoinColumn(name="ac_id", referencedColumnName="id")
      */
     private $ac;
+
+    function getRole() {
+        return $this->role;
+    }
+
+    function setRole($role) {
+        $this->role = $role;
+    }
 
     function getAc(): AssessmentCenter {
         return $this->ac;

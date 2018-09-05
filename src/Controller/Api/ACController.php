@@ -72,12 +72,25 @@ class ACController extends MyRestController {
         try {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
-            $data = null;
             $slug = $request->get('slug');
+            $invitationToken = $request->get('invitation_token');
             $entityManager = $this->getDoctrine()->getManager();
             $user = $payload ? $entityManager->getRepository(User::class)->find($payload->user_id) : null;
             $ac = $entityManager->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
-            if ($ac) {
+            $data = null;
+            $code = '';
+            $msg = '';
+            $userRole = '';
+
+            if ($invitationToken) {
+                $invitation = $entityManager->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
+                if ($ac && $invitation && $ac === $invitation->getAc()) {
+                    $userRole = $invitation->getRole();
+                } else {
+                    $code = 'error';
+                }
+            }
+            if ($ac && $code === '') {
                 $admin = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
                 $registered = false;
                 $userData = [
@@ -89,61 +102,76 @@ class ACController extends MyRestController {
                     'password' => '',
                     'password_confirm' => '',
                 ];
-
-                if ($user) {
-                    $registered = $user->hasRegisteredWith($ac);
-                    $userData = [
-                        'name' => $user->getName(),
-                        'last_name' => $user->getLastname(),
-                        'email' => $user->getEmail(),
-                        'postcode' => $user->getPostcode(),
-                        'address' => $user->getAddress(),
-                        'password' => 'password',
-                        'password_confirm' => 'password',
-                    ];
-                }
-
-                $isAdmin = $admin->getUser() === $user;
                 $students = [];
                 $needsAssessors = [];
-                if ($isAdmin) {
-                    $acUsers = $ac->getAssessment_center_users();
-                    foreach ($acUsers as $acUser) {
-                        $userAux = $acUser->getUser();
-                        if ($userAux->isStudent()) {
-                            $students[] = [
-                                'id' => $userAux->getId(),
-                                'name' => $userAux->getFullname(),
-                                'institute' => $userAux->getUniversity()->getName(),
-                            ];
-                        } else if ($userAux->isNA()) {
-                            $needsAssessors[] = [
-                                'id' => $userAux->getId(),
-                                'name' => $userAux->getFullname(),
-                                'email' => $userAux->getEmail(),
-                            ];
+
+                if ($user) {
+                    if (!$user->isDO()) {
+                        $userRole = $user->getRoles()[0];
+
+                        $isAdmin = $admin->getUser() === $user;
+                        $registered = $user->hasRegisteredWith($ac);
+                        $userData = [
+                            'name' => $user->getName(),
+                            'last_name' => $user->getLastname(),
+                            'email' => $user->getEmail(),
+                            'postcode' => $user->getPostcode(),
+                            'address' => $user->getAddress(),
+                            'password' => 'password',
+                            'password_confirm' => 'password',
+                        ];
+                        if ($isAdmin) {
+                            $acUsers = $ac->getAssessment_center_users();
+                            foreach ($acUsers as $acUser) {
+                                $userAux = $acUser->getUser();
+                                if ($userAux->isStudent()) {
+                                    $students[] = [
+                                        'id' => $userAux->getId(),
+                                        'name' => $userAux->getFullname(),
+                                        'institute' => $userAux->getUniversity()->getName(),
+                                    ];
+                                } else if ($userAux->isNA()) {
+                                    $needsAssessors[] = [
+                                        'id' => $userAux->getId(),
+                                        'name' => $userAux->getFullname(),
+                                        'email' => $userAux->getEmail(),
+                                    ];
+                                }
+                            }
                         }
+                    } else {
+                        $code = 'error';
+                        $msg = 'Access denied';
+                    }
+                } else {
+                    $isAdmin = false;
+                    if ($userRole === '') {
+                        $userRole = 'student';
                     }
                 }
 
-                $data = [
-                    'id' => $ac->getId(),
-                    'name' => $ac->getName(),
-                    'token' => $ac->getUrl(),
-                    'address' => $ac->getAddress(),
-                    'phone' => $ac->getTelephone(),
-                    'registered' => $registered,
-                    'is_admin' => $isAdmin,
-                    'admin' => $admin ? $admin->getUser()->__toString() : null,
-                    'user_data' => $userData,
-                    'students' => $students,
-                    'needs_assessors' => $needsAssessors,
-                ];
-                $code = 'success';
-                $msg = '';
+                if ($code === '') {
+
+                    $data = [
+                        'id' => $ac->getId(),
+                        'name' => $ac->getName(),
+                        'token' => $ac->getUrl(),
+                        'address' => $ac->getAddress(),
+                        'phone' => $ac->getTelephone(),
+                        'registered' => $registered,
+                        'is_admin' => $isAdmin,
+                        'role' => $userRole,
+                        'admin' => $admin ? $admin->getUser()->__toString() : null,
+                        'user_data' => $userData,
+                        'students' => $students,
+                        'needs_assessors' => $needsAssessors,
+                    ];
+                    $code = 'success';
+                    $msg = 'AC loaded';
+                }
             } else {
                 $code = 'error';
-                $msg = 'Invalid identifier';
+                $msg = 'Invalid parameter.';
             }
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
@@ -163,6 +191,7 @@ class ACController extends MyRestController {
             $data = null;
             $userOk = false;
             $entityManager = $this->getDoctrine()->getManager();
+            $invitation = null;
 
             if ($payload) {
                 $user = $entityManager->getRepository(User::class)->find($payload->user_id);
@@ -185,7 +214,9 @@ class ACController extends MyRestController {
                     $msg = 'The email address you entered is already registered';
                     $userOk = false;
                 } else {
-                    $role = $request->get('role');
+                    $invitationToken = $request->get('invitation_token');
+                    $invitation = $entityManager->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
+                    $role = ($invitation) ? $invitation->getRole() : 'student';
                     $user = new User();
                     $user->setAddress($params['address']);
                     $user->setPostcode($params['postcode']);
@@ -221,6 +252,9 @@ class ACController extends MyRestController {
                             $user->setPre_register($preRegisterInfo);
                             $entityManager->persist($user);
                             $dsaLetter->move($this->container->getParameter('kernel.project_dir') . '/app_data/dsa_letters/', $dsaLetterFilename);
+                        }
+                        if ($invitation) {
+                            $entityManager->remove($invitation);
                         }
                         $entityManager->flush();
                         $code = 'success';
@@ -371,7 +405,7 @@ class ACController extends MyRestController {
                     $acName = $ac->getName();
                     $senderMsg = $invitation['text'];
                     $token = StaticMembers::random_str(64);
-                    $body = $this->renderView('email/invite_user.html.twig', ['name' => $receiverName, 'sender' => $senderName, 'ac_name' => $acName, 'message' => $senderMsg, 'url' => $url]);
+                    $body = $this->renderView('email/invite_user.html.twig', ['name' => $receiverName, 'sender' => $senderName, 'ac_name' => $acName, 'message' => $senderMsg, 'url' => $url . $token]);
                     $recipients = [$receiverEmail => $receiverName];
                     if (StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
                         $userInv = new UserInvitation();
@@ -380,6 +414,7 @@ class ACController extends MyRestController {
                         $userInv->setText($senderMsg);
                         $userInv->setToken($token);
                         $userInv->setUser($user);
+                        $userInv->setRole('na');
                         $userInv->setAc($ac);
                         $entityManager->persist($userInv);
                         $entityManager->flush();
