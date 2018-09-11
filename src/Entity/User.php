@@ -100,6 +100,19 @@ class User implements UserInterface, \Serializable {
      * */
     private $assessment_center_users;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterServiceAssessor", mappedBy="assessor")
+     * */
+    private $assessment_center_services_assessors;
+
+    function getAssessment_center_services_assessors() {
+        return $this->assessment_center_services_assessors;
+    }
+
+    function setAssessment_center_services_assessors($assessment_center_services_assessors) {
+        $this->assessment_center_services_assessors = $assessment_center_services_assessors;
+    }
+
     function getAssessmentCentres($returnType = 'full') {
         $acUsers = $this->getAssessment_center_users();
         $res = [];
@@ -377,7 +390,7 @@ class User implements UserInterface, \Serializable {
     public function isDO() {
         return in_array('do', $this->getRoles());
     }
-    
+
     public function isNA() {
         return in_array('na', $this->getRoles());
     }

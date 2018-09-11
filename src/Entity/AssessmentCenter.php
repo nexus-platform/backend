@@ -73,6 +73,19 @@ class AssessmentCenter {
      * */
     private $assessment_center_users;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterService", mappedBy="ac")
+     * */
+    private $assessment_center_services;
+
+    function getAssessment_center_services() {
+        return $this->assessment_center_services;
+    }
+
+    function setAssessment_center_services($assessment_center_services) {
+        $this->assessment_center_services = $assessment_center_services;
+    }
+
     function getContact_name() {
         return $this->contact_name;
     }
@@ -230,7 +243,7 @@ class AssessmentCenter {
     public function setLabels(Label $labels) {
         $this->labels = $labels;
     }
-    
+
     public function getAdmin() {
         $acUsers = $this->getAssessment_center_users();
         foreach ($acUsers as $acUser) {
@@ -239,4 +252,5 @@ class AssessmentCenter {
         }
         return null;
     }
+
 }

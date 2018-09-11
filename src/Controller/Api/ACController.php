@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\AppSettings;
 use App\Entity\AssessmentCenter;
+use App\Entity\AssessmentCenterService;
 use App\Entity\AssessmentCenterUser;
 use App\Entity\User;
 use App\Entity\UserInvitation;
@@ -104,11 +105,11 @@ class ACController extends MyRestController {
                 ];
                 $students = [];
                 $needsAssessors = [];
+                $services = [];
 
                 if ($user) {
                     if (!$user->isDO()) {
                         $userRole = $user->getRoles()[0];
-
                         $isAdmin = $admin->getUser() === $user;
                         $registered = $user->hasRegisteredWith($ac);
                         $userData = [
@@ -138,6 +139,18 @@ class ACController extends MyRestController {
                                     ];
                                 }
                             }
+                            $acServices = $ac->getAssessment_center_services();
+                            foreach ($acServices as $acService) {
+                                $services[] = [
+                                    'id' => $acService->getId(),
+                                    'name' => $acService->getName(),
+                                    'description' => $acService->getDescription(),
+                                    'duration' => $acService->getDuration(),
+                                    'attendants_number' => $acService->getAttendants_number(),
+                                    'price' => $acService->getPrice(),
+                                    'currency' => $acService->getCurrency(),
+                                ];
+                            }
                         }
                     } else {
                         $code = 'error';
@@ -165,6 +178,7 @@ class ACController extends MyRestController {
                         'user_data' => $userData,
                         'students' => $students,
                         'needs_assessors' => $needsAssessors,
+                        'services' => $services,
                     ];
                     $code = 'success';
                     $msg = 'AC loaded';
@@ -435,6 +449,94 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $code = 'error';
+            $msg = $exc->getMessage();
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Invite need assessor
+     * @FOSRest\Post(path="/api/update-ac-service")
+     */
+    public function updateACService(Request $request) {
+        $code = 'error';
+        $msg = 'Invalid user.';
+        $data = null;
+
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+
+            if ($payload) {
+                $acId = $request->get('ac_id');
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                if ($ac->getAdmin() === $user) {
+                    $service = $request->get('item');
+                    $action = $request->get('action');
+                    $acService = $entityManager->getRepository(AssessmentCenterService::class)->find($service['id']);
+
+                    switch ($action) {
+                        case 'Add service':
+                            if (!$acService) {
+                                $acService = new AssessmentCenterService();
+                                $acService->setAc($ac);
+                                $acService->setAttendants_number($service['attendants_number']);
+                                $acService->setCurrency($service['currency']);
+                                $acService->setDescription(isset($service['description']) ? $service['description'] : '');
+                                $acService->setDuration($service['duration']);
+                                $acService->setName($service['name']);
+                                $acService->setPrice($service['price']);
+                                $entityManager->persist($acService);
+                                $code = 'success';
+                                $msg = 'The service has been added.';
+                            } else {
+                                $msg = 'The new service already exists.';
+                            }
+                            break;
+                        case 'Update service':
+                            if ($acService) {
+                                $acService->setAttendants_number($service['attendants_number']);
+                                $acService->setCurrency($service['currency']);
+                                $acService->setDescription($service['description']);
+                                $acService->setDuration($service['duration']);
+                                $acService->setName($service['name']);
+                                $acService->setPrice($service['price']);
+                                $entityManager->persist($acService);
+                                $code = 'success';
+                                $msg = 'The specified service has been updated.';
+                            } else {
+                                $msg = 'The specified service does not exist.';
+                            }
+                            break;
+                        case 'Delete service':
+                            if ($acService) {
+                                $acServiceAssessors = $entityManager->getRepository(\App\Entity\AssessmentCenterServiceAssessor::class)->findBy(['service' => $acService]);
+                                foreach ($acServiceAssessors as $acServiceAssessor) {
+                                    $entityManager->remove($acServiceAssessor);
+                                }
+                                $entityManager->remove($acService);
+                                $code = 'success';
+                                $msg = 'The specified service has been deleted.';
+                            } else {
+                                $msg = 'The specified service does not exist.';
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    if ($code === 'success') {
+                        $entityManager->flush();
+                        $data = $acService->getId();
+                    }
+                } else {
+                    $msg = 'Not allowed.';
+                }
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
             $msg = $exc->getMessage();
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
         }
