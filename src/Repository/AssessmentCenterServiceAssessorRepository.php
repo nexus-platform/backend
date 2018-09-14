@@ -12,4 +12,12 @@ class AssessmentCenterServiceAssessorRepository extends ServiceEntityRepository 
         parent::__construct($registry, AssessmentCenterServiceAssessor::class);
     }
 
+    public function findNAServicesByAC($ac, $assessor) {
+        return $this->createQueryBuilder('acsa')
+                        ->join('acsa.service', 'serv')
+                        ->where('acsa.assessor = :assessor')->setParameter('assessor', $assessor)
+                        ->andWhere('serv.ac = :ac')->setParameter('ac', $ac)
+                        ->getQuery()->getResult();
+    }
+
 }

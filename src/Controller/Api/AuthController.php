@@ -33,7 +33,7 @@ class AuthController extends MyRestController {
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $email, 'password' => sha1($password)]);
         $data = null;
 
-        if ($user) {
+        if ($user && $user->getStatus() === 1) {
             $now = time();
             $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
             $payload = [
@@ -64,7 +64,7 @@ class AuthController extends MyRestController {
             }
         } else {
             $code = 'warning';
-            $msg = "Invalid username or password";
+            $msg = !$user ? "Invalid username or password." : "Your user account is inactive.";
         }
         return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
     }
@@ -299,6 +299,125 @@ class AuthController extends MyRestController {
             $code = 'error';
             $msg = $exc->getMessage();
             return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Retrieves the user saved signature.
+     * @FOSRest\Get(path="/api/get-profile-info")
+     */
+    public function getProfileInfo(Request $request) {
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+            $data = null;
+
+            if ($payload) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                if ($user) {
+                    $preRegisterInfo = $user->getPre_register();
+                    $dsaLetterName = isset($preRegisterInfo['dsa_letter']) && file_exists($this->getDSALettersDir() . $preRegisterInfo['dsa_letter']) ? $preRegisterInfo['dsa_letter'] : '';
+                    $data = [
+                        'name' => $user->getName(),
+                        'lastname' => $user->getLastname(),
+                        'postcode' => $user->getPostcode(),
+                        'address' => $user->getAddress(),
+                        'email' => $user->getEmail(),
+                        'current_password' => '',
+                        'password' => '',
+                        'password_confirm' => '',
+                        'is_student' => $user->isStudent(),
+                        'ac_registered' => $user->getAssessment_center_users() ? true : false,
+                        'signature' => $user->getSignature(),
+                        'dsa_letter_name' => $dsaLetterName,
+                    ];
+                    $code = 'success';
+                    $msg = 'User data loaded.';
+                } else {
+                    $code = 'error';
+                    $msg = 'Invalid user information';
+                }
+            } else {
+                $code = 'error';
+                $msg = 'Invalid parameter supplied. You may need to renew your session';
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Updates profile
+     * @FOSRest\Post(path="/api/update-user-profile")
+     */
+    public function updateUserProfile(Request $request) {
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+            $data = null;
+            $entityManager = $this->getDoctrine()->getManager();
+
+            if ($payload) {
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                if ($user) {
+                    $userData = json_decode($request->get('user_data'));
+                    $user->setName($userData->name);
+                    $user->setLastname($userData->lastname);
+                    $user->setPostcode($userData->postcode);
+                    $user->setAddress($userData->address);
+                    $uniqueEmail = false;
+                    if (!$entityManager->getRepository(User::class)->findByEmailUnique($user->getId(), $user->getEmail())) {
+                        $user->setEmail($userData->email);
+                        $uniqueEmail = true;
+                    }
+                    $passwordOk = true;
+                    if ($userData->password) {
+                        if ($user->getPassword() === sha1($userData->current_password)) {
+                            if ($userData->password === $userData->password_confirm){
+                                $user->setPassword(sha1($userData->password));
+                            } else {
+                                $passwordOk = false;
+                                $msg = 'The new passwords do not match.';
+                            }
+                        } else {
+                            $passwordOk = false;
+                            $msg = 'The current password entered is invalid.';
+                        }
+                    }
+                    $dsaLetter = $request->files->get('dsa_letter');
+                    if ($dsaLetter) {
+                        $dsaLetterFilename = $user->getId() . '.' . $dsaLetter->getClientOriginalExtension();
+                        $preRegisterInfo = $user->getPre_register();
+                        if (isset($preRegisterInfo['dsa_letter']) && file_exists($this->getDSALettersDir() . $preRegisterInfo['dsa_letter'])) {
+                            unlink($this->getDSALettersDir() . $preRegisterInfo['dsa_letter']);
+                        }
+                        $preRegisterInfo['dsa_letter'] = $dsaLetterFilename;
+                        $user->setPre_register($preRegisterInfo);
+                        $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
+                    }
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    if (!$uniqueEmail) {
+                        $code = 'warning';
+                        $msg = 'The email address belongs to another registered user.';
+                    } else if (!$passwordOk) {
+                        $code = 'warning';
+                    } else {
+                        $code = 'success';
+                        $msg = 'Profile updated.';
+                    }
+                } else {
+                    $code = 'error';
+                    $msg = 'Invalid parameters.';
+                }
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            $code = 'error';
+            $msg = $exc->getMessage();
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
         }
     }
 

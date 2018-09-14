@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\AppSettings;
 use App\Entity\AssessmentCenter;
 use App\Entity\AssessmentCenterService;
+use App\Entity\AssessmentCenterServiceAssessor;
 use App\Entity\AssessmentCenterUser;
 use App\Entity\User;
 use App\Entity\UserInvitation;
@@ -106,6 +107,7 @@ class ACController extends MyRestController {
                 $students = [];
                 $needsAssessors = [];
                 $services = [];
+                $settings = [];
 
                 if ($user) {
                     if (!$user->isDO()) {
@@ -122,7 +124,9 @@ class ACController extends MyRestController {
                             'password_confirm' => 'password',
                         ];
                         if ($isAdmin) {
+                            $acServices = $ac->getAssessment_center_services();
                             $acUsers = $ac->getAssessment_center_users();
+
                             foreach ($acUsers as $acUser) {
                                 $userAux = $acUser->getUser();
                                 if ($userAux->isStudent()) {
@@ -132,14 +136,29 @@ class ACController extends MyRestController {
                                         'institute' => $userAux->getUniversity()->getName(),
                                     ];
                                 } else if ($userAux->isNA()) {
+                                    $naServicesAux = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findNAServicesByAC($ac, $userAux);
+                                    $naServices = [];
+                                    foreach ($naServicesAux as $naService) {
+                                        $serviceAux = $naService->getService();
+                                        $naServices[] = [
+                                            'id' => $serviceAux->getId(),
+                                            'name' => $serviceAux->getName(),
+                                            'description' => $serviceAux->getDescription(),
+                                            'duration' => $serviceAux->getDuration(),
+                                            'attendants_number' => $serviceAux->getAttendants_number(),
+                                            'price' => $serviceAux->getPrice(),
+                                            'currency' => $serviceAux->getCurrency(),
+                                        ];
+                                    }
                                     $needsAssessors[] = [
                                         'id' => $userAux->getId(),
                                         'name' => $userAux->getFullname(),
                                         'email' => $userAux->getEmail(),
+                                        'services' => $naServices
                                     ];
                                 }
                             }
-                            $acServices = $ac->getAssessment_center_services();
+
                             foreach ($acServices as $acService) {
                                 $services[] = [
                                     'id' => $acService->getId(),
@@ -151,6 +170,12 @@ class ACController extends MyRestController {
                                     'currency' => $acService->getCurrency(),
                                 ];
                             }
+                            
+                            $settings['availability_type'] = $ac->getAvailability_type();
+                            $settings['name'] = $ac->getName();
+                            $settings['token'] = $ac->getUrl();
+                            $settings['address'] = $ac->getAddress();
+                            $settings['telephone'] = $ac->getTelephone();
                         }
                     } else {
                         $code = 'error';
@@ -164,13 +189,10 @@ class ACController extends MyRestController {
                 }
 
                 if ($code === '') {
-
                     $data = [
                         'id' => $ac->getId(),
                         'name' => $ac->getName(),
                         'token' => $ac->getUrl(),
-                        'address' => $ac->getAddress(),
-                        'phone' => $ac->getTelephone(),
                         'registered' => $registered,
                         'is_admin' => $isAdmin,
                         'role' => $userRole,
@@ -179,6 +201,7 @@ class ACController extends MyRestController {
                         'students' => $students,
                         'needs_assessors' => $needsAssessors,
                         'services' => $services,
+                        'settings' => $settings,
                     ];
                     $code = 'success';
                     $msg = 'AC loaded';
@@ -265,7 +288,7 @@ class ACController extends MyRestController {
                             $preRegisterInfo['dsa_letter'] = $dsaLetterFilename;
                             $user->setPre_register($preRegisterInfo);
                             $entityManager->persist($user);
-                            $dsaLetter->move($this->container->getParameter('kernel.project_dir') . '/app_data/dsa_letters/', $dsaLetterFilename);
+                            $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
                         }
                         if ($invitation) {
                             $entityManager->remove($invitation);
@@ -313,7 +336,7 @@ class ACController extends MyRestController {
                     $preRegisterInfo = $user->getPre_register();
                     if (isset($preRegisterInfo['dsa_letter'])) {
                         $dsaLetterFilename = $preRegisterInfo['dsa_letter'];
-                        $dsaLetterPath = $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_letters/' . $dsaLetterFilename;
+                        $dsaLetterPath = $this->getDSALettersDir() . $dsaLetterFilename;
                         if (file_exists($dsaLetterPath)) {
                             unlink($dsaLetterPath);
                         }
@@ -364,7 +387,7 @@ class ACController extends MyRestController {
                     $preRegisterInfo = $member->getPre_register();
                     if (isset($preRegisterInfo['dsa_letter'])) {
                         $dsaLetterFilename = $preRegisterInfo['dsa_letter'];
-                        $dsaLetterPath = $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_letters/' . $dsaLetterFilename;
+                        $dsaLetterPath = $this->getDSALettersDir() . $dsaLetterFilename;
                         if (file_exists($dsaLetterPath)) {
                             unlink($dsaLetterPath);
                         }
@@ -455,7 +478,7 @@ class ACController extends MyRestController {
     }
 
     /**
-     * Invite need assessor
+     * Update AC service
      * @FOSRest\Post(path="/api/update-ac-service")
      */
     public function updateACService(Request $request) {
@@ -513,7 +536,7 @@ class ACController extends MyRestController {
                             break;
                         case 'Delete service':
                             if ($acService) {
-                                $acServiceAssessors = $entityManager->getRepository(\App\Entity\AssessmentCenterServiceAssessor::class)->findBy(['service' => $acService]);
+                                $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $acService]);
                                 foreach ($acServiceAssessors as $acServiceAssessor) {
                                     $entityManager->remove($acServiceAssessor);
                                 }
@@ -530,6 +553,114 @@ class ACController extends MyRestController {
                     if ($code === 'success') {
                         $entityManager->flush();
                         $data = $acService->getId();
+                    }
+                } else {
+                    $msg = 'Not allowed.';
+                }
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            $msg = $exc->getMessage();
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Update NA services
+     * @FOSRest\Post(path="/api/update-na-services")
+     */
+    public function updateNAServices(Request $request) {
+        $code = 'error';
+        $msg = 'Invalid user.';
+        $data = null;
+
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+
+            if ($payload) {
+                $acId = $request->get('ac_id');
+                $userId = $request->get('user_id');
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $assessor = $entityManager->getRepository(User::class)->find($userId);
+                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                if ($ac->getAdmin() === $user && $assessor->hasRegisteredWith($ac)) {
+                    StaticMembers::executeRawSQL($entityManager, 'delete from `assessment_center_service_assessor` where `assessor_id` = ' . $assessor->getId() . ' and `ac_service_id` in (select `id` from `assessment_center_service` where `ac_id` = ' . $ac->getId() . ')', false);
+                    $services = $request->get('services');
+                    foreach ($services as $service) {
+                        $serviceEntity = $entityManager->getRepository(AssessmentCenterService::class)->find($service['id']);
+                        if ($serviceEntity && $serviceEntity->getAc() === $ac) {
+                            $naService = new AssessmentCenterServiceAssessor();
+                            $naService->setAssessor($assessor);
+                            $naService->setService($serviceEntity);
+                            $entityManager->persist($naService);
+                        }
+                    }
+                    $entityManager->flush();
+                    $code = 'success';
+                    $msg = 'Services updated.';
+                } else {
+                    $msg = 'Not allowed.';
+                }
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            $msg = $exc->getMessage();
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        }
+    }
+    
+    /**
+     * Update NA services
+     * @FOSRest\Post(path="/api/update-ac-settings")
+     */
+    public function updateACSettings(Request $request) {
+        $code = 'error';
+        $msg = 'Invalid user.';
+        $data = null;
+
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+
+            if ($payload) {
+                $acId = $request->get('ac_id');
+                $settings = $request->get('settings');
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                if ($ac && $ac->getAdmin() === $user) {
+                    $uniqueName = false;
+                    if (!$entityManager->getRepository(AssessmentCenter::class)->getAnotherACByName($ac)) {
+                        $ac->setName($settings['name']);
+                        $uniqueName = true;
+                    }
+                    $uniqueSlug = false;
+                    $pp = $entityManager->getRepository(AssessmentCenter::class)->getAnotherACBySlug($ac);
+                    if (!$entityManager->getRepository(AssessmentCenter::class)->getAnotherACBySlug($ac)) {
+                        //$ac->setUrl($settings['token']);
+                        $uniqueSlug = true;
+                    }
+                    $ac->setTelephone($settings['telephone']);
+                    $ac->setAddress($settings['address']);
+                    $ac->setAvailability_type($settings['availability_type']);
+                    $entityManager->persist($ac);
+                    $entityManager->flush();
+                    
+                    if (!$uniqueName) {
+                        $code = 'warning';
+                        $msg = 'That name belongs to another Assessment Centre.';
+                    }
+                    else if (!$uniqueSlug) {
+                        $code = 'warning';
+                        $msg = 'That slug belongs to another Assessment Centre.';
+                    }
+                    else {
+                        $code = 'success';
+                        $msg = 'Centre updated.';
                     }
                 } else {
                     $msg = 'Not allowed.';

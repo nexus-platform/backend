@@ -63,6 +63,12 @@ class AssessmentCenter {
     private $url;
 
     /**
+     * Custom URL
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $availability_type;
+
+    /**
      * @var Label
      * @ORM\OneToMany(targetEntity="App\Entity\Label", mappedBy="center")
      */
@@ -77,6 +83,14 @@ class AssessmentCenter {
      * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterService", mappedBy="ac")
      * */
     private $assessment_center_services;
+
+    function getAvailability_type() {
+        return $this->availability_type;
+    }
+
+    function setAvailability_type($availability_type) {
+        $this->availability_type = $availability_type;
+    }
 
     function getAssessment_center_services() {
         return $this->assessment_center_services;

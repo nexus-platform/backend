@@ -34,42 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
 class DOController extends MyRestController {
 
     /**
-     * Retrieves the user saved signature.
-     * @FOSRest\Get(path="/api/get-previous-signature")
-     */
-    public function getPreviousSignatureAction(Request $request) {
-        try {
-            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            $payload = $this->decodeJWT($jwt);
-            $data = null;
-
-            if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                if ($user) {
-                    $data = $user->getSignature();
-                    if ($data) {
-                        $code = 'success';
-                        $msg = 'Your previously saved signature has been retrieved';
-                    } else {
-                        $code = 'warning';
-                        $msg = 'You have not saved a signature yet';
-                    }
-                } else {
-                    $code = 'error';
-                    $msg = 'Invalid user information';
-                }
-            } else {
-                $code = 'error';
-                $msg = 'Invalid parameter supplied. You may need to renew your session';
-            }
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
-        } catch (Exception $exc) {
-            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
-        }
-    }
-
-    /**
      * Retrieves an university.
      * @FOSRest\Get(path="/api/get-university")
      */
@@ -758,7 +722,7 @@ class DOController extends MyRestController {
                                         $pdf = new Pdf($originPath);
                                         $pdfNameWithoutExt = str_replace('.pdf', '', $item->getBase());
                                         $filledName = $pdfNameWithoutExt . '-' . time() . '.pdf';
-                                        $destinationDir = $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_forms_filled/';
+                                        $destinationDir = $this->getDSAFilledFormsDir();
                                         if (!file_exists($destinationDir)) {
                                             mkdir($destinationDir);
                                         }

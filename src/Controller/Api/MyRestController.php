@@ -10,7 +10,15 @@ use FOS\RestBundle\Controller\Annotations as FOSRest;
 class MyRestController extends FOSRestController {
 
     private $key = "vUrQrZL50m7qL3uosytRJbeW8fzSwUqd";
-
+    
+    public function getDSALettersDir() {
+        return $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_letters/';
+    }
+    
+    public function getDSAFilledFormsDir() {
+        return $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_forms_filled/';
+    }
+    
     public function encodeJWT($payload) {
         try {
             return JWT::encode($payload, $this->key);
@@ -130,7 +138,7 @@ class MyRestController extends FOSRestController {
                         $userId = $filledUser->getId();
                     }
                     $filename = $filledForm->getFilename();
-                    $file = new File($this->container->getParameter('kernel.project_dir') . '/app_data/dsa_forms_filled/' . $filename);
+                    $file = new File($this->getDSAFilledFormsDir() . $filename);
                     return $this->file($file);
                 } else {
                     $code = 'error';
