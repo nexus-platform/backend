@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Serializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields={"email"}, message="Email is already in use")
  * @UniqueEntity(fields={"url"})
  */
-class User implements UserInterface, \Serializable {
+class User implements UserInterface, Serializable {
 
     /**
      * @ORM\Id
@@ -88,7 +88,7 @@ class User implements UserInterface, \Serializable {
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\University", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="University", cascade={"persist"})
      * @ORM\JoinColumn(name="university_id", referencedColumnName="id")
      *
      * @Assert\NotBlank
@@ -96,14 +96,40 @@ class User implements UserInterface, \Serializable {
     private $university;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterUser", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="AssessmentCenterUser", mappedBy="user")
      * */
     private $assessment_center_users;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterServiceAssessor", mappedBy="assessor")
+     * @ORM\OneToMany(targetEntity="AssessmentCenterServiceAssessor", mappedBy="assessor")
      * */
     private $assessment_center_services_assessors;
+
+    /**
+     * @ORM\OneToMany(targetEntity="EaAppointment", mappedBy="provider")
+     * */
+    private $provider_appointments;
+
+    /**
+     * @ORM\OneToMany(targetEntity="EaAppointment", mappedBy="student")
+     * */
+    private $student_appointments;
+
+    function getProvider_appointments() {
+        return $this->provider_appointments;
+    }
+
+    function getStudent_appointments() {
+        return $this->student_appointments;
+    }
+
+    function setProvider_appointments($provider_appointments) {
+        $this->provider_appointments = $provider_appointments;
+    }
+
+    function setStudent_appointments($student_appointments) {
+        $this->student_appointments = $student_appointments;
+    }
 
     function getAssessment_center_services_assessors() {
         return $this->assessment_center_services_assessors;

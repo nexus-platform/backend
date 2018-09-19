@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\AssessmentCenter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use \Doctrine\Common\Collections\Criteria;
 
 class AssessmentCenterRepository extends ServiceEntityRepository {
 
@@ -12,18 +13,11 @@ class AssessmentCenterRepository extends ServiceEntityRepository {
         parent::__construct($registry, AssessmentCenter::class);
     }
     
-    public function getAnotherACByName($ac) {
-        return $this->createQueryBuilder('ac')
-                        ->where('ac.name = :name')->setParameter('name', $ac->getName())
-                        ->andWhere('ac.id != :id')->setParameter('id', $ac->getId())
-                        ->getQuery()->getOneOrNullResult();
-    }
-    
-    public function getAnotherACBySlug($ac) {
-        return $this->createQueryBuilder('ac')
-                        ->where('ac.url = :url')->setParameter('url', $ac->getUrl())
-                        ->andWhere('ac.id != :id')->setParameter('id', $ac->getId())
-                        ->getQuery()->getFirstResult();
+    public function isUniqueField($id, $name, $value) {
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->neq('id', $id))->andWhere(Criteria::expr()->eq($name, $value));
+        $res = $this->matching($criteria)->count();
+        return $res === 0 ? true : false;
     }
 
 }

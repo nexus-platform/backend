@@ -10,15 +10,31 @@ use FOS\RestBundle\Controller\Annotations as FOSRest;
 class MyRestController extends FOSRestController {
 
     private $key = "vUrQrZL50m7qL3uosytRJbeW8fzSwUqd";
-    
+
+    protected function addMonthToDate($date_str, $months) {
+        $date = new DateTime($date_str);
+        // We extract the day of the month as $start_day
+        $start_day = $date->format('j');
+        // We add 1 month to the given date
+        $date->modify("+{$months} month");
+        // We extract the day of the month again so we can compare
+        $end_day = $date->format('j');
+        if ($start_day != $end_day) {
+            // The day of the month isn't the same anymore, so we correct the date
+            $date->modify('last day of last month');
+        }
+
+        return $date;
+    }
+
     public function getDSALettersDir() {
         return $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_letters/';
     }
-    
+
     public function getDSAFilledFormsDir() {
         return $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_forms_filled/';
     }
-    
+
     public function encodeJWT($payload) {
         try {
             return JWT::encode($payload, $this->key);
@@ -35,7 +51,7 @@ class MyRestController extends FOSRestController {
             return null;
         }
     }
-    
+
     public function createNotification($title, $subtitle, $headline, $user, $status, $type) {
         $notif = new Notification();
         $notif->setTitle($title);
@@ -47,7 +63,7 @@ class MyRestController extends FOSRestController {
         $notif->setCreated_at(time());
         return $notif;
     }
-    
+
     public function dateDiff($time1, $time2, $precision = 6) {
         // If not numeric then convert texts to unix timestamps
         if (!is_int($time1)) {
@@ -112,8 +128,7 @@ class MyRestController extends FOSRestController {
         // Return string with times
         return implode(", ", $times);
     }
-    
-    
+
     /**
      * Returns a filled PDF.
      * @FOSRest\Get(path="/api/get-file")
@@ -154,5 +169,4 @@ class MyRestController extends FOSRestController {
         }
     }
 
-    
 }

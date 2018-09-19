@@ -7,9 +7,11 @@ use App\Entity\AssessmentCenter;
 use App\Entity\AssessmentCenterService;
 use App\Entity\AssessmentCenterServiceAssessor;
 use App\Entity\AssessmentCenterUser;
+use App\Entity\EaAppointment;
 use App\Entity\User;
 use App\Entity\UserInvitation;
 use App\Utils\StaticMembers;
+use DateTime;
 use Exception;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -108,6 +110,7 @@ class ACController extends MyRestController {
                 $needsAssessors = [];
                 $services = [];
                 $settings = [];
+                $appointmentRestrictions = [];
 
                 if ($user) {
                     if (!$user->isDO()) {
@@ -123,60 +126,79 @@ class ACController extends MyRestController {
                             'password' => 'password',
                             'password_confirm' => 'password',
                         ];
-                        if ($isAdmin) {
-                            $acServices = $ac->getAssessment_center_services();
-                            $acUsers = $ac->getAssessment_center_users();
 
-                            foreach ($acUsers as $acUser) {
-                                $userAux = $acUser->getUser();
-                                if ($userAux->isStudent()) {
-                                    $students[] = [
-                                        'id' => $userAux->getId(),
-                                        'name' => $userAux->getFullname(),
-                                        'institute' => $userAux->getUniversity()->getName(),
-                                    ];
-                                } else if ($userAux->isNA()) {
-                                    $naServicesAux = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findNAServicesByAC($ac, $userAux);
-                                    $naServices = [];
-                                    foreach ($naServicesAux as $naService) {
-                                        $serviceAux = $naService->getService();
-                                        $naServices[] = [
-                                            'id' => $serviceAux->getId(),
-                                            'name' => $serviceAux->getName(),
-                                            'description' => $serviceAux->getDescription(),
-                                            'duration' => $serviceAux->getDuration(),
-                                            'attendants_number' => $serviceAux->getAttendants_number(),
-                                            'price' => $serviceAux->getPrice(),
-                                            'currency' => $serviceAux->getCurrency(),
-                                        ];
-                                    }
-                                    $needsAssessors[] = [
-                                        'id' => $userAux->getId(),
-                                        'name' => $userAux->getFullname(),
-                                        'email' => $userAux->getEmail(),
-                                        'services' => $naServices
+                        $acServices = $ac->getAssessment_center_services();
+                        $acUsers = $ac->getAssessment_center_users();
+
+                        foreach ($acUsers as $acUser) {
+                            $userAux = $acUser->getUser();
+                            if ($userAux->isStudent()) {
+                                $students[] = [
+                                    'id' => $userAux->getId(),
+                                    'name' => $userAux->getFullname(),
+                                    'institute' => $userAux->getUniversity()->getName(),
+                                ];
+                            } else if ($userAux->isNA()) {
+                                $naServicesAux = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findNAServicesByAC($ac, $userAux);
+                                $naServices = [];
+                                foreach ($naServicesAux as $naService) {
+                                    $serviceAux = $naService->getService();
+                                    $naServices[] = [
+                                        'id' => $serviceAux->getId(),
+                                        'name' => $serviceAux->getName(),
+                                        'description' => $serviceAux->getDescription(),
+                                        'duration' => $serviceAux->getDuration(),
+                                        'attendants_number' => $serviceAux->getAttendants_number(),
+                                        'price' => $serviceAux->getPrice(),
+                                        'currency' => $serviceAux->getCurrency(),
                                     ];
                                 }
-                            }
-
-                            foreach ($acServices as $acService) {
-                                $services[] = [
-                                    'id' => $acService->getId(),
-                                    'name' => $acService->getName(),
-                                    'description' => $acService->getDescription(),
-                                    'duration' => $acService->getDuration(),
-                                    'attendants_number' => $acService->getAttendants_number(),
-                                    'price' => $acService->getPrice(),
-                                    'currency' => $acService->getCurrency(),
+                                $needsAssessors[] = [
+                                    'id' => $userAux->getId(),
+                                    'name' => $userAux->getFullname(),
+                                    'email' => $userAux->getEmail(),
+                                    'services' => $naServices
                                 ];
                             }
-                            
-                            $settings['availability_type'] = $ac->getAvailability_type();
-                            $settings['name'] = $ac->getName();
-                            $settings['token'] = $ac->getUrl();
-                            $settings['address'] = $ac->getAddress();
-                            $settings['telephone'] = $ac->getTelephone();
                         }
+
+                        foreach ($acServices as $acService) {
+                            $services[] = [
+                                'id' => $acService->getId(),
+                                'name' => $acService->getName(),
+                                'description' => $acService->getDescription(),
+                                'duration' => $acService->getDuration(),
+                                'attendants_number' => $acService->getAttendants_number(),
+                                'price' => $acService->getPrice(),
+                                'currency' => $acService->getCurrency(),
+                            ];
+                        }
+
+                        $currTimestamp = time();
+                        $minTimestamp = $currTimestamp + 86400;
+                        $maxTimestamp = $currTimestamp + 2592000;
+                        $minDate = date('Y-m-d', $minTimestamp);
+                        $maxDate = date('Y-m-d', $maxTimestamp);
+                        $allowedDates = [];
+
+                        for ($i = $minTimestamp; $i <= $maxTimestamp; $i += 86400) {
+                            $date = date('N', $i);
+                            if (!in_array($date, [6, 7])) {
+                                $allowedDates[] = date('Y-m-d', $i);
+                            }
+                        }
+
+                        $appointmentRestrictions = [
+                            'min_date' => $minDate,
+                            'max_date' => $maxDate,
+                            'allowed_dates' => $allowedDates,
+                        ];
+
+                        $settings['availability_type'] = $ac->getAvailability_type();
+                        $settings['name'] = $ac->getName();
+                        $settings['token'] = $ac->getUrl();
+                        $settings['address'] = $ac->getAddress();
+                        $settings['telephone'] = $ac->getTelephone();
                     } else {
                         $code = 'error';
                         $msg = 'Access denied';
@@ -191,8 +213,6 @@ class ACController extends MyRestController {
                 if ($code === '') {
                     $data = [
                         'id' => $ac->getId(),
-                        'name' => $ac->getName(),
-                        'token' => $ac->getUrl(),
                         'registered' => $registered,
                         'is_admin' => $isAdmin,
                         'role' => $userRole,
@@ -202,6 +222,7 @@ class ACController extends MyRestController {
                         'needs_assessors' => $needsAssessors,
                         'services' => $services,
                         'settings' => $settings,
+                        'appointment_restrictions' => $appointmentRestrictions,
                     ];
                     $code = 'success';
                     $msg = 'AC loaded';
@@ -611,9 +632,9 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
         }
     }
-    
+
     /**
-     * Update NA services
+     * Update AC settings
      * @FOSRest\Post(path="/api/update-ac-settings")
      */
     public function updateACSettings(Request $request) {
@@ -627,21 +648,21 @@ class ACController extends MyRestController {
 
             if ($payload) {
                 $acId = $request->get('ac_id');
-                $settings = $request->get('settings');
+                $settings = json_decode($request->get('settings'), true);
                 $entityManager = $this->getDoctrine()->getManager();
                 $user = $entityManager->getRepository(User::class)->find($payload->user_id);
                 $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
 
                 if ($ac && $ac->getAdmin() === $user) {
                     $uniqueName = false;
-                    if (!$entityManager->getRepository(AssessmentCenter::class)->getAnotherACByName($ac)) {
+                    if ($entityManager->getRepository(AssessmentCenter::class)->isUniqueField($ac->getId(), 'name', $settings['name'])) {
                         $ac->setName($settings['name']);
                         $uniqueName = true;
                     }
                     $uniqueSlug = false;
-                    $pp = $entityManager->getRepository(AssessmentCenter::class)->getAnotherACBySlug($ac);
-                    if (!$entityManager->getRepository(AssessmentCenter::class)->getAnotherACBySlug($ac)) {
-                        //$ac->setUrl($settings['token']);
+
+                    if ($entityManager->getRepository(AssessmentCenter::class)->isUniqueField($ac->getId(), 'url', $settings['token'])) {
+                        $ac->setUrl($settings['token']);
                         $uniqueSlug = true;
                     }
                     $ac->setTelephone($settings['telephone']);
@@ -649,21 +670,247 @@ class ACController extends MyRestController {
                     $ac->setAvailability_type($settings['availability_type']);
                     $entityManager->persist($ac);
                     $entityManager->flush();
-                    
+
                     if (!$uniqueName) {
                         $code = 'warning';
                         $msg = 'That name belongs to another Assessment Centre.';
-                    }
-                    else if (!$uniqueSlug) {
+                    } else if (!$uniqueSlug) {
                         $code = 'warning';
                         $msg = 'That slug belongs to another Assessment Centre.';
-                    }
-                    else {
+                    } else {
                         $code = 'success';
                         $msg = 'Centre updated.';
                     }
                 } else {
                     $msg = 'Not allowed.';
+                }
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            $msg = $exc->getMessage();
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Available appointment dates
+     * @FOSRest\Get(path="/api/get-allowed-dates")
+     */
+    public function getServiceAllowedDates(Request $request) {
+        $code = 'error';
+        $msg = 'Invalid user.';
+        $data = null;
+
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+
+            if ($payload) {
+                $acId = $request->get('ac_id');
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                if ($user && $ac && $user->isStudent() && $user->hasRegisteredWith($ac)) {
+                    $currTimestamp = time();
+                    $minTimestamp = $currTimestamp + 86400;
+                    $maxTimestamp = $currTimestamp + 2592000;
+                    $minDate = date('Y-m-d', $minTimestamp);
+                    $maxDate = date('Y-m-d', $maxTimestamp);
+                    $allowedDates = [];
+
+                    for ($i = $minTimestamp; $i <= $maxTimestamp; $i += 86400) {
+                        $date = date('N', $i);
+                        if (!in_array($date, [6, 7])) {
+                            $allowedDates[] = date('Y-m-d', $i);
+                        }
+                    }
+
+                    $data = [
+                        'min_date' => $minDate,
+                        'max_date' => $maxDate,
+                        'allowed_dates' => $allowedDates,
+                    ];
+                    $code = 'success';
+                    $msg = 'Dates loaded.';
+                } else {
+                    $msg = 'Invalid parameters.';
+                }
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            $msg = $exc->getMessage();
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Available appointment hours by date
+     * @FOSRest\Get(path="/api/get-available-hours")
+     */
+    public function getServiceAvailableHours(Request $request) {
+        $code = 'error';
+        $msg = 'Invalid user.';
+        $data = null;
+
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+
+            if ($payload) {
+                $serviceId = $request->get('service_id');
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $service = $entityManager->getRepository(AssessmentCenterService::class)->find($serviceId);
+                $ac = $service->getAc();
+
+                if ($service && $user && $user->isStudent() && $user->hasRegisteredWith($ac)) {
+                    $assessorId = $request->get('assessor_id');
+                    $acAvailabilityType = $ac->getAvailability_type();
+                    $assessors = [];
+
+                    if ($assessorId != '-1' && $acAvailabilityType === 'Individual') {
+                        $assessor = $entityManager->getRepository(User::class)->find($assessorId);
+                        if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
+                            $code = 'success';
+                        }
+                        $assessors[] = $assessor;
+                    } else if ($assessorId == '-1' && $acAvailabilityType === 'Combined') {
+                        $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
+                        foreach ($acServiceAssessors as $acServiceAssessor) {
+                            $assessor = $acServiceAssessor->getAssessor();
+                            if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
+                                $assessors[] = $assessor;
+                            }
+                        }
+                        $code = 'success';
+                    }
+
+                    if ($code === 'success') {
+                        $data = [];
+                        $serviceDuration = $service->getDuration();
+                        foreach ($assessors as $assessor) {
+                            $date = $request->get('date');
+                            $hours = [];
+                            $scheduledAppointments = $entityManager->getRepository(EaAppointment::class)->getAppointmentsByAssessorAndDate($assessor, $date);
+                            $fullDate = new DateTime("$date 09:00");
+                            
+                            do {
+                                //$fullDateStr = $fullDate->format('Y-m-d H:i');
+                                $hour = $fullDate->format('H:i');
+                                
+                                $availableHour = true;
+                                foreach ($scheduledAppointments as $appointment) {
+                                    $start = $appointment->getStart_datetime();
+                                    $end = $appointment->getEnd_datetime();
+                                    if ($fullDate >= $start && $fullDate < $end) {
+                                        $availableHour = false;
+                                        break;
+                                    }
+                                }
+                                if ($availableHour) {
+                                    $hours[] = ['name' => $hour];
+                                }
+                                $fullDate->modify("+$serviceDuration minutes");
+                            }
+                            while ($hour <= '18:00');
+                            $data = array_merge($data, $hours);
+                        }
+                        $msg = 'Hours loaded.';
+                    } else {
+                        $msg = 'Invalid parameters.';
+                    }
+                } else {
+                    $msg = 'Invalid parameters.';
+                }
+            }
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            $msg = $exc->getMessage();
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        }
+    }
+    
+    /**
+     * Create a new appointment
+     * @FOSRest\Post(path="/api/create-appointment")
+     */
+    public function createAppointment(Request $request) {
+        $code = 'error';
+        $msg = 'Invalid user.';
+        $data = null;
+
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = $this->decodeJWT($jwt);
+
+            if ($payload) {
+                $serviceId = $request->get('service_id');
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $service = $entityManager->getRepository(AssessmentCenterService::class)->find($serviceId);
+                $ac = $service->getAc();
+
+                if ($service && $user && $user->isStudent() && $user->hasRegisteredWith($ac)) {
+                    $assessorId = $request->get('assessor_id');
+                    $acAvailabilityType = $ac->getAvailability_type();
+                    $assessors = [];
+
+                    if ($assessorId != '-1' && $acAvailabilityType === 'Individual') {
+                        $assessor = $entityManager->getRepository(User::class)->find($assessorId);
+                        if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
+                            $code = 'success';
+                        }
+                        $assessors[] = $assessor;
+                    } else if ($assessorId == '-1' && $acAvailabilityType === 'Combined') {
+                        $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
+                        foreach ($acServiceAssessors as $acServiceAssessor) {
+                            $assessor = $acServiceAssessor->getAssessor();
+                            if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
+                                $assessors[] = $assessor;
+                            }
+                        }
+                        $code = 'success';
+                    }
+
+                    if ($code === 'success') {
+                        $data = [];
+                        $serviceDuration = $service->getDuration();
+                        foreach ($assessors as $assessor) {
+                            $date = $request->get('date');
+                            $hours = [];
+                            $scheduledAppointments = $entityManager->getRepository(EaAppointment::class)->getAppointmentsByAssessorAndDate($assessor, $date);
+                            $fullDate = new DateTime("$date 09:00");
+                            
+                            do {
+                                //$fullDateStr = $fullDate->format('Y-m-d H:i');
+                                $hour = $fullDate->format('H:i');
+                                
+                                $availableHour = true;
+                                foreach ($scheduledAppointments as $appointment) {
+                                    $start = $appointment->getStart_datetime();
+                                    $end = $appointment->getEnd_datetime();
+                                    if ($fullDate >= $start && $fullDate < $end) {
+                                        $availableHour = false;
+                                        break;
+                                    }
+                                }
+                                if ($availableHour) {
+                                    $hours[] = ['name' => $hour];
+                                }
+                                $fullDate->modify("+$serviceDuration minutes");
+                            }
+                            while ($hour <= '18:00');
+                            $data = array_merge($data, $hours);
+                        }
+                        $msg = 'Hours loaded.';
+                    } else {
+                        $msg = 'Invalid parameters.';
+                    }
+                } else {
+                    $msg = 'Invalid parameters.';
                 }
             }
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);

@@ -4,11 +4,13 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AssessmentCenterRepository")
  * @ApiResource
+ * @UniqueEntity(fields={"url"}, message="The AC slug must be unique")
  */
 class AssessmentCenter {
 
@@ -63,7 +65,7 @@ class AssessmentCenter {
     private $url;
 
     /**
-     * Custom URL
+     * Availability type
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $availability_type;
