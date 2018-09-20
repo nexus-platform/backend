@@ -18,10 +18,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Brand controller.
+ * AC controller.
  *
  * @Route("/")
  */
@@ -611,6 +610,7 @@ class ACController extends MyRestController {
                     StaticMembers::executeRawSQL($entityManager, 'delete from `assessment_center_service_assessor` where `assessor_id` = ' . $assessor->getId() . ' and `ac_service_id` in (select `id` from `assessment_center_service` where `ac_id` = ' . $ac->getId() . ')', false);
                     $services = $request->get('services');
                     foreach ($services as $service) {
+                        $service = json_decode($service, true);
                         $serviceEntity = $entityManager->getRepository(AssessmentCenterService::class)->find($service['id']);
                         if ($serviceEntity && $serviceEntity->getAc() === $ac) {
                             $naService = new AssessmentCenterServiceAssessor();
@@ -770,13 +770,13 @@ class ACController extends MyRestController {
                     $acAvailabilityType = $ac->getAvailability_type();
                     $assessors = [];
 
-                    if ($assessorId != '-1' && $acAvailabilityType === 'Individual') {
+                    if ($assessorId && $acAvailabilityType === 'Individual') {
                         $assessor = $entityManager->getRepository(User::class)->find($assessorId);
                         if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
                             $code = 'success';
                         }
                         $assessors[] = $assessor;
-                    } else if ($assessorId == '-1' && $acAvailabilityType === 'Combined') {
+                    } else if ($acAvailabilityType === 'Combined') {
                         $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
                         foreach ($acServiceAssessors as $acServiceAssessor) {
                             $assessor = $acServiceAssessor->getAssessor();
@@ -790,16 +790,16 @@ class ACController extends MyRestController {
                     if ($code === 'success') {
                         $data = [];
                         $serviceDuration = $service->getDuration();
+                        $date = $request->get('date');
+                        
                         foreach ($assessors as $assessor) {
-                            $date = $request->get('date');
                             $hours = [];
                             $scheduledAppointments = $entityManager->getRepository(EaAppointment::class)->getAppointmentsByAssessorAndDate($assessor, $date);
                             $fullDate = new DateTime("$date 09:00");
-                            
+
                             do {
-                                //$fullDateStr = $fullDate->format('Y-m-d H:i');
                                 $hour = $fullDate->format('H:i');
-                                
+
                                 $availableHour = true;
                                 foreach ($scheduledAppointments as $appointment) {
                                     $start = $appointment->getStart_datetime();
@@ -810,13 +810,20 @@ class ACController extends MyRestController {
                                     }
                                 }
                                 if ($availableHour) {
+                                    $hourObj = ['name' => $hour];
+                                    if (!in_array($hourObj, $data, true)) {
+                                        $data[] = $hourObj;
+                                    }
                                     $hours[] = ['name' => $hour];
                                 }
                                 $fullDate->modify("+$serviceDuration minutes");
-                            }
-                            while ($hour <= '18:00');
-                            $data = array_merge($data, $hours);
+                            } while ($hour < '18:00');
+                            /*$diff = array_diff($data, $hours);
+                            array_merge($data, $diff);*/
                         }
+                        usort($data, function($a, $b) {
+                            return strcmp($a['name'], $b['name']);
+                        });
                         $msg = 'Hours loaded.';
                     } else {
                         $msg = 'Invalid parameters.';
@@ -831,7 +838,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
         }
     }
-    
+
     /**
      * Create a new appointment
      * @FOSRest\Post(path="/api/create-appointment")
@@ -846,72 +853,81 @@ class ACController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                $serviceId = $request->get('service_id');
-
+                $params = json_decode($request->get('appointment'), true);
                 $entityManager = $this->getDoctrine()->getManager();
                 $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $service = $entityManager->getRepository(AssessmentCenterService::class)->find($serviceId);
+                $service = $entityManager->getRepository(AssessmentCenterService::class)->find($params['service']['id']);
                 $ac = $service->getAc();
 
                 if ($service && $user && $user->isStudent() && $user->hasRegisteredWith($ac)) {
-                    $assessorId = $request->get('assessor_id');
                     $acAvailabilityType = $ac->getAvailability_type();
-                    $assessors = [];
+                    $assessor = null;
+                    $startDateStr = $params['date'] . ' ' . $params['hour'];
+                    $startDateTime = new DateTime($startDateStr);
 
-                    if ($assessorId != '-1' && $acAvailabilityType === 'Individual') {
-                        $assessor = $entityManager->getRepository(User::class)->find($assessorId);
-                        if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
+                    if (isset($params['assessor']['id']) && $acAvailabilityType === 'Individual') {
+                        $assessor = $entityManager->getRepository(User::class)->find($params['assessor']['id']);
+                        $appointmentOnDate = $entityManager->getRepository(EaAppointment::class)->isAssessorAvailableByDate($assessor, $startDateTime);
+                        if (count($appointmentOnDate) === 0) {
                             $code = 'success';
+                        } else {
+                            $assessor = null;
+                            $msg = 'The selected provider is not available.';
                         }
-                        $assessors[] = $assessor;
-                    } else if ($assessorId == '-1' && $acAvailabilityType === 'Combined') {
+                    } else if ($acAvailabilityType === 'Combined') {
                         $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
                         foreach ($acServiceAssessors as $acServiceAssessor) {
                             $assessor = $acServiceAssessor->getAssessor();
                             if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
-                                $assessors[] = $assessor;
+                                $appointmentOnDate = $entityManager->getRepository(EaAppointment::class)->isAssessorAvailableByDate($assessor, $startDateTime);
+                                if (count($appointmentOnDate) === 0) {
+                                    $code = 'success';
+                                    break;
+                                } else {
+                                    $assessor = null;
+                                    $msg = 'No providers available.';
+                                }
                             }
                         }
-                        $code = 'success';
                     }
 
                     if ($code === 'success') {
                         $data = [];
-                        $serviceDuration = $service->getDuration();
-                        foreach ($assessors as $assessor) {
-                            $date = $request->get('date');
-                            $hours = [];
-                            $scheduledAppointments = $entityManager->getRepository(EaAppointment::class)->getAppointmentsByAssessorAndDate($assessor, $date);
-                            $fullDate = new DateTime("$date 09:00");
-                            
-                            do {
-                                //$fullDateStr = $fullDate->format('Y-m-d H:i');
-                                $hour = $fullDate->format('H:i');
-                                
-                                $availableHour = true;
-                                foreach ($scheduledAppointments as $appointment) {
-                                    $start = $appointment->getStart_datetime();
-                                    $end = $appointment->getEnd_datetime();
-                                    if ($fullDate >= $start && $fullDate < $end) {
-                                        $availableHour = false;
-                                        break;
-                                    }
-                                }
-                                if ($availableHour) {
-                                    $hours[] = ['name' => $hour];
-                                }
-                                $fullDate->modify("+$serviceDuration minutes");
-                            }
-                            while ($hour <= '18:00');
-                            $data = array_merge($data, $hours);
-                        }
-                        $msg = 'Hours loaded.';
-                    } else {
-                        $msg = 'Invalid parameters.';
+                        $endDateTime = new DateTime($startDateStr);
+                        $endDateTime->modify('+' . $service->getDuration() . ' minutes');
+                        $newAppointment = new EaAppointment();
+                        $newAppointment->setBook_datetime(new DateTime());
+                        $newAppointment->setEnd_datetime($endDateTime);
+                        $newAppointment->setHash(StaticMembers::random_str(32));
+                        $newAppointment->setIs_unavailable(false);
+                        $newAppointment->setProvider($assessor);
+                        $newAppointment->setService($service);
+                        $newAppointment->setStart_datetime($startDateTime);
+                        $newAppointment->setStudent($user);
+                        $entityManager->persist($newAppointment);
+                        $msg = 'Appointment created.';
+                        
+                        $headline = date('Y/m/d H:i:s', time());
+                        $notif = $this->createNotification('New appointment', 'A new appointment has been scheduled by ' . $user->__toString() . ' from ' . $ac->getName(), $headline, $ac->getAdmin(), 1, 1);
+                        $entityManager->persist($notif);
+                        $notif = $this->createNotification('New appointment', 'You have scheduled a new appointment with ' . $ac->getAdmin()->getFullname(), $headline, $user, 1, 2);
+                        $entityManager->persist($notif);
+                        $entityManager->flush();
+                        
+                        /*$subject = 'Activate your Nexus account';
+                        $fullName = $user->getName() . ' ' . $user->getLastname();
+                        $body = $this->renderView('email/signup.html.twig', ['name' => $fullName, 'url' => $params['activation_url'] . '/' . $user->getToken()]);
+                        $recipients = [$user->getEmail() => $fullName];
+
+                        if (StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
+                            $code = 'success';
+                            $msg = "Thanks for joining us! An email has been sent to your address with instructions on how to activate your account.";
+                            $entityManager->flush();
+                        }*/
                     }
-                } else {
-                    $msg = 'Invalid parameters.';
                 }
+            } else {
+                $msg = 'Invalid parameters.';
             }
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {

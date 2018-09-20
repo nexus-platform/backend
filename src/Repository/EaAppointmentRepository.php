@@ -3,6 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\EaAppointment;
+use App\Entity\User;
+use App\Utils\StaticMembers;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -14,27 +17,17 @@ class EaAppointmentRepository extends ServiceEntityRepository {
     }
 
     public function getAppointmentsByAssessorAndDate($assessor, $date) {
-        $qb = $this->createQueryBuilder('t');
-        $qb->where('t.provider = :provider')->setParameter('provider', $assessor)
-                //->andWhere($qb->expr()->orX($qb->expr()->like('t.start_datetime', "$date%"), $qb->expr()->like('t.end_datetime', "$date%")));
-                ->andWhere("t.start_datetime like :date or t.end_datetime like :date")->setParameter('date', "$date%");
-                
-
-        /* $criteria = new Criteria();
-          $criteria->where(Criteria::expr()->eq('provider', $assessor));
-          $criteria->andWhere(
-          $criteria->expr()->orX(
-          $criteria->expr()->startsWith('start_datetime', $date), $criteria->expr()->contains('end_datetime', $date)
-          )
-          );
-          $res = $this->matching($criteria)->toArray(); */
-        /*$res =  $this->createQueryBuilder('t')
-                ->where('t.provider = :provider')
-                ->setParameter('provider', $assessor)
-                        ->getQuery()
-                        ->getResult();*/
-        $res = $qb->getQuery()->getResult();
+        $res = $this->createQueryBuilder('t')
+                ->where('t.provider = :provider')->setParameter('provider', $assessor)
+                ->andWhere("t.start_datetime like :date or t.end_datetime like :date")->setParameter('date', "$date%")
+                ->getQuery()
+                ->getResult();
         return $res;
+    }
+    
+    public function isAssessorAvailableByDate(User $assessor, DateTime $date) {
+        $startDate = $date->format('Y-m-d H:i');
+        return StaticMembers::executeRawSQL($this->_em, "select * from `ea_appointment` `t` where `provider_id` = " . $assessor->getId() . " and '$startDate' BETWEEN `t`.`start_datetime` and DATE_ADD(`t`.`end_datetime`, INTERVAL -1 second)", true);
     }
 
 }

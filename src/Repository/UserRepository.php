@@ -19,7 +19,7 @@ class UserRepository extends ServiceEntityRepository {
                         ->getFirstResult()
         ;
     }
-    
+
     public function findByEmailUnique($id, $value) {
         return $this->createQueryBuilder('u')
                         ->where('u.email = :value')->setParameter('value', $value)
@@ -28,5 +28,5 @@ class UserRepository extends ServiceEntityRepository {
                         ->getFirstResult()
         ;
     }
-
+    
 }

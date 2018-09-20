@@ -37,7 +37,7 @@ class EaAppointment {
     private $end_datetime;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $notes;
 
@@ -73,7 +73,7 @@ class EaAppointment {
     private $service;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $google_calendar_id;
 
