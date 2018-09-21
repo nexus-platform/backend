@@ -54,21 +54,21 @@ class EaAppointment {
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(name="provider_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="provider_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $provider;
 
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="student_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $student;
 
     /**
      * @var AssessmentCenterService
      * @ORM\ManyToOne(targetEntity="App\Entity\AssessmentCenterService")
-     * @ORM\JoinColumn(name="service_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="service_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $service;
 

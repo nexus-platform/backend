@@ -54,7 +54,7 @@ class University {
     /**
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User", cascade={"persist"})
-     * @ORM\JoinColumn(name="manager_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="manager_id", referencedColumnName="id", onDelete="SET NULL")
      *
      */
     private $manager;

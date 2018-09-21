@@ -54,7 +54,7 @@ class DisabilityOfficer {
     /**
      * @var User
      * @ORM\OneToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="RESTRICT")
      */
     private $admin;
 

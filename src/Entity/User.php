@@ -89,7 +89,7 @@ class User implements UserInterface, Serializable {
     /**
      *
      * @ORM\ManyToOne(targetEntity="University", cascade={"persist"})
-     * @ORM\JoinColumn(name="university_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="university_id", referencedColumnName="id", onDelete="SET NULL")
      *
      * @Assert\NotBlank
      */

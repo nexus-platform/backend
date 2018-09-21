@@ -46,14 +46,14 @@ class UserInvitation {
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(name="sender_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="sender_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $user;
 
     /**
      * @var AssessmentCenter
      * @ORM\ManyToOne(targetEntity="App\Entity\AssessmentCenter")
-     * @ORM\JoinColumn(name="ac_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="ac_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $ac;
 

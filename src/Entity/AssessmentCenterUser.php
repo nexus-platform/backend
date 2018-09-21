@@ -22,13 +22,13 @@ class AssessmentCenterUser {
 
     /**
      * @ORM\ManyToOne(targetEntity="AssessmentCenter", inversedBy="assessment_center_users")
-     * @ORM\JoinColumn(name="ac_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="ac_id", referencedColumnName="id", onDelete="CASCADE")
      * */
     private $ac;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="assessment_center_users")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      * */
     private $user;
 

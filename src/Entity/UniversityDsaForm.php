@@ -22,13 +22,13 @@ class UniversityDsaForm {
 
     /**
      * @ORM\ManyToOne(targetEntity="University", inversedBy="univ_dsa_form")
-     * @ORM\JoinColumn(name="univ_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="univ_id", referencedColumnName="id", onDelete="CASCADE")
      * */
     private $university;
 
     /**
      * @ORM\ManyToOne(targetEntity="DsaForm", inversedBy="univ_dsa_form")
-     * @ORM\JoinColumn(name="dsa_form_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="dsa_form_id", referencedColumnName="id", onDelete="CASCADE")
      * */
     private $dsa_form;
     

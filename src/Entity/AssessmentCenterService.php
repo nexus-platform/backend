@@ -21,7 +21,7 @@ class AssessmentCenterService {
 
     /**
      * @ORM\ManyToOne(targetEntity="AssessmentCenter", inversedBy="assessment_center_services")
-     * @ORM\JoinColumn(name="ac_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="ac_id", referencedColumnName="id", onDelete="CASCADE")
      * */
     private $ac;
 
