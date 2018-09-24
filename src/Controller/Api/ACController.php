@@ -200,6 +200,7 @@ class ACController extends MyRestController {
                             'min_date' => $minDate,
                             'max_date' => $maxDate,
                             'allowed_dates' => $allowedDates,
+                            'needs_assessors' => []
                         ];
                     } else {
                         $code = 'error';
@@ -286,7 +287,7 @@ class ACController extends MyRestController {
                     $user->setName($params['name']);
                     $user->setPassword(sha1($params['password']));
                     $user->setRoles([$role]);
-                    $user->setStatus(0);
+                    $user->setStatus(1);
                     $user->setToken(sha1(StaticMembers::random_str()));
                     $entityManager->persist($user);
                     $entityManager->flush();
@@ -812,7 +813,6 @@ class ACController extends MyRestController {
 
                             do {
                                 $hour = $fullDate->format('H:i');
-
                                 $availableHour = true;
                                 foreach ($scheduledAppointments as $appointment) {
                                     $start = $appointment->getStart_datetime();
@@ -921,20 +921,15 @@ class ACController extends MyRestController {
                         $msg = 'Appointment created.';
 
                         $headline = date('Y/m/d H:i:s', time());
-                        $entityManager->persist($this->createNotification('New appointment', 'A new appointment has been scheduled by ' . $user->__toString() . ' from ' . $ac->getName(), $headline, $assessor, 1, 1));
+                        $entityManager->persist($this->createNotification('New appointment', 'A new appointment has been scheduled by ' . $user->getFullname() . ' from ' . $ac->getName(), $headline, $assessor, 1, 1));
                         $entityManager->persist($this->createNotification('New appointment', 'You have scheduled a new appointment with ' . $ac->getAdmin()->getFullname(), $headline, $user, 1, 2));
                         $entityManager->flush();
 
-                        /* $subject = 'Activate your Nexus account';
-                          $fullName = $user->getName() . ' ' . $user->getLastname();
-                          $body = $this->renderView('email/signup.html.twig', ['name' => $fullName, 'url' => $params['activation_url'] . '/' . $user->getToken()]);
-                          $recipients = [$user->getEmail() => $fullName];
-
-                          if (StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
-                          $code = 'success';
-                          $msg = "Thanks for joining us! An email has been sent to your address with instructions on how to activate your account.";
-                          $entityManager->flush();
-                          } */
+                        $url = $request->get('home_url');
+                        $body = $this->renderView('email/new_appointment_student.html.twig', ['name' => $user->getFullname(), 'home_url' => $url, 'service' => $service->getName(), 'provider' => $assessor->getFullname(), 'date_time' => $startDateStr]);
+                        StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$user->getEmail() => $user->getFullname()]);
+                        $body = $this->renderView('email/new_appointment_provider.html.twig', ['name' => $assessor->getFullname(), 'home_url' => $url, 'student' => $user->getFullname(), 'service' => $service->getName(), 'date_time' => $startDateStr]);
+                        StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$assessor->getEmail() => $assessor->getFullname()]);
                     }
                 }
             } else {
