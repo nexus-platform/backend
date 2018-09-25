@@ -1,19 +1,18 @@
-<?php
-
-declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Utils\StaticMembers;
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+use App\Utils\StaticMembers;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20880515193122 extends AbstractMigration {
-
-    public function up(Schema $schema) {
+final class Version20180925141419 extends AbstractMigration
+{
+    public function up(Schema $schema) : void
+    {
         $this->addSql("INSERT INTO `university` (`country_id`, `name`, `domains`, `pages`, `state_province`, `token`) VALUES (184, '42 US', '[\"student.42.us.org\"]', '[\"http://www.42.us.org/\"]', null, '" . StaticMembers::random_str(16) . "')");
         $this->addSql("INSERT INTO `university` (`country_id`, `name`, `domains`, `pages`, `state_province`, `token`) VALUES (184, 'California Baptist University', '[\"calbaptist.edu\"]', '[\"http://www.calbaptist.edu/\"]', null, '" . StaticMembers::random_str(16) . "')");
         $this->addSql("INSERT INTO `university` (`country_id`, `name`, `domains`, `pages`, `state_province`, `token`) VALUES (184, 'Stevenson University', '[\"stevenson.edu\"]', '[\"http://www.stevenson.edu/\"]', null, '" . StaticMembers::random_str(16) . "')");
@@ -9617,8 +9616,9 @@ final class Version20880515193122 extends AbstractMigration {
         $this->addSql("INSERT INTO `university` (`country_id`, `name`, `domains`, `pages`, `state_province`, `token`) VALUES (161, 'Universidad Internacional Isabel I', '[\"ui1.es\",\"alumnos.ui1.es\"]', '[\"https://www.ui1.es/\"]', 'Castilla la mancha', '" . StaticMembers::random_str(16) . "')");
     }
 
-    public function down(Schema $schema): void {
+    public function down(Schema $schema) : void
+    {
         // this down() migration is auto-generated, please modify it to your needs
-    }
 
+    }
 }

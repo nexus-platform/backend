@@ -1,19 +1,38 @@
-<?php
-
-declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+use App\Utils\StaticMembers;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20880515193121 extends AbstractMigration {
+final class Version20180925141344 extends AbstractMigration
+{
+    public function up(Schema $schema) : void
+    {
+		//Default App Administrator
+        $pass = sha1('a');
+		$this->addSql("INSERT INTO `user` (`name`, `lastname`, `roles`, `email`, `password`, `status`, `token`, `created_at`) VALUES ('Admin', 'Istrator', '[\"admin\"]', 'admin@nexus.uk', '$pass', 1, '" . StaticMembers::random_str(16) . "', '" . time() . "')");
 
-    public function up(Schema $schema) {
-        $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (1, 'Albania', 'AL')");
+        //PDF Forms
+        $this->addSql("INSERT INTO `dsa_form` (`id`, `name`, `code`, `base`, `active`, `content`) VALUES
+            (1, 'Claim for reimbursement of costs through Disabled Students’ Allowances 2017/18', 'sfe_dsa_costs_claim_form_1718_d', 'sfe_dsa_costs_claim_form_1718_d.pdf', 1, '{}'),
+            (2, 'Claim for reimbursement of costs through Disabled Students’ Allowances 2018/19', 'sfe_dsa_costs_claim_form_1819_o', 'sfe_dsa_costs_claim_form_1819_o.pdf', 1, '{}'),
+            (3, 'Disabled Students’ Allowances (DSAs) Disability Evidence Form', 'sfe_dsa_disability_evidence_form_1819_o', 'sfe_dsa_disability_evidence_form_1819_o.pdf', 1, '{}'),
+            (4, 'Request for temporary Disabled Student Allowances support form', 'sfe_dsa_request_for_temporary_support_form_d', 'sfe_dsa_request_for_temporary_support_form_d.pdf', 1, '{}'),
+            (5, 'DSA SLIM 2017/18 - Disabled Students’ Allowances Application Form', 'sfe_dsa_slim_form_1718_d', 'sfe_dsa_slim_form_1718_d.pdf', 1, '{}'),
+            (6, 'DSA SLIM 2018/19 - Disabled Students’ Allowances Application Form', 'sfe_dsa_slim_form_1819_o', 'sfe_dsa_slim_form_1819_o.pdf', 1, '{}'),
+            (7, 'DSA1 2017/18 - Application for Disabled Students’ Allowances', 'sfe_dsa1_form_1718_d', 'sfe_dsa1_form_1718_d.pdf', 1, '{}'),
+            (8, 'DSA1 2018/19 - Application for Disabled Students’ Allowances', 'sfe_dsa1_form_1819_o', 'sfe_dsa1_form_1819_o.pdf', 1, '{}')");
+		
+		//App Settings
+		$this->addSql("INSERT INTO `app_settings` (`mail_host`, `mail_port`, `mail_username`, `mail_password`, `mail_encryption`) VALUES ('127.0.0.1', '25', 'user', 'pass', '')");
+		
+		//Countries
+		$this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (1, 'Albania', 'AL')");
         $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (2, 'Algeria', 'DZ')");
         $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (3, 'Andorra', 'AD')");
         $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (4, 'Angola', 'AO')");
@@ -229,10 +248,13 @@ final class Version20880515193121 extends AbstractMigration {
         $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (216, 'Turks and Caicos Islands', 'TC')");
         $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (217, 'Virgin Islands, British', 'VG')");
         $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (218, 'Macao', 'MO')");
+		
+		
     }
 
-    public function down(Schema $schema): void {
+    public function down(Schema $schema) : void
+    {
         // this down() migration is auto-generated, please modify it to your needs
-    }
 
+    }
 }
