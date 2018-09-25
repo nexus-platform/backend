@@ -42,6 +42,7 @@ class AuthController extends MyRestController {
                 'iat' => $now,
                 'exp' => $now + 604800, //a week
                 'user_id' => $user->getId(),
+                'ip' => $request->getClientIp(),
             ];
             $jwt = $this->encodeJWT($payload);
 
