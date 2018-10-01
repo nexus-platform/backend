@@ -38,6 +38,20 @@ class AssessmentCenterUser {
      */
     private $is_admin;
 
+    /**
+     * @var integer
+     * @ORM\Column(type="integer")
+     */
+    private $status;
+
+    function getStatus() {
+        return $this->status;
+    }
+
+    function setStatus($status) {
+        $this->status = $status;
+    }
+
     function getAc() {
         return $this->ac;
     }
@@ -65,4 +79,5 @@ class AssessmentCenterUser {
     function getId() {
         return $this->id;
     }
+
 }

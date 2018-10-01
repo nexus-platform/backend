@@ -130,53 +130,61 @@
             ],
             [
                 {
-                    "class": "md5",
-                    "content_type": "input",
-                    "input": {
-                        "title": "Details of your costs",
-                        "name": "Details of your costs",
-                        "comments": [], "commentable": true, "type": "text",
-                        "max_length": 1275,
-						"rows": 10,
-                        "required": false,
-                        "value": "",
-                        "disabled": false,
-                        "read_only": false
-                    }
-                },
-                {
-                    "class": "md2",
-                    "content_type": "input",
-                    "input": {
-                        "title": "Amount (£)",
-                        "name": "Amount (£)",
-                        "comments": [], "commentable": true, "type": "double",
-						"function": {
-							"name": "sum",
-							"dest": "Total claimed"
+                    "class": "md12",
+                    "content_type": "input_group",
+					"name": "costs",
+					"repeat": 3,
+                    "inputs": [
+						{
+							"class": "md5",
+							"content_type": "input",
+							"input": {
+								"title": "Details of your costs",
+								"name": "Details of your costs",
+								"comments": [], "commentable": true, "type": "text",
+								"max_length": 1275,
+								"rows": 10,
+								"required": false,
+								"value": "",
+								"disabled": false,
+								"read_only": false
+							}
 						},
-                        "max_length": 1275,
-						"rows": 10,
-                        "required": false,
-                        "value": "",
-                        "disabled": false,
-                        "read_only": false
-                    }
-                },
-                {
-                    "class": "md5",
-                    "content_type": "input",
-                    "input": {
-                        "title": "Name and address of supplier",
-                        "name": "Name and address of supplier",
-                        "comments": [], "commentable": true, "type": "text",
-                        "max_length": 1275,
-						"rows": 10,
-                        "required": false,
-                        "value": "",
-                        "disabled": false,
-                        "read_only": false
-                    }
+						{
+							"class": "md2",
+							"content_type": "input",
+							"input": {
+								"title": "Amount (£)",
+								"name": "Amount (£)",
+								"comments": [], "commentable": true, "type": "double",
+								"function": {
+									"name": "sum",
+									"dest": "Total claimed"
+								},
+								"max_length": 1275,
+								"rows": 10,
+								"required": false,
+								"value": "",
+								"disabled": false,
+								"read_only": false
+							}
+						},
+						{
+							"class": "md5",
+							"content_type": "input",
+							"input": {
+								"title": "Name and address of supplier",
+								"name": "Name and address of supplier",
+								"comments": [], "commentable": true, "type": "text",
+								"max_length": 1275,
+								"rows": 10,
+								"required": false,
+								"value": "",
+								"disabled": false,
+								"read_only": false
+							}
+						}
+					]
                 }
             ],
             [

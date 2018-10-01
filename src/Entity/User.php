@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Mapping as ORM;
 use Serializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -423,6 +424,11 @@ class User implements UserInterface, Serializable {
 
     public function getFullname() {
         return $this->name . ' ' . $this->lastname;
+    }
+    
+    public function isEnabledInAC(ObjectManager $entityManager, AssessmentCenter $ac) {
+        $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $this]);
+        return $acUser->getStatus();
     }
 
 }
