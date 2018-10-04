@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\DsaFormFilled;
 use App\Entity\Notification;
 use App\Entity\User;
+use Doctrine\Common\Persistence\ObjectManager;
 use Exception;
 use Firebase\JWT\JWT;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
@@ -17,16 +18,29 @@ use Symfony\Component\HttpFoundation\Response;
 class MyRestController extends FOSRestController {
 
     private $key = "vUrQrZL50m7qL3uosytRJbeW8fzSwUqd";
-
-    public function getRequestPayload(Request $request) {
-        try {
-            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            return $this->decodeJWT($jwt);
-        } catch (Exception $exc) {
-            return null;
+    private $entityManager = null;
+    
+    public function getEntityManager() : ObjectManager {
+        if (!$this->entityManager) {
+            $this->entityManager = $this->getDoctrine()->getManager();
         }
+        return $this->entityManager;
     }
 
+    protected function getRequestUser(Request $request) {
+        try {
+            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+            $payload = JWT::decode($jwt, $this->key, ['HS256']);
+            if ($payload->exp > time() && $payload->ip === $request->getClientIp()) {
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                return ['code' => 'success', 'user' => $user];
+            }
+            return ['code' => 'error', 'msg' => 'Invalid credentials.'];
+        } catch (Exception $exc) {
+            return ['code' => 'error', 'msg' => 'Invalid credentials.'];
+        }
+    }
+    
     /* protected function addMonthToDate($date_str, $months) {
       $date = new DateTime($date_str);
       // We extract the day of the month as $start_day
@@ -77,7 +91,7 @@ class MyRestController extends FOSRestController {
         $notif->setStatus($status);
         $notif->setType($type);
         $notif->setCreated_at(time());
-        return $notif;
+        $this->getEntityManager()->persist($notif);
     }
 
     public function dateDiff($time1, $time2, $precision = 6) {

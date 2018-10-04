@@ -144,4 +144,43 @@ class DsaFormFilled {
         $this->dsaForm = $dsaForm;
     }
 
+    function getContentForApproval() {
+        $filledData = $this->getContent();
+        $template = $this->getDsaForm()->getContent();
+        $dataCount = count($template);
+
+        for ($i = 0; $i < $dataCount; $i++) {
+            $components = $template[$i]['components'];
+            $componentsCount = count($components);
+            for ($j = 0; $j < $componentsCount; $j++) {
+                $colsCount = count($components[$j]);
+                for ($k = 0; $k < $colsCount; $k++) {
+                    $col = $components[$j][$k];
+                    if ($col['content_type'] === 'input_group') {
+                        $inputGroupName = $col['name'];
+                        $rowsCount = 0;
+
+                        if (isset($filledData[$inputGroupName])) {
+                            $rowsCount = $filledData[$inputGroupName];
+                            $models = $col['model'];
+
+                            foreach ($models as $model) {
+                                $inputName = $model['input']['name'];
+                                $filledData[$inputName] = '';
+                                for ($l = 1; $l <= $rowsCount; $l++) {
+                                    $newName = "$inputName $l";
+                                    if (isset($filledData[$newName])) {
+                                        $newValue = $filledData[$newName] . "\r";   //chr(10)
+                                        $filledData[$inputName] .= $newValue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $filledData;
+    }
+
 }

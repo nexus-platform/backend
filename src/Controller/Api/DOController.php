@@ -225,6 +225,42 @@ class DOController extends MyRestController {
                                                 if (isset($signatures[$name])) {
                                                     $data[$i]['components'][$j][$k]['input']['value'] = $signatures[$name]['value'];
                                                 }
+                                                //Input group
+                                            } else if ($col['content_type'] === 'input_group') {
+                                                $inputGroupName = $col['name'];
+                                                if (isset($comments[$inputGroupName])) {
+                                                    if ($user === $filledFormUser) {
+                                                        $data[$i]['components'][$j][$k]['comments'] = $comments[$inputGroupName];
+                                                    }
+                                                }
+
+                                                $rowsCount = 0;
+                                                $rows = [];
+
+                                                if (isset($filledData[$inputGroupName])) {
+                                                    $rowsCount = $filledData[$inputGroupName];
+                                                    $models = $col['model'];
+                                                    for ($l = 1; $l <= $rowsCount; $l++) {
+                                                        $newRow = [];
+                                                        foreach ($models as $model) {
+                                                            $newName = $model['input']['name'] .= " $l";
+                                                            $model['input']['name'] = $newName;
+                                                            if ($filledForm->getStatus() == 1 || $filledForm->getStatus() == 2 || $user !== $filledFormUser) {
+                                                                $model['input']['disabled'] = true;
+                                                                $model['input']['read_only'] = true;
+                                                            }
+                                                            if (isset($filledData[$newName])) {
+                                                                $model['input']['value'] = $filledData[$newName];
+                                                            }
+                                                            if (isset($signatures[$newName])) {
+                                                                $model['input']['value'] = $signatures[$newName]['value'];
+                                                            }
+                                                            $newRow[] = $model;
+                                                        }
+                                                        $rows[] = $newRow;
+                                                    }
+                                                }
+                                                $data[$i]['components'][$j][$k]['rows'] = $rows;
                                             }
                                         }
                                     }
@@ -353,12 +389,10 @@ class DOController extends MyRestController {
                                 $disabOfficers = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 $headline = date('Y/m/d H:i:s', $now);
                                 $route = 'dsa-form/' . $univFromUser->getToken() . '/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
-                                $notifAux = $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="/#/my-dsa-forms">here</a>.', $headline, $user, 1, 2);
-                                $entityManager->persist($notifAux);
+                                $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="/#/my-dsa-forms">here</a>.', $headline, $user, 1, 2);
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $entityManager->getRepository(User::class)->find($do['id']);
-                                    $notifAux = $this->createNotification('New DSA Form submitted by ' . $user->__toString(), 'A new "' . $item->getName() . '" has been submitted. You can review it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
-                                    $entityManager->persist($notifAux);
+                                    $this->createNotification('New DSA Form submitted by ' . $user->__toString(), 'A new "' . $item->getName() . '" has been submitted. You can review it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
                                 }
                                 $msg = "Your form has been submitted.";
                                 $entityManager->flush();
@@ -728,7 +762,7 @@ class DOController extends MyRestController {
                                         }
                                         $destinationPath = $destinationDir . $filledName;
 
-                                        if ($pdf->fillForm($filledForm->getContent())->needAppearances()->saveAs($destinationPath)) {
+                                        if ($pdf->fillForm($filledForm->getContentForApproval())->needAppearances()->saveAs($destinationPath)) {
                                             //SELECT JSON_EXTRACT(`content`, '$[*].components[*][*].input') FROM `dsa_form` where `code` = 'sfe_dsa_costs_claim_form_1718_d'
                                             $signaturesInfo = $filledForm->getSignatures();
                                             if ($signaturesInfo) {
@@ -787,10 +821,8 @@ class DOController extends MyRestController {
                                             $filledForm->setFilename($filledName);
                                             $entityManager->persist($filledForm);
                                             $now = time();
-                                            $notif = $this->createNotification('You have approved a new form', 'The "' . $filledForm->getDsaForm()->getName() . '" submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . 'by <i>' . $student->__toString() . '</i>', date('Y/m/d H:i:s', $now), $user, 1, 2);
-                                            $entityManager->persist($notif);
-                                            $notif = $this->createNotification('Your form has been approved', 'Your ' . $filledForm->getDsaForm()->getName() . ', submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . ', has been approved by <i>' . $user->__toString() . '</i>', date('Y/m/d H:i:s', $now), $student, 1, 1);
-                                            $entityManager->persist($notif);
+                                            $this->createNotification('You have approved a new form', 'The "' . $filledForm->getDsaForm()->getName() . '" submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . 'by <i>' . $student->__toString() . '</i>', date('Y/m/d H:i:s', $now), $user, 1, 2);
+                                            $this->createNotification('Your form has been approved', 'Your ' . $filledForm->getDsaForm()->getName() . ', submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . ', has been approved by <i>' . $user->__toString() . '</i>', date('Y/m/d H:i:s', $now), $student, 1, 1);
                                             $entityManager->flush();
                                             $data = $filledForm->getStatus();
                                             $code = 'success';
@@ -958,19 +990,15 @@ class DOController extends MyRestController {
                             $route = 'dsa-form/' . $univFromUser->getToken() . '/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
 
                             if ($user->isStudent()) {
-                                $notifAux = $this->createNotification('You have submitted a new comment', '<b>' . $fieldName . '</b> input field from your <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
-                                $entityManager->persist($notifAux);
+                                $this->createNotification('You have submitted a new comment', '<b>' . $fieldName . '</b> input field from your <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
                                 $disabOfficers = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $entityManager->getRepository(User::class)->find($do['id']);
-                                    $notifAux = $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
-                                    $entityManager->persist($notifAux);
+                                    $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
                                 }
                             } else {
-                                $notifAux = $this->createNotification('You have submitted a new comment', '<b>' . $fieldName . '</b> in a form submitted by <b>' . $filledForm->getUser()->__toString() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
-                                $entityManager->persist($notifAux);
-                                $notifAux = $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $filledForm->getUser(), 1, 1);
-                                $entityManager->persist($notifAux);
+                                $this->createNotification('You have submitted a new comment', '<b>' . $fieldName . '</b> in a form submitted by <b>' . $filledForm->getUser()->__toString() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
+                                $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $filledForm->getUser(), 1, 1);
                             }
                             $msg = "Your comment has been submitted.";
                             $code = 'success';

@@ -50,7 +50,7 @@
 				{
 					"class": "md4",
 					"content_type": "input",
-					"input" : {
+					"input": {
 						"title": "Date of Birth",
 						"name": "Date of Birth - Full",
 						"comments": [], "commentable": true, "type": "date",
@@ -66,7 +66,7 @@
 				{
 					"class": "md4",
 					"content_type": "input",
-					"input" : {
+					"input": {
 						"title": "Address",
 						"name": "Address",
 						"comments": [], "commentable": true, "type": "text",
@@ -80,7 +80,7 @@
 				{
 					"class": "md4",
 					"content_type": "input",
-					"input" : {
+					"input": {
 						"title": "Postcode",
 						"name": "postcode",
 						"comments": [], "commentable": true, "type": "text",
@@ -96,7 +96,7 @@
 				{
 					"class": "md4",
 					"content_type": "input",
-					"input" : {
+					"input": {
 						"title": "Course",
 						"name": "Course",
 						"comments": [], "commentable": true, "type": "text",
@@ -112,7 +112,7 @@
 				{
 					"class": "md12",
 					"content_type": "html",
-					"html" : "Complete this form to claim any costs you have had to pay in connection with your studies due to a reason relating to your disability, mental health condition or specific learning difficulty, such as travel costs, books in Braille or consumables (batteries, cartridges, paper...)"
+					"html": "Complete this form to claim any costs you have had to pay in connection with your studies due to a reason relating to your disability, mental health condition or specific learning difficulty, such as travel costs, books in Braille or consumables (batteries, cartridges, paper...)"
 				}
 			]
 		]
@@ -125,67 +125,80 @@
 				{
 					"class": "md12",
 					"content_type": "html",
-					"html" : "Please attach receipts or invoices as evidence of your purchases.<br /><b>Please do not include items which are invoiced directly to us.</b>"
+					"html": "Please attach receipts or invoices as evidence of your purchases.<br /><b>Please do not include items which are invoiced directly to us.</b>"
 				}
 			],
 			[
-				{
-					"class": "md5",
-					"content_type": "input",
-					"input": {
-						"title": "Details of your costs",
-						"name": "Details of your costs",
-						"comments": [], "commentable": true, "type": "text",
-						"max_length": 1275,
-						"required": false,
-						"value": "",
-						"disabled": false,
-						"read_only": false
-					}
-				},
-				{
-					"class": "md2",
-					"content_type": "input",
-					"input": {
-						"title": "Amount (£)",
-						"name": "Amount (£)",
-						"comments": [], "commentable": true, "type": "double",
-						"function": {
-							"name": "sum",
-							"dest": "Total claimed"
+                {
+                    "class": "md12",
+                    "content_type": "input_group",
+					"name": "Costs",
+					"comments": [], "commentable": true,
+					"count": 0,
+					"rows": [],
+                    "model": [
+						{
+							"class": "md5",
+							"content_type": "input",
+							"input": {
+								"title": "Details of your costs",
+								"name": "Details of your costs",
+								"comments": [], "commentable": true, "type": "text",
+								"max_length": 1275,
+								"rows": 10,
+								"required": false,
+								"value": "",
+								"disabled": false,
+								"read_only": false
+							}
 						},
-						"max_length": 1275,
-						"required": false,
-						"value": "",
-						"disabled": false,
-						"read_only": false
-					}
-				},
-				{
-					"class": "md5",
-					"content_type": "input",
-					"input": {
-						"title": "Name and address of supplier",
-						"name": "Name and address of supplier",
-						"comments": [], "commentable": true, "type": "text",
-						"max_length": 1275,
-						"required": false,
-						"value": "",
-						"disabled": false,
-						"read_only": false
-					}
-				}
-			],
+						{
+							"class": "md2",
+							"content_type": "input",
+							"input": {
+								"title": "Amount (£)",
+								"name": "Amount (£)",
+								"comments": [], "commentable": true, "type": "double",
+								"function": {
+									"name": "sum",
+									"dest": "Total claimed"
+								},
+								"max_length": 1275,
+								"rows": 10,
+								"required": false,
+								"value": "",
+								"disabled": false,
+								"read_only": false
+							}
+						},
+						{
+							"class": "md5",
+							"content_type": "input",
+							"input": {
+								"title": "Name and address of supplier",
+								"name": "Name and address of supplier",
+								"comments": [], "commentable": true, "type": "text",
+								"max_length": 1275,
+								"rows": 10,
+								"required": false,
+								"value": "",
+								"disabled": false,
+								"read_only": false
+							}
+						}
+					]
+                }
+            ],
 			[
 				{
 					"class": "md5",
 					"content_type": "html",
-					"html" : ""
+					"html": ""
 				},
 				{
 					"class": "md2",
 					"content_type": "input",
-					"input" : {
+					"input": {
 						"title": "Total claimed",
 						"name": "Total claimed",
 						"comments": [], "commentable": false, "type": "double",
@@ -206,14 +219,14 @@
 				{
 					"class": "md12",
 					"content_type": "html",
-					"html" : "If you cannot sign this form, it must be signed on your behalf by your Power of Attorney. The Power of Attorney letter must be sent with this form before a signature from that Power of Attorney will be accepted.<br /><ul><li>I have incurred the expenses shown in this form.</li><li>I will inform you of any changes that occur.</li></ul>"
+					"html": "If you cannot sign this form, it must be signed on your behalf by your Power of Attorney. The Power of Attorney letter must be sent with this form before a signature from that Power of Attorney will be accepted.<br /><ul><li>I have incurred the expenses shown in this form.</li><li>I will inform you of any changes that occur.</li></ul>"
 				}
 			],
 			[
 				{
 					"class": "md4",
 					"content_type": "input",
-					"input" : {
+					"input": {
 						"title": "Your full name (in BLOCK CAPITALS)",
 						"name": "Your full name (in BLOCK CAPITALS)",
 						"comments": [], "commentable": true, "type": "text",
@@ -229,7 +242,7 @@
 				{
 					"class": "md3",
 					"content_type": "input",
-					"input" : {
+					"input": {
 						"title": "Today's date",
 						"name": "Today's date",
 						"comments": [], "commentable": true, "type": "date",

@@ -73,9 +73,11 @@ class ApiController extends MyRestController {
                     $appointments = $entityManager->getRepository(EaAppointment::class)->findBy($user->isStudent() ? ['student' => $user] : ['provider' => $user, 'is_unavailable' => false]);
                     $data = [];
                     foreach ($appointments as $appointment) {
+                        $student = $appointment->getStudent();
                         $data[] = [
                             'id' => $appointment->getId(),
-                            'student' => $appointment->getStudent()->getFullname(),
+                            'student' => $student->getFullname(),
+                            'institute' => $student->getUniversity()->getName(),
                             'provider' => $appointment->getProvider()->getFullname(),
                             'service' => $appointment->getService()->getName(),
                             'start' => $appointment->getStart_datetime()->format('Y-m-d H:i'),
@@ -87,6 +89,34 @@ class ApiController extends MyRestController {
                 }
             }
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Cancels a booking.
+     * @FOSRest\Post(path="/api/cancel-booking")
+     */
+    public function cancelBooking(Request $request) {
+        try {
+            $userInfo = $this->getRequestUser($request);
+            if ($userInfo['code'] === 'success') {
+                $currentUser = $userInfo['user'];
+                $bookingId = $request->get('id');
+                $bookingEntity = $this->getEntityManager()->getRepository(EaAppointment::class)->find($bookingId);
+                if ($currentUser->isStudent() && $bookingEntity->getStudent() === $currentUser) {
+                    $headline = date('Y/m/d H:i:s', time());
+                    $this->getEntityManager()->remove($bookingEntity);
+                    $this->createNotification('Appointment cancelled', 'The appointment scheduled with you by' . $currentUser->getFullname() . ' from ' . $bookingEntity->getService()->getAc()->getName() . ' between ' . $bookingEntity->getStart_datetime()->format('Y-m-d H:i') . ' and ' . $bookingEntity->getEnd_datetime()->format('Y-m-d H:i') . ' has been cancelled by the student.', $headline, $bookingEntity->getProvider(), 1, 1);
+                    $this->createNotification('Appointment cancelled', 'You have cancelled your appointment with ' . $bookingEntity->getProvider()->getFullname() . ', scheduled between ' . $bookingEntity->getStart_datetime()->format('Y-m-d H:i') . ' and ' . $bookingEntity->getEnd_datetime()->format('Y-m-d H:i'), $headline, $currentUser, 1, 2);
+                    $this->getEntityManager()->flush();
+                    return new JsonResponse(['code' => 'success', 'msg' => 'The appointment has been cancelled.', 'data' => null], Response::HTTP_OK);
+                } else if ($currentUser->isNA() && $bookingEntity->getProvider() === $currentUser) {
+                    
+                }
+            }
+            return new JsonResponse(['code' => $userInfo['code'], 'msg' => $userInfo['msg'], 'data' => null], Response::HTTP_OK);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
         }

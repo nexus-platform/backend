@@ -921,11 +921,11 @@ class ACController extends MyRestController {
                         $newAppointment->setStart_datetime($startDateTime);
                         $newAppointment->setStudent($user);
                         $entityManager->persist($newAppointment);
-                        $msg = 'Appointment created.';
+                        $msg = 'Your appointment has been scheduled.';
 
                         $headline = date('Y/m/d H:i:s', time());
-                        $entityManager->persist($this->createNotification('New appointment', 'A new appointment has been scheduled by ' . $user->getFullname() . ' from ' . $ac->getName(), $headline, $assessor, 1, 1));
-                        $entityManager->persist($this->createNotification('New appointment', 'You have scheduled a new appointment with ' . $assessor->getFullname(), $headline, $user, 1, 2));
+                        $this->createNotification('New appointment', 'A new appointment has been scheduled by ' . $user->getFullname() . ' from ' . $ac->getName(), $headline, $assessor, 1, 1);
+                        $this->createNotification('New appointment', 'You have scheduled a new appointment with ' . $assessor->getFullname(), $headline, $user, 1, 2);
                         $entityManager->flush();
 
                         $url = $request->get('home_url');
@@ -980,8 +980,7 @@ class ACController extends MyRestController {
                     $code = 'success';
 
                     $headline = date('Y/m/d H:i:s', time());
-                    //$entityManager->persist($this->createNotification('New appointment', 'A new appointment has been scheduled by ' . $user->__toString() . ' from ' . $ac->getName(), $headline, $assessor, 1, 1));
-                    $entityManager->persist($this->createNotification('New unavailable period', 'You have set a new unavailable period from ' . $startDateTime->format('YYYY-MM-DD H:i') . ' to ' . $endDateTime->format('YYYY-MM-DD H:i'), $headline, $user, 1, 2));
+                    $this->createNotification('New unavailable period', 'You have set a new unavailable period from ' . $startDateTime->format('YYYY-MM-DD H:i') . ' to ' . $endDateTime->format('YYYY-MM-DD H:i'), $headline, $user, 1, 2);
                     $entityManager->flush();
 
                     /* $subject = 'Activate your Nexus account';
