@@ -929,10 +929,12 @@ class ACController extends MyRestController {
                         $entityManager->flush();
 
                         $url = $request->get('home_url');
-                        $body = $this->renderView('email/new_appointment_student.html.twig', ['name' => $user->getFullname(), 'home_url' => $url, 'service' => $service->getName(), 'provider' => $assessor->getFullname(), 'date_time' => $startDateStr]);
-                        StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$user->getEmail() => $user->getFullname()]);
-                        $body = $this->renderView('email/new_appointment_provider.html.twig', ['name' => $assessor->getFullname(), 'home_url' => $url, 'student' => $user->getFullname(), 'service' => $service->getName(), 'date_time' => $startDateStr]);
-                        StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$assessor->getEmail() => $assessor->getFullname()]);
+                        try {
+                            $body = $this->renderView('email/new_appointment_student.html.twig', ['name' => $user->getFullname(), 'home_url' => $url, 'service' => $service->getName(), 'provider' => $assessor->getFullname(), 'date_time' => $startDateStr]);
+                            StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$user->getEmail() => $user->getFullname()]);
+                            $body = $this->renderView('email/new_appointment_provider.html.twig', ['name' => $assessor->getFullname(), 'home_url' => $url, 'student' => $user->getFullname(), 'service' => $service->getName(), 'date_time' => $startDateStr]);
+                            StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$assessor->getEmail() => $assessor->getFullname()]);
+                        } catch (Exception $exc) {}
                     }
                 }
             } else {
