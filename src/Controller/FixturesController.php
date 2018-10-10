@@ -24,13 +24,14 @@ class FixturesController extends Controller {
     /**
      * @Route("/fixtures", name="fixtures")
      */
-    public function applyDataFixtures(Request $request) {
+    public function fixtures(Request $request) {
         $entityManager = $this->getDoctrine()->getManager();
         $originDir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data';
         $res = '<i>Loaded DSA Forms:</i> <b>' . $this->loadDSAForms($entityManager, "$originDir/dsa_forms_json") . '</b><br />' .
                 '<i>Users added:</i> <b>' . $this->loadUsers($entityManager) . '</b><br />' .
                 '<i>Universities managed by DO:</i> <b>' . $this->loadUniversitiesForms($entityManager) . '</b><br />' .
-                '<i>New Assessment Centers:</i> <b>' . $this->loadAssessmentCenters($entityManager) . '</b><br />'
+                '<i>New Assessment Centers:</i> <b>' . $this->loadACs($entityManager) . '</b><br />' .
+                '<i>New Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />'
         ;
         $entityManager->flush();
         return new Response($res);
@@ -53,74 +54,83 @@ class FixturesController extends Controller {
 
     private function loadUsers(ObjectManager $entityManager) {
         $country = $entityManager->getRepository(Country::class)->find(182);
-        $university = $entityManager->getRepository(University::class)->findOneBy(['country' => $country]);
+        $universities = $entityManager->getRepository(University::class)->findBy(['country' => $country]);
         $res = '';
         $pass = sha1('a');
-        $users = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('do')) = 1");
-        if (!$users) {
+        $usersNeeded = 3;
+        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('do')) = 1")[0]['count'];
+        $res .= ($usersNeeded - $usersCount) . ' DOs';
+        while ($usersCount < $usersNeeded) {
+            $usersCount++;
             $user = new User();
             $user->setCreatedAt(time());
-            $user->setEmail('do@nexus.uk');
-            $user->setName('Jane');
+            $user->setEmail("do$usersCount@nexus.uk");
+            $user->setName("DO $usersCount");
             $user->setLastname('Doe');
             $user->setPassword($pass);
             $user->setRoles(["do"]);
             $user->setStatus(1);
-            $user->setUniversity($university);
+            $user->setUniversity($universities[$usersCount]);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
-            $res = '1 DO';
         }
-        $users = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('student')) = 1");
-        if (!$users) {
+
+        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('student')) = 1")[0]['count'];
+        $res .= ', ' . ($usersNeeded - $usersCount) . ' Students';
+        while ($usersCount < $usersNeeded) {
+            $usersCount++;
             $user = new User();
             $user->setCreatedAt(time());
-            $user->setEmail('student@nexus.uk');
-            $user->setName('John');
-            $user->setLastname('Doe');
+            $user->setEmail("student$usersCount@nexus.uk");
+            $user->setName("Student $usersCount");
+            $user->setLastname('Lennon');
             $user->setPassword($pass);
             $user->setRoles(["student"]);
             $user->setStatus(1);
-            $user->setUniversity($university);
+            $user->setUniversity($universities[$usersCount]);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
-            $res .= ', 1 Student';
         }
-        $users = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('ac')) = 1");
-        if (!$users) {
+
+        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('ac')) = 1")[0]['count'];
+        $res .= ', ' . ($usersNeeded - $usersCount) . ' AC Managers';
+        while ($usersCount < $usersNeeded) {
+            $usersCount++;
             $user = new User();
             $user->setCreatedAt(time());
-            $user->setEmail('ac@nexus.uk');
-            $user->setName('Jack');
+            $user->setEmail("ac$usersCount@nexus.uk");
+            $user->setName("AC $usersCount");
             $user->setLastname('Sparrow');
             $user->setPassword($pass);
             $user->setRoles(["ac"]);
             $user->setStatus(1);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
-            $res .= ', 1 AC Manager';
         }
-        $users = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('na')) = 1");
-        if (!$users) {
+
+        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('na')) = 1")[0]['count'];
+        $res .= ', ' . ($usersNeeded - $usersCount) . ' NAs';
+        while ($usersCount < $usersNeeded) {
+            $usersCount++;
             $user = new User();
             $user->setCreatedAt(time());
-            $user->setEmail('na@nexus.uk');
-            $user->setName('Paul');
+            $user->setEmail("na$usersCount@nexus.uk");
+            $user->setName("NA $usersCount");
             $user->setLastname('McCartney');
             $user->setPassword($pass);
             $user->setRoles(["na"]);
             $user->setStatus(1);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
-            $res .= ', 1 Needs Assessor';
         }
-        $users = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('admin')) = 1");
-        if (!$users) {
+
+        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('admin')) = 1")[0]['count'];
+        if ($usersCount < 1) {
             $user = new User();
             $user->setCreatedAt(time());
             $user->setEmail('admin@nexus.uk');
-            $user->setName('John');
-            $user->setLastname('Lennon');
+            $user->setName("John");
+            $user->setLastname('Snow');
             $user->setPassword($pass);
             $user->setRoles(["admin"]);
             $user->setStatus(1);
@@ -128,6 +138,7 @@ class FixturesController extends Controller {
             $entityManager->persist($user);
             $res .= ', 1 App Admin';
         }
+        $entityManager->flush();
         StaticMembers::executeRawSQL($entityManager, "UPDATE `user` set `password` = '$pass'", false);
         $res = trim($res, ",");
         return $res ? $res : '0';
@@ -158,13 +169,63 @@ class FixturesController extends Controller {
         return $count;
     }
 
-    private function loadAssessmentCenters(ObjectManager $entityManager) {
+    private function activateACs(ObjectManager $entityManager) {
+        $entities = $entityManager->getRepository(AssessmentCenterUser::class)->getActiveACs();
+        $acs = $entityManager->getRepository(AssessmentCenter::class)->findAll();
+        $res = 0;
+        if ($acs) {
+            $count = count($entities);
+            $res = 3 - $count;
+            while ($count < 3) {
+                $count++;
+                //Setting the AC manager
+                $user = $entityManager->getRepository(User::class)->findOneBy(['email' => "ac$count@nexus.uk"]);
+                if ($user) {
+                    $ac = $acs[$count];
+                    $acu = new AssessmentCenterUser();
+                    $acu->setAc($ac);
+                    $acu->setIs_admin(1);
+                    $acu->setStatus(1);
+                    $acu->setUser($user);
+                    $entityManager->persist($acu);
+                }
+                $i = 0;
+                while ($i < $count) {
+                    $i++;
+                    //Setting the NAs
+                    $user = $entityManager->getRepository(User::class)->findOneBy(['email' => "na$i@nexus.uk"]);
+                    if ($user) {
+                        $ac = $acs[$count];
+                        $acu = new AssessmentCenterUser();
+                        $acu->setAc($ac);
+                        $acu->setIs_admin(0);
+                        $acu->setStatus(1);
+                        $acu->setUser($user);
+                        $entityManager->persist($acu);
+                    }
+                    //Setting the students
+                    $user = $entityManager->getRepository(User::class)->findOneBy(['email' => "student$i@nexus.uk"]);
+                    if ($user) {
+                        $ac = $acs[$count];
+                        $acu = new AssessmentCenterUser();
+                        $acu->setAc($ac);
+                        $acu->setIs_admin(0);
+                        $acu->setStatus(1);
+                        $acu->setUser($user);
+                        $entityManager->persist($acu);
+                    }
+                }
+            }
+        }
+        return $res;
+    }
+
+    private function loadACs(ObjectManager $entityManager) {
         $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data//assessment-centre/';
         $count = 0;
 
         if ($dh = opendir($dir)) {
             $i = 0;
-            $entityManager = $this->getDoctrine()->getManager();
             while (($file = readdir($dh)) !== false) {
                 if ($file != '..' && $file != '.') {
                     $contents = file_get_contents($dir . $file);
@@ -186,22 +247,6 @@ class FixturesController extends Controller {
                 }
             }
             closedir($dh);
-        }
-        $acs = $entityManager->getRepository(AssessmentCenterUser::class)->getActiveACs();
-        if (!$acs) {
-            $acs = $entityManager->getRepository(AssessmentCenter::class)->findAll();
-            if ($acs) {
-                $user = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where json_contains(roles, json_array('ac')) = 1 limit 1");
-                if ($user) {
-                    $ac = $acs[0];
-                    $acu = new AssessmentCenterUser();
-                    $acu->setAc($ac);
-                    $acu->setIs_admin(1);
-                    $acu->setStatus(1);
-                    $acu->setUser($entityManager->getRepository(User::class)->find($user[0]['id']));
-                    $entityManager->persist($acu);
-                }
-            }
         }
         return $count;
     }

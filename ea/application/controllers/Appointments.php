@@ -60,12 +60,12 @@ class Appointments extends CI_Controller {
             redirect('installation/index');
             return;
         }
-
+        $ac = $this->companies_model->find($this->input->get('ac'));
         $payload = jwt_helper::decode($this->input->get('jwt'));
-        $user = $this->db->get_where('ea_users', ['id' => $payload->user_id])->row_array();
+        $user = $this->db->get_where('ea_users', ['id' => $payload->user_id, 'idAssessmentCenter' => $ac->id])->row_array();
 
         if (!$user) {
-            return;
+            return 'You are not allowed to acess this resource.';
         }
         $this->load->library('session');
         $this->session->set_userdata('user_id', $user['id']);
@@ -80,8 +80,7 @@ class Appointments extends CI_Controller {
         $this->load->model('settings_model');
         $this->load->model('companies_model');
         
-        $ac = $this->companies_model->find($this->input->get('ac'));
-
+        
         try {
             $available_services = $this->services_model->get_available_services($ac);
             $available_providers = $this->providers_model->get_available_providers($ac);

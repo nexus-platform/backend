@@ -38,7 +38,9 @@ CREATE TABLE IF NOT EXISTS `ea_consents` (
 
 CREATE TABLE IF NOT EXISTS `ea_migrations` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `version` INT(11) NOT NULL
+    `version` INT(11) NOT NULL,
+    PRIMARY KEY (`id`)
+    
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -132,7 +134,9 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `state` VARCHAR(128),
     `zip_code` VARCHAR(64),
     `notes` TEXT,
+    `status` INT(11) NOT NULL DEFAULT 1,
     `id_roles` INT(11) NOT NULL,
+    `id_assessment_center` INT(11) NOT NULL,
     PRIMARY KEY (`id`),
     KEY `id_roles` (`id_roles`)
 )
@@ -153,6 +157,7 @@ CREATE TABLE IF NOT EXISTS `ea_user_settings` (
     `sync_past_days` INT(11) DEFAULT '5',
     `sync_future_days` INT(11) DEFAULT '5',
     `calendar_view` VARCHAR(32) DEFAULT 'default',
+    `id_assessment_center` INT(11) NOT NULL,
     PRIMARY KEY (`id_users`)
 )
     ENGINE = InnoDB
@@ -180,9 +185,7 @@ ALTER TABLE `ea_secretaries_providers`
 ALTER TABLE `ea_services`
     ADD CONSTRAINT `services_service_categories` FOREIGN KEY (`id_service_categories`) REFERENCES `ea_service_categories` (`id`)
     ON DELETE SET NULL
-    ON UPDATE CASCADE;
-
-ALTER TABLE `ea_services`
+    ON UPDATE CASCADE,
     ADD CONSTRAINT `services_assessment_center` FOREIGN KEY (`id_assessment_center`) REFERENCES `assessment_center` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
@@ -213,9 +216,15 @@ ALTER TABLE `ea_services_providers`
 ALTER TABLE `ea_users`
     ADD CONSTRAINT `users_roles` FOREIGN KEY (`id_roles`) REFERENCES `ea_roles` (`id`)
     ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `user_assessment_center` FOREIGN KEY (`id_assessment_center`) REFERENCES `assessment_center` (`id`)
+    ON DELETE CASCADE
     ON UPDATE CASCADE;
 
 ALTER TABLE `ea_user_settings`
     ADD CONSTRAINT `user_settings_users` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `user_sett_assessment_center` FOREIGN KEY (`id_assessment_center`) REFERENCES `assessment_center` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;

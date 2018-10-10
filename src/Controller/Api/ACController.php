@@ -7,7 +7,9 @@ use App\Entity\AssessmentCenter;
 use App\Entity\AssessmentCenterService;
 use App\Entity\AssessmentCenterServiceAssessor;
 use App\Entity\AssessmentCenterUser;
-use App\Entity\EaAppointment;
+use App\Entity\EA\EaUserSettings;
+use App\Entity\EA\EaAppointment;
+use App\Entity\EA\EaUsers;
 use App\Entity\User;
 use App\Entity\UserInvitation;
 use App\Utils\StaticMembers;
@@ -160,27 +162,27 @@ class ACController extends MyRestController {
                                 }
 
                                 //Working plan
-                                $workingPlan = [
-                                    'Monday' => [],
-                                    'Tuesday' => [],
-                                    'Wednesday' => [],
-                                    'Thursday' => [],
-                                    'Friday' => [],
-                                    'Saturday' => [],
-                                    'Sunday' => [],
-                                ];
-                                $otherWPs = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->getWorkingPlansForOtherACs($userAux, $ac);
-                                foreach ($otherWPs as $otherWP) {
-                                    foreach ($workingPlan as $day => $plan) {
-                                        if (isset($otherWP[$day]) && isset($workingPlan[$day])) {
-                                            unset($workingPlan[$day]);
-                                        }
-                                    }
-                                }
-                                /*$currentWP = $acUser->getWorking_plan();
-                                foreach ($currentWP as $key => $value) {
-                                    $currentWP = array();
-                                }*/
+                                /* $workingPlan = [
+                                  'Monday' => [],
+                                  'Tuesday' => [],
+                                  'Wednesday' => [],
+                                  'Thursday' => [],
+                                  'Friday' => [],
+                                  'Saturday' => [],
+                                  'Sunday' => [],
+                                  ];
+                                  $otherWPs = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->getWorkingPlansForOtherACs($userAux, $ac);
+                                  foreach ($otherWPs as $otherWP) {
+                                  foreach ($workingPlan as $day => $plan) {
+                                  if (isset($otherWP[$day]) && isset($workingPlan[$day])) {
+                                  unset($workingPlan[$day]);
+                                  }
+                                  }
+                                  }
+                                  $currentWP = $acUser->getWorking_plan();
+                                  foreach ($currentWP as $key => $value) {
+                                  $currentWP = array();
+                                  } */
 
                                 $needsAssessors[] = [
                                     'id' => $userAux->getId(),
@@ -266,6 +268,36 @@ class ACController extends MyRestController {
         }
     }
 
+    private function syncEaUser(AssessmentCenterUser $acUser, $mode = 1) {
+        $user = $acUser->getUser();
+        $ac = $acUser->getAc();
+        $eaUser = $this->getEntityManager()->getRepository(EaUsers::class)->findOneBy(['id' => $user->getId(), 'idAssessmentCenter' => $ac->getId()]);
+        if ($mode === 0) {
+            $this->getEntityManager()->remove($eaUser);
+        } else {
+            if (!$eaUser) {
+                $eaUser = new EaUsers();
+                $eaUser->setId($user->getId());
+                $eaUser->setIdAssessmentCenter($ac);
+                $this->getEntityManager()->persist($eaUser);
+                $this->getEntityManager()->flush();
+            }
+            $eaUser->setAddress($user->getAddress());
+            $eaUser->setFirstName($user->getName());
+            $eaUser->setLastName($user->getLastname());
+            $eaUser->setEmail($user->getEmail());
+            $eaUser->setStatus($acUser->getStatus());
+            $this->getEntityManager()->persist($eaUser);
+            $eaUserSettings = $this->getEntityManager()->getRepository(EaUserSettings::class)->findOneBy(['id' => $user->getId(), 'idAssessmentCenter' => $ac]);
+            if (!$eaUserSettings) {
+                $eaUserSettings = new EaUserSettings();
+                $eaUserSettings->setIdUsers($eaUser);
+                $eaUserSettings->setIdAssessmentCenter($ac);
+            }
+            $this->getEntityManager()->persist($eaUserSettings);
+        }
+    }
+
     /**
      * Registers with AC
      * @FOSRest\Post(path="/api/register-with-ac")
@@ -273,7 +305,6 @@ class ACController extends MyRestController {
     public function registerWithAC(Request $request) {
         try {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            $pp = $request->headers->all();
             $payload = $this->decodeJWT($jwt);
             $acParams = json_decode($request->get('ac'));
             $data = null;
@@ -333,6 +364,8 @@ class ACController extends MyRestController {
                         $acUser->setStatus(1);
                         $acUser->setUser($user);
                         $this->getEntityManager()->persist($acUser);
+                        $this->getEntityManager()->flush();
+                        $this->syncEaUser($acUser);
                         $preRegisterInfo = $user->getPre_register();
                         $dsaLetter = $request->files->get('dsa_letter');
                         if ($dsaLetter) {

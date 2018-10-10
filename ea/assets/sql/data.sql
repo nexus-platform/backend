@@ -34,4 +34,4 @@ INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'privacy_policy_content' as `name`, 'Privacy policy content.' as `value` from `assessment_center_user` where `is_admin` = 1;
 
-INSERT INTO `ea_migrations` VALUES ('12');
+INSERT INTO `ea_migrations` (`version`) VALUES ('12');

@@ -20,19 +20,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AuthController extends MyRestController {
 
     /**
-     * Decodes a JWT.
-     * @FOSRest\Get(path="/api/decode")
-     */
-    public function decode(Request $request) {
-        try {
-            $payload = JWT::decode($request->get('jwt'), $this->getKey(), ['HS256']);
-            return new JsonResponse($payload);
-        } catch (Exception $exc) {
-            return new JsonResponse($exc->getMessage());
-        }
-    }
-
-    /**
      * Logs an user in.
      * @FOSRest\Post(path="/api/login")
      */
@@ -49,7 +36,7 @@ class AuthController extends MyRestController {
                 'iss' => $homeUrl,
                 'aud' => $homeUrl,
                 'iat' => $now,
-                'exp' => $now + 604800, //a week
+                'exp' => $now + 43200, //12 hours
                 'user_id' => $user->getId(),
                 'ip' => $request->getClientIp(),
             ];

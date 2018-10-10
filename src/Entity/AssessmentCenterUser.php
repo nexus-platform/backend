@@ -56,7 +56,7 @@ class AssessmentCenterUser {
         return $this->ac;
     }
 
-    function getUser() {
+    function getUser() : User {
         return $this->user;
     }
 
