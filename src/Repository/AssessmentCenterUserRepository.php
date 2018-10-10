@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\AssessmentCenterUser;
 use App\Utils\StaticMembers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class AssessmentCenterUserRepository extends ServiceEntityRepository {
@@ -36,6 +37,13 @@ class AssessmentCenterUserRepository extends ServiceEntityRepository {
                         ->getQuery()
                         ->getResult();
         $res = $data[0]->getUser();
+        return $res;
+    }
+    
+    public function getWorkingPlansForOtherACs($user, $ac) {
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->eq('user', $user))->andWhere(Criteria::expr()->neq('ac', $ac));
+        $res = $this->matching($criteria)->toArray();
         return $res;
     }
 

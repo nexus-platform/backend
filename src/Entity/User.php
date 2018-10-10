@@ -430,5 +430,17 @@ class User implements UserInterface, Serializable {
         $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $this]);
         return $acUser->getStatus();
     }
+    
+    public function getEaRole() {
+        $res = 4;
+        if ($this->isStudent()) {
+            $res = 3;
+        } elseif ($this->isNA()) {
+            $res = 2;
+        } elseif ($this->isAC()) {
+            $res = 1;
+        }
+        return $res;
+    }
 
 }

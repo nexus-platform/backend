@@ -4,6 +4,8 @@ namespace App\Utils;
 
 use App\Entity\AppSettings;
 use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
+use Firebase\JWT\JWT;
 use PHPHtmlParser\Dom;
 use PHPHtmlParser\StaticDom;
 use Swift_Mailer;
@@ -13,12 +15,22 @@ use function mb_strlen;
 
 class StaticMembers {
 
+    private $key = "vUrQrZL50m7qL3uosytRJbeW8fzSwUqd";
     private static $globalConfig = [
         'date_format' => 'Y-m-d',
         'date_time_format' => 'Y-m-d H:i:s',
         'secure_key' => 'G7IwX4LkVxH_E1I9jfoXxja2wUOe-xFK',
         'characters' => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     ];
+
+    public static function decodeJWT($jwt) {
+        try {
+            $payload = JWT::decode($jwt, $this->key, ['HS256']);
+            return ($payload->exp > time()) ? $payload : null;
+        } catch (Exception $exc) {
+            return null;
+        }
+    }
 
     public static function encryptString($string_to_encrypt) {
         return openssl_encrypt($string_to_encrypt, "AES-128-ECB", self::$globalConfig['secure_key']);
@@ -27,7 +39,7 @@ class StaticMembers {
     public static function decryptString($encrypted_string) {
         return openssl_decrypt($encrypted_string, "AES-128-ECB", self::$globalConfig['secure_key']);
     }
-    
+
     public static function contains($haystack, $needle) {
         foreach ($haystack as $item) {
             if ($item === $needle) {

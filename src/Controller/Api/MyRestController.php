@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\DsaFormFilled;
+use App\Entity\EaUsers;
 use App\Entity\Notification;
 use App\Entity\User;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -19,8 +20,12 @@ class MyRestController extends FOSRestController {
 
     private $key = "vUrQrZL50m7qL3uosytRJbeW8fzSwUqd";
     private $entityManager = null;
-    
-    public function getEntityManager() : ObjectManager {
+
+    function getKey() {
+        return $this->key;
+    }
+
+    public function getEntityManager(): ObjectManager {
         if (!$this->entityManager) {
             $this->entityManager = $this->getDoctrine()->getManager();
         }
@@ -40,7 +45,7 @@ class MyRestController extends FOSRestController {
             return ['code' => 'error', 'msg' => 'Invalid credentials.'];
         }
     }
-    
+
     /* protected function addMonthToDate($date_str, $months) {
       $date = new DateTime($date_str);
       // We extract the day of the month as $start_day
@@ -196,6 +201,21 @@ class MyRestController extends FOSRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    public function updateEaUser(User $user, $action) {
+        switch ($action) {
+            case 'create':
+                $eaUser = new EaUsers();
+                $eaUser->setAddress($user->getAddress());
+                $eaUser->setEmail($user->getEmail());
+                $eaUser->setFirstName($user->getNname());
+                $eaUser->setLastName($user->getLastname());
+                $eaUser->setIdRoles($this->getEntityManager()->find('App\Entity\EaRoles', $user->getEaRole()));
+                $eaUser->setZipCode($user->getPostcode());
+                $this->getEntityManager()->persist($eaUser);
+                break;
         }
     }
 

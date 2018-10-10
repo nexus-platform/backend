@@ -37,13 +37,13 @@ class ACController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
                 $userACs = $user->getAssessmentCentres();
-                $entities = $entityManager->getRepository(AssessmentCenterUser::class)->getActiveACs();
+                $entities = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->getActiveACs();
                 $data = [];
                 foreach ($entities as $entity) {
-                    $admin = $entityManager->getRepository(AssessmentCenterUser::class)->getACAdmin($entity);
+                    $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->getACAdmin($entity);
                     $data[] = [
                         'id' => $entity->getId(),
                         'name' => $entity->getName(),
@@ -78,16 +78,16 @@ class ACController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
             $slug = $request->get('slug');
             $invitationToken = $request->get('invitation_token');
-            $entityManager = $this->getDoctrine()->getManager();
-            $user = $payload ? $entityManager->getRepository(User::class)->find($payload->user_id) : null;
-            $ac = $entityManager->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
+
+            $user = $payload ? $this->getEntityManager()->getRepository(User::class)->find($payload->user_id) : null;
+            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
             $data = null;
             $code = '';
             $msg = '';
             $userRole = '';
 
             if ($invitationToken) {
-                $invitation = $entityManager->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
+                $invitation = $this->getEntityManager()->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
                 if ($ac && $invitation && $ac === $invitation->getAc()) {
                     $userRole = $invitation->getRole();
                 } else {
@@ -95,7 +95,7 @@ class ACController extends MyRestController {
                 }
             }
             if ($ac && $code === '') {
-                $admin = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
+                $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
                 $registered = false;
                 $userData = [
                     'name' => '',
@@ -144,7 +144,7 @@ class ACController extends MyRestController {
                                     'status' => $acUser->getStatus(),
                                 ];
                             } else if ($userAux->isNA()) {
-                                $naServicesAux = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findNAServicesByAC($ac, $userAux);
+                                $naServicesAux = $this->getEntityManager()->getRepository(AssessmentCenterServiceAssessor::class)->findNAServicesByAC($ac, $userAux);
                                 $naServices = [];
                                 foreach ($naServicesAux as $naService) {
                                     $serviceAux = $naService->getService();
@@ -158,6 +158,30 @@ class ACController extends MyRestController {
                                         'currency' => $serviceAux->getCurrency(),
                                     ];
                                 }
+
+                                //Working plan
+                                $workingPlan = [
+                                    'Monday' => [],
+                                    'Tuesday' => [],
+                                    'Wednesday' => [],
+                                    'Thursday' => [],
+                                    'Friday' => [],
+                                    'Saturday' => [],
+                                    'Sunday' => [],
+                                ];
+                                $otherWPs = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->getWorkingPlansForOtherACs($userAux, $ac);
+                                foreach ($otherWPs as $otherWP) {
+                                    foreach ($workingPlan as $day => $plan) {
+                                        if (isset($otherWP[$day]) && isset($workingPlan[$day])) {
+                                            unset($workingPlan[$day]);
+                                        }
+                                    }
+                                }
+                                /*$currentWP = $acUser->getWorking_plan();
+                                foreach ($currentWP as $key => $value) {
+                                    $currentWP = array();
+                                }*/
+
                                 $needsAssessors[] = [
                                     'id' => $userAux->getId(),
                                     'name' => $userAux->getFullname(),
@@ -254,11 +278,11 @@ class ACController extends MyRestController {
             $acParams = json_decode($request->get('ac'));
             $data = null;
             $userOk = false;
-            $entityManager = $this->getDoctrine()->getManager();
+
             $invitation = null;
 
             if ($payload) {
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
                 $userOk = !is_null($payload);
             } else {
                 $userParams = $acParams->user_data;
@@ -271,7 +295,7 @@ class ACController extends MyRestController {
                     'password' => $userParams->password,
                     'activation_url' => $request->get('url'),
                 ];
-                $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $params['email']]);
+                $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
 
                 if ($user) {
                     $code = 'warning';
@@ -279,7 +303,7 @@ class ACController extends MyRestController {
                     $userOk = false;
                 } else {
                     $invitationToken = $request->get('invitation_token');
-                    $invitation = $entityManager->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
+                    $invitation = $this->getEntityManager()->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
                     $role = ($invitation) ? $invitation->getRole() : 'student';
                     $user = new User();
                     $user->setAddress($params['address']);
@@ -292,36 +316,36 @@ class ACController extends MyRestController {
                     $user->setRoles([$role]);
                     $user->setStatus(1);
                     $user->setToken(sha1(StaticMembers::random_str()));
-                    $entityManager->persist($user);
-                    $entityManager->flush();
+                    $this->getEntityManager()->persist($user);
+                    $this->getEntityManager()->flush();
                     $userOk = true;
                 }
             }
 
             if ($userOk) {
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acParams->id);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acParams->id);
                 if ($ac) {
-                    $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $user]);
+                    $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $user]);
                     if (!$acUser) {
                         $acUser = new AssessmentCenterUser();
                         $acUser->setAc($ac);
                         $acUser->setIs_admin(0);
                         $acUser->setStatus(1);
                         $acUser->setUser($user);
-                        $entityManager->persist($acUser);
+                        $this->getEntityManager()->persist($acUser);
                         $preRegisterInfo = $user->getPre_register();
                         $dsaLetter = $request->files->get('dsa_letter');
                         if ($dsaLetter) {
                             $dsaLetterFilename = $user->getId() . '.' . $dsaLetter->getClientOriginalExtension();
                             $preRegisterInfo['dsa_letter'] = $dsaLetterFilename;
                             $user->setPre_register($preRegisterInfo);
-                            $entityManager->persist($user);
+                            $this->getEntityManager()->persist($user);
                             $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
                         }
                         if ($invitation) {
-                            $entityManager->remove($invitation);
+                            $this->getEntityManager()->remove($invitation);
                         }
-                        $entityManager->flush();
+                        $this->getEntityManager()->flush();
                         $code = 'success';
                         $msg = 'You have registered with this Centre.' . ($payload ? '' : ' Redirecting to login page...');
                         $data = true;
@@ -342,22 +366,22 @@ class ACController extends MyRestController {
         }
     }
 
-    private function removeUserFromAC(ObjectManager $entityManager, $acUser) {
+    private function removeUserFromAC($acUser) {
         $user = $acUser->getUser();
         $ac = $acUser->getAc();
-        $arrayAux = $entityManager->getRepository(EaAppointment::class)->getAppointmentsByUser($user);
+        $arrayAux = $this->getEntityManager()->getRepository(EaAppointment::class)->getAppointmentsByUser($user);
         foreach ($arrayAux as $item) {
             if ($item->getService()->getAc() === $ac) {
-                $entityManager->remove($item);
+                $this->getEntityManager()->remove($item);
             }
         }
-        $arrayAux = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['assessor' => $user]);
+        $arrayAux = $this->getEntityManager()->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['assessor' => $user]);
         foreach ($arrayAux as $item) {
             if ($item->getService()->getAc() === $ac) {
-                $entityManager->remove($item);
+                $this->getEntityManager()->remove($item);
             }
         }
-        $entityManager->remove($acUser);
+        $this->getEntityManager()->remove($acUser);
         $preRegisterInfo = $user->getPre_register();
         if (isset($preRegisterInfo['dsa_letter'])) {
             $dsaLetterFilename = $preRegisterInfo['dsa_letter'];
@@ -367,9 +391,9 @@ class ACController extends MyRestController {
             }
             unset($preRegisterInfo['dsa_letter']);
             $user->setPre_register($preRegisterInfo);
-            $entityManager->persist($user);
+            $this->getEntityManager()->persist($user);
         }
-        $entityManager->flush();
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -385,12 +409,12 @@ class ACController extends MyRestController {
 
             if ($payload) {
                 $acId = $request->get('ac_id');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
-                $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $user]);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
+                $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $user]);
                 if ($acUser) {
-                    $this->removeUserFromAC($entityManager, $acUser);
+                    $this->removeUserFromAC($acUser);
                     $code = 'success';
                     $msg = 'You have cancelled your registration with this Centre.';
                 } else {
@@ -423,13 +447,13 @@ class ACController extends MyRestController {
             if ($payload) {
                 $acId = $request->get('ac_id');
                 $userId = $request->get('user_id');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $member = $entityManager->getRepository(User::class)->find($userId);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
-                $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $member]);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $member = $this->getEntityManager()->getRepository(User::class)->find($userId);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
+                $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $member]);
                 if ($acUser && $ac->getAdmin() === $user) {
-                    $this->removeUserFromAC($entityManager, $acUser);
+                    $this->removeUserFromAC($acUser);
                     $code = 'success';
                     $msg = $member->getFullname() . ' is no longer registered in this Centre.';
                 } else {
@@ -463,11 +487,11 @@ class ACController extends MyRestController {
                 $invitation = $request->get('invitation');
                 $acId = $request->get('ac_id');
                 $url = $request->get('url');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
-                $na = $entityManager->getRepository(User::class)->findOneBy(['email' => $invitation['email']]);
-                $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $na]);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
+                $na = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $invitation['email']]);
+                $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $na]);
                 if (!$acUser && $ac->getAdmin() === $user) {
                     $subject = 'Join my Assessment Centre on Nexus!';
                     $receiverName = $invitation['name'];
@@ -478,7 +502,7 @@ class ACController extends MyRestController {
                     $token = StaticMembers::random_str(64);
                     $body = $this->renderView('email/invite_user.html.twig', ['name' => $receiverName, 'sender' => $senderName, 'ac_name' => $acName, 'message' => $senderMsg, 'url' => $url . $token]);
                     $recipients = [$receiverEmail => $receiverName];
-                    if (StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
+                    if (StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
                         $userInv = new UserInvitation();
                         $userInv->setEmail($receiverEmail);
                         $userInv->setName($receiverName);
@@ -487,8 +511,8 @@ class ACController extends MyRestController {
                         $userInv->setUser($user);
                         $userInv->setRole('na');
                         $userInv->setAc($ac);
-                        $entityManager->persist($userInv);
-                        $entityManager->flush();
+                        $this->getEntityManager()->persist($userInv);
+                        $this->getEntityManager()->flush();
                         $code = 'success';
                         $msg = "Your invitation has been sent.";
                     } else {
@@ -526,14 +550,14 @@ class ACController extends MyRestController {
 
             if ($payload) {
                 $acId = $request->get('ac_id');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
 
                 if ($ac->getAdmin() === $user) {
                     $service = $request->get('item');
                     $action = $request->get('action');
-                    $acService = $entityManager->getRepository(AssessmentCenterService::class)->find($service['id']);
+                    $acService = $this->getEntityManager()->getRepository(AssessmentCenterService::class)->find($service['id']);
 
                     switch ($action) {
                         case 'Add service':
@@ -546,7 +570,7 @@ class ACController extends MyRestController {
                                 $acService->setDuration($service['duration']);
                                 $acService->setName($service['name']);
                                 $acService->setPrice($service['price']);
-                                $entityManager->persist($acService);
+                                $this->getEntityManager()->persist($acService);
                                 $code = 'success';
                                 $msg = 'The service has been added.';
                             } else {
@@ -561,7 +585,7 @@ class ACController extends MyRestController {
                                 $acService->setDuration($service['duration']);
                                 $acService->setName($service['name']);
                                 $acService->setPrice($service['price']);
-                                $entityManager->persist($acService);
+                                $this->getEntityManager()->persist($acService);
                                 $code = 'success';
                                 $msg = 'The specified service has been updated.';
                             } else {
@@ -570,15 +594,15 @@ class ACController extends MyRestController {
                             break;
                         case 'Delete service':
                             if ($acService) {
-                                $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $acService]);
+                                $acServiceAssessors = $this->getEntityManager()->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $acService]);
                                 foreach ($acServiceAssessors as $acServiceAssessor) {
-                                    $entityManager->remove($acServiceAssessor);
+                                    $this->getEntityManager()->remove($acServiceAssessor);
                                 }
-                                $appointments = $entityManager->getRepository(EaAppointment::class)->findBy(['service' => $acService]);
+                                $appointments = $this->getEntityManager()->getRepository(EaAppointment::class)->findBy(['service' => $acService]);
                                 foreach ($appointments as $appointment) {
-                                    $entityManager->remove($appointment);
+                                    $this->getEntityManager()->remove($appointment);
                                 }
-                                $entityManager->remove($acService);
+                                $this->getEntityManager()->remove($acService);
                                 $code = 'success';
                                 $msg = 'The specified service has been deleted.';
                             } else {
@@ -589,7 +613,7 @@ class ACController extends MyRestController {
                             break;
                     }
                     if ($code === 'success') {
-                        $entityManager->flush();
+                        $this->getEntityManager()->flush();
                         $data = $acService->getId();
                     }
                 } else {
@@ -619,24 +643,24 @@ class ACController extends MyRestController {
             if ($payload) {
                 $acId = $request->get('ac_id');
                 $userId = $request->get('user_id');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $assessor = $entityManager->getRepository(User::class)->find($userId);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $assessor = $this->getEntityManager()->getRepository(User::class)->find($userId);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
 
                 if ($ac->getAdmin() === $user && $assessor->hasRegisteredWith($ac)) {
-                    StaticMembers::executeRawSQL($entityManager, 'delete from `assessment_center_service_assessor` where `assessor_id` = ' . $assessor->getId() . ' and `ac_service_id` in (select `id` from `assessment_center_service` where `ac_id` = ' . $ac->getId() . ')', false);
+                    StaticMembers::executeRawSQL($this->getEntityManager(), 'delete from `assessment_center_service_assessor` where `assessor_id` = ' . $assessor->getId() . ' and `ac_service_id` in (select `id` from `assessment_center_service` where `ac_id` = ' . $ac->getId() . ')', false);
                     $services = $request->get('services');
                     foreach ($services as $service) {
-                        $serviceEntity = $entityManager->getRepository(AssessmentCenterService::class)->find($service['id']);
+                        $serviceEntity = $this->getEntityManager()->getRepository(AssessmentCenterService::class)->find($service['id']);
                         if ($serviceEntity && $serviceEntity->getAc() === $ac) {
                             $naService = new AssessmentCenterServiceAssessor();
                             $naService->setAssessor($assessor);
                             $naService->setService($serviceEntity);
-                            $entityManager->persist($naService);
+                            $this->getEntityManager()->persist($naService);
                         }
                     }
-                    $entityManager->flush();
+                    $this->getEntityManager()->flush();
                     $code = 'success';
                     $msg = 'Services updated.';
                 } else {
@@ -666,27 +690,27 @@ class ACController extends MyRestController {
             if ($payload) {
                 $acId = $request->get('ac_id');
                 $settings = $request->get('settings');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
 
                 if ($ac && $ac->getAdmin() === $user) {
                     $uniqueName = false;
-                    if ($entityManager->getRepository(AssessmentCenter::class)->isUniqueField($ac->getId(), 'name', $settings['name'])) {
+                    if ($this->getEntityManager()->getRepository(AssessmentCenter::class)->isUniqueField($ac->getId(), 'name', $settings['name'])) {
                         $ac->setName($settings['name']);
                         $uniqueName = true;
                     }
                     $uniqueSlug = false;
 
-                    if ($entityManager->getRepository(AssessmentCenter::class)->isUniqueField($ac->getId(), 'url', $settings['token'])) {
+                    if ($this->getEntityManager()->getRepository(AssessmentCenter::class)->isUniqueField($ac->getId(), 'url', $settings['token'])) {
                         $ac->setUrl($settings['token']);
                         $uniqueSlug = true;
                     }
                     $ac->setTelephone($settings['telephone']);
                     $ac->setAddress($settings['address']);
                     $ac->setAvailability_type($settings['availability_type']);
-                    $entityManager->persist($ac);
-                    $entityManager->flush();
+                    $this->getEntityManager()->persist($ac);
+                    $this->getEntityManager()->flush();
 
                     if (!$uniqueName) {
                         $code = 'warning';
@@ -724,9 +748,9 @@ class ACController extends MyRestController {
 
             if ($payload) {
                 $acId = $request->get('ac_id');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
 
                 if ($user && $ac && $user->isStudent() && $user->hasRegisteredWith($ac)) {
                     $currTimestamp = time();
@@ -777,9 +801,9 @@ class ACController extends MyRestController {
             if ($payload) {
                 $serviceId = $request->get('service_id');
 
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $service = $entityManager->getRepository(AssessmentCenterService::class)->find($serviceId);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $service = $this->getEntityManager()->getRepository(AssessmentCenterService::class)->find($serviceId);
                 $ac = $service->getAc();
 
                 if ($service && $user && $user->isStudent() && $user->hasRegisteredWith($ac)) {
@@ -788,13 +812,13 @@ class ACController extends MyRestController {
                     $assessors = [];
 
                     if ($assessorId && $acAvailabilityType === 'Individual') {
-                        $assessor = $entityManager->getRepository(User::class)->find($assessorId);
+                        $assessor = $this->getEntityManager()->getRepository(User::class)->find($assessorId);
                         if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
                             $code = 'success';
                         }
                         $assessors[] = $assessor;
                     } else if ($acAvailabilityType === 'Combined') {
-                        $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
+                        $acServiceAssessors = $this->getEntityManager()->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
                         foreach ($acServiceAssessors as $acServiceAssessor) {
                             $assessor = $acServiceAssessor->getAssessor();
                             if ($assessor->isNA() && $assessor->hasRegisteredWith($ac)) {
@@ -811,7 +835,7 @@ class ACController extends MyRestController {
 
                         foreach ($assessors as $assessor) {
                             $hours = [];
-                            $scheduledAppointments = $entityManager->getRepository(EaAppointment::class)->getAppointmentsByAssessorAndDate($assessor, $date);
+                            $scheduledAppointments = $this->getEntityManager()->getRepository(EaAppointment::class)->getAppointmentsByAssessorAndDate($assessor, $date);
                             $fullDate = new DateTime("$date 09:00");
 
                             do {
@@ -870,9 +894,9 @@ class ACController extends MyRestController {
 
             if ($payload) {
                 $params = $request->get('appointment');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $service = $entityManager->getRepository(AssessmentCenterService::class)->find($params['service']['id']);
+
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $service = $this->getEntityManager()->getRepository(AssessmentCenterService::class)->find($params['service']['id']);
                 $ac = $service->getAc();
 
                 if ($service && $user && $user->isStudent() && $user->hasRegisteredWith($ac)) {
@@ -882,20 +906,20 @@ class ACController extends MyRestController {
                     $startDateTime = new DateTime($startDateStr);
 
                     if (isset($params['assessor']['id']) && $acAvailabilityType === 'Individual') {
-                        $assessor = $entityManager->getRepository(User::class)->find($params['assessor']['id']);
-                        $appointmentOnDate = $entityManager->getRepository(EaAppointment::class)->isAssessorAvailableByDate($assessor, $startDateTime);
-                        if ($assessor->isEnabledInAC($entityManager, $ac) && count($appointmentOnDate) === 0) {
+                        $assessor = $this->getEntityManager()->getRepository(User::class)->find($params['assessor']['id']);
+                        $appointmentOnDate = $this->getEntityManager()->getRepository(EaAppointment::class)->isAssessorAvailableByDate($assessor, $startDateTime);
+                        if ($assessor->isEnabledInAC($this->getEntityManager(), $ac) && count($appointmentOnDate) === 0) {
                             $code = 'success';
                         } else {
                             $assessor = null;
                             $msg = 'The selected provider is not available.';
                         }
                     } else if ($acAvailabilityType === 'Combined') {
-                        $acServiceAssessors = $entityManager->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
+                        $acServiceAssessors = $this->getEntityManager()->getRepository(AssessmentCenterServiceAssessor::class)->findBy(['service' => $service]);
                         foreach ($acServiceAssessors as $acServiceAssessor) {
                             $assessor = $acServiceAssessor->getAssessor();
-                            if ($assessor->isNA() && $assessor->hasRegisteredWith($ac) && $assessor->isEnabledInAC($entityManager, $ac)) {
-                                $appointmentOnDate = $entityManager->getRepository(EaAppointment::class)->isAssessorAvailableByDate($assessor, $startDateTime);
+                            if ($assessor->isNA() && $assessor->hasRegisteredWith($ac) && $assessor->isEnabledInAC($this->getEntityManager(), $ac)) {
+                                $appointmentOnDate = $this->getEntityManager()->getRepository(EaAppointment::class)->isAssessorAvailableByDate($assessor, $startDateTime);
                                 if (count($appointmentOnDate) === 0) {
                                     $code = 'success';
                                     break;
@@ -920,21 +944,23 @@ class ACController extends MyRestController {
                         $newAppointment->setService($service);
                         $newAppointment->setStart_datetime($startDateTime);
                         $newAppointment->setStudent($user);
-                        $entityManager->persist($newAppointment);
+                        $this->getEntityManager()->persist($newAppointment);
                         $msg = 'Your appointment has been scheduled.';
 
                         $headline = date('Y/m/d H:i:s', time());
                         $this->createNotification('New appointment', 'A new appointment has been scheduled by ' . $user->getFullname() . ' from ' . $ac->getName(), $headline, $assessor, 1, 1);
                         $this->createNotification('New appointment', 'You have scheduled a new appointment with ' . $assessor->getFullname(), $headline, $user, 1, 2);
-                        $entityManager->flush();
+                        $this->getEntityManager()->flush();
 
                         $url = $request->get('home_url');
                         try {
                             $body = $this->renderView('email/new_appointment_student.html.twig', ['name' => $user->getFullname(), 'home_url' => $url, 'service' => $service->getName(), 'provider' => $assessor->getFullname(), 'date_time' => $startDateStr]);
-                            StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$user->getEmail() => $user->getFullname()]);
+                            StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$user->getEmail() => $user->getFullname()]);
                             $body = $this->renderView('email/new_appointment_provider.html.twig', ['name' => $assessor->getFullname(), 'home_url' => $url, 'student' => $user->getFullname(), 'service' => $service->getName(), 'date_time' => $startDateStr]);
-                            StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$assessor->getEmail() => $assessor->getFullname()]);
-                        } catch (Exception $exc) {}
+                            StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), 'New appointment created on Nexus', $body, [$assessor->getEmail() => $assessor->getFullname()]);
+                        } catch (Exception $exc) {
+                            
+                        }
                     }
                 }
             } else {
@@ -948,52 +974,77 @@ class ACController extends MyRestController {
     }
 
     /**
-     * Create a new appointment
+     * Unavailability period
      * @FOSRest\Post(path="/api/set-unavailable-period")
      */
     public function setUnavailablePeriod(Request $request) {
         $code = 'error';
         $msg = 'Invalid user.';
         $data = null;
-
         try {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
-
             if ($payload) {
-                $params = json_decode($request->get('period'), true);
+                $params = $request->get('period');
                 $acId = $request->get('ac_id');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
-
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
                 if ($user && $user->isNA() && $user->hasRegisteredWith($ac)) {
                     $startDateTime = new DateTime($params['start_date'] . ' ' . $params['start_hour']);
                     $endDateTime = new DateTime($params['end_date'] . ' ' . $params['end_hour']);
-                    $newAppointment = new EaAppointment();
-                    $newAppointment->setBook_datetime(new DateTime());
-                    $newAppointment->setEnd_datetime($endDateTime);
-                    $newAppointment->setHash(StaticMembers::random_str(32));
-                    $newAppointment->setIs_unavailable(true);
-                    $newAppointment->setProvider($user);
-                    $newAppointment->setStart_datetime($startDateTime);
-                    $entityManager->persist($newAppointment);
+                    $repository = $this->getEntityManager()->getRepository(EaAppointment::class);
+                    $existingAppointment = false;
+
+                    $extendByLower = $repository->extendUnavailabilityByLowerLimit($user, $startDateTime, $endDateTime);
+                    if (count($extendByLower) > 0) {
+                        $newAppointment = $repository->find($extendByLower[0]['id']);
+                        $newAppointment->setStart_datetime($startDateTime);
+                        $newAppointment->setBook_datetime(new DateTime());
+                        $this->getEntityManager()->persist($newAppointment);
+                        $this->getEntityManager()->flush();
+                        $existingAppointment = true;
+                    }
+
+                    $extendByUpper = $repository->extendUnavailabilityByUpperLimit($user, $startDateTime, $endDateTime);
+                    if (count($extendByUpper) > 0) {
+                        $newAppointment = $repository->find($extendByUpper[0]['id']);
+                        $newAppointment->setEnd_datetime($endDateTime);
+                        $newAppointment->setBook_datetime(new DateTime());
+                        $this->getEntityManager()->persist($newAppointment);
+                        $this->getEntityManager()->flush();
+                        $existingAppointment = true;
+                    }
+
+                    if ($repository->unavailabilityInRange($user, $startDateTime, $endDateTime)) {
+                        $existingAppointment = true;
+                    }
+
+                    if (!$existingAppointment) {
+                        $newAppointment = new EaAppointment();
+                        $newAppointment->setStart_datetime($startDateTime);
+                        $newAppointment->setEnd_datetime($endDateTime);
+                        $newAppointment->setHash(StaticMembers::random_str(32));
+                        $newAppointment->setIs_unavailable(true);
+                        $newAppointment->setProvider($user);
+                        $newAppointment->setBook_datetime(new DateTime());
+                        $this->getEntityManager()->persist($newAppointment);
+                        $headline = date('Y/m/d H:i:s', time());
+                        $this->createNotification('New unavailable period', 'You have set a new unavailable period from ' . $startDateTime->format('YYYY-MM-DD H:i') . ' to ' . $endDateTime->format('YYYY-MM-DD H:i'), $headline, $user, 1, 2);
+                        $this->getEntityManager()->flush();
+                    }
                     $msg = 'Unavailable period saved.';
                     $code = 'success';
 
-                    $headline = date('Y/m/d H:i:s', time());
-                    $this->createNotification('New unavailable period', 'You have set a new unavailable period from ' . $startDateTime->format('YYYY-MM-DD H:i') . ' to ' . $endDateTime->format('YYYY-MM-DD H:i'), $headline, $user, 1, 2);
-                    $entityManager->flush();
 
                     /* $subject = 'Activate your Nexus account';
                       $fullName = $user->getName() . ' ' . $user->getLastname();
                       $body = $this->renderView('email/signup.html.twig', ['name' => $fullName, 'url' => $params['activation_url'] . '/' . $user->getToken()]);
                       $recipients = [$user->getEmail() => $fullName];
 
-                      if (StaticMembers::sendMail($entityManager->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
+                      if (StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
                       $code = 'success';
                       $msg = "Thanks for joining us! An email has been sent to your address with instructions on how to activate your account.";
-                      $entityManager->flush();
+                      $this->getEntityManager()->flush();
                       } */
                 }
             } else {
@@ -1007,32 +1058,29 @@ class ACController extends MyRestController {
     }
 
     /**
-     * set-ac-user-status
+     * Toggle user status
      * @FOSRest\Post(path="/api/set-ac-user-status")
      */
     public function setACUserStatus(Request $request) {
         $code = 'error';
         $msg = 'Invalid parameters.';
         $data = null;
-
         try {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
-
             if ($payload) {
                 $acId = $request->get('ac_id');
                 $memberId = $request->get('user_id');
                 $status = $request->get('status');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $acMember = $entityManager->getRepository(User::class)->find($memberId);
-                $ac = $entityManager->getRepository(AssessmentCenter::class)->find($acId);
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+                $acMember = $this->getEntityManager()->getRepository(User::class)->find($memberId);
+                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acId);
 
                 if ($user && $ac->getAdmin() === $user && $acMember && $acMember->hasRegisteredWith($ac) && !is_null($status)) {
-                    $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $acMember]);
+                    $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $acMember]);
                     $acUser->setStatus($status);
-                    $entityManager->persist($acUser);
-                    $entityManager->flush();
+                    $this->getEntityManager()->persist($acUser);
+                    $this->getEntityManager()->flush();
                     $code = 'success';
                     $msg = 'User status updated.';
                 }
@@ -1041,6 +1089,33 @@ class ACController extends MyRestController {
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * @FOSRest\Post(path="/api/get-calendar-events")
+     */
+    public function getCalendarEvents(Request $request) {
+        try {
+            $userInfo = $this->getRequestUser($request);
+            if ($userInfo['code'] === 'success') {
+                $currentUser = $userInfo['user'];
+                $bookingId = $request->get('id');
+                $bookingEntity = $this->getEntityManager()->getRepository(EaAppointment::class)->find($bookingId);
+                if ($currentUser->isStudent() && $bookingEntity->getStudent() === $currentUser) {
+                    $headline = date('Y/m/d H:i:s', time());
+                    $this->getEntityManager()->remove($bookingEntity);
+                    $this->createNotification('Appointment cancelled', 'The appointment scheduled with you by' . $currentUser->getFullname() . ' from ' . $bookingEntity->getService()->getAc()->getName() . ' between ' . $bookingEntity->getStart_datetime()->format('Y-m-d H:i') . ' and ' . $bookingEntity->getEnd_datetime()->format('Y-m-d H:i') . ' has been cancelled by the student.', $headline, $bookingEntity->getProvider(), 1, 1);
+                    $this->createNotification('Appointment cancelled', 'You have cancelled your appointment with ' . $bookingEntity->getProvider()->getFullname() . ', scheduled between ' . $bookingEntity->getStart_datetime()->format('Y-m-d H:i') . ' and ' . $bookingEntity->getEnd_datetime()->format('Y-m-d H:i'), $headline, $currentUser, 1, 2);
+                    $this->getEntityManager()->flush();
+                    return new JsonResponse(['code' => 'success', 'msg' => 'The appointment has been cancelled.', 'data' => null], Response::HTTP_OK);
+                } else if ($currentUser->isNA() && $bookingEntity->getProvider() === $currentUser) {
+                    
+                }
+            }
+            return new JsonResponse(['code' => $userInfo['code'], 'msg' => $userInfo['msg'], 'data' => null], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
         }
     }
 

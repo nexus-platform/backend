@@ -197,6 +197,7 @@ class FixturesController extends Controller {
                     $acu = new AssessmentCenterUser();
                     $acu->setAc($ac);
                     $acu->setIs_admin(1);
+                    $acu->setStatus(1);
                     $acu->setUser($entityManager->getRepository(User::class)->find($user[0]['id']));
                     $entityManager->persist($acu);
                 }
