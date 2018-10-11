@@ -7,14 +7,13 @@ use App\Entity\AssessmentCenter;
 use App\Entity\AssessmentCenterService;
 use App\Entity\AssessmentCenterServiceAssessor;
 use App\Entity\AssessmentCenterUser;
-use App\Entity\EA\EaUserSettings;
 use App\Entity\EA\EaAppointment;
 use App\Entity\EA\EaUsers;
+use App\Entity\EA\EaUserSettings;
 use App\Entity\User;
 use App\Entity\UserInvitation;
 use App\Utils\StaticMembers;
 use DateTime;
-use Doctrine\Common\Persistence\ObjectManager;
 use Exception;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -108,7 +107,7 @@ class ACController extends MyRestController {
                     'password' => '',
                     'password_confirm' => '',
                 ];
-                $students = [];
+                /*$students = [];
                 $needsAssessors = [];
                 $services = [];
                 $settings = [];
@@ -118,7 +117,7 @@ class ACController extends MyRestController {
                 $settings['name'] = $ac->getName();
                 $settings['token'] = $ac->getUrl();
                 $settings['address'] = $ac->getAddress();
-                $settings['telephone'] = $ac->getTelephone();
+                $settings['telephone'] = $ac->getTelephone();*/
 
                 if ($user) {
                     if (!$user->isDO()) {
@@ -135,7 +134,7 @@ class ACController extends MyRestController {
                             'password_confirm' => 'password',
                         ];
 
-                        $acUsers = $ac->getAssessment_center_users();
+                        /*$acUsers = $ac->getAssessment_center_users();
                         foreach ($acUsers as $acUser) {
                             $userAux = $acUser->getUser();
                             if ($userAux->isStudent()) {
@@ -184,7 +183,7 @@ class ACController extends MyRestController {
                                   $currentWP = array();
                                   } */
 
-                                $needsAssessors[] = [
+                                /*$needsAssessors[] = [
                                     'id' => $userAux->getId(),
                                     'name' => $userAux->getFullname(),
                                     'email' => $userAux->getEmail(),
@@ -229,7 +228,7 @@ class ACController extends MyRestController {
                             'max_date' => $maxDate,
                             'allowed_dates' => $allowedDates,
                             'needs_assessors' => []
-                        ];
+                        ];*/
                     } else {
                         $code = 'error';
                         $msg = 'Access denied';
@@ -249,11 +248,12 @@ class ACController extends MyRestController {
                         'role' => $userRole,
                         'admin' => $admin ? $admin->getUser()->__toString() : null,
                         'user_data' => $userData,
-                        'students' => $students,
+                        'slug' => $ac->getUrl(),
+                        /*'students' => $students,
                         'needs_assessors' => $needsAssessors,
                         'services' => $services,
                         'settings' => $settings,
-                        'appointment_restrictions' => $appointmentRestrictions,
+                        'appointment_restrictions' => $appointmentRestrictions,*/
                     ];
                     $code = 'success';
                     $msg = 'AC loaded';
@@ -268,17 +268,18 @@ class ACController extends MyRestController {
         }
     }
 
-    private function syncEaUser(AssessmentCenterUser $acUser, $mode = 1) {
+    /*private function syncEaUser(AssessmentCenterUser $acUser, $mode = 1) {
         $user = $acUser->getUser();
         $ac = $acUser->getAc();
-        $eaUser = $this->getEntityManager()->getRepository(EaUsers::class)->findOneBy(['id' => $user->getId(), 'idAssessmentCenter' => $ac->getId()]);
+        $eaUser = $this->getEntityManager()->getRepository(EaUsers::class)->findOneBy(['id' => $user->getId(), 'id_assessment_center' => $ac->getId()]);
         if ($mode === 0) {
             $this->getEntityManager()->remove($eaUser);
         } else {
             if (!$eaUser) {
                 $eaUser = new EaUsers();
                 $eaUser->setId($user->getId());
-                $eaUser->setIdAssessmentCenter($ac);
+                $eaUser->setId_assessment_center($ac->getId());
+                $eaUser->setId_roles($user->getEaRole());
                 $this->getEntityManager()->persist($eaUser);
                 $this->getEntityManager()->flush();
             }
@@ -288,15 +289,15 @@ class ACController extends MyRestController {
             $eaUser->setEmail($user->getEmail());
             $eaUser->setStatus($acUser->getStatus());
             $this->getEntityManager()->persist($eaUser);
-            $eaUserSettings = $this->getEntityManager()->getRepository(EaUserSettings::class)->findOneBy(['id' => $user->getId(), 'idAssessmentCenter' => $ac]);
+            $eaUserSettings = $this->getEntityManager()->getRepository(EaUserSettings::class)->findOneBy(['id_users' => $user->getId(), 'id_assessment_center' => $ac->getId()]);
             if (!$eaUserSettings) {
                 $eaUserSettings = new EaUserSettings();
-                $eaUserSettings->setIdUsers($eaUser);
-                $eaUserSettings->setIdAssessmentCenter($ac);
+                $eaUserSettings->setIdUsers($user->getId());
+                $eaUserSettings->setIdAssessmentCenter($ac->getId());
             }
             $this->getEntityManager()->persist($eaUserSettings);
         }
-    }
+    }*/
 
     /**
      * Registers with AC
@@ -365,7 +366,7 @@ class ACController extends MyRestController {
                         $acUser->setUser($user);
                         $this->getEntityManager()->persist($acUser);
                         $this->getEntityManager()->flush();
-                        $this->syncEaUser($acUser);
+                        StaticMembers::syncEaUser($this->getEntityManager(), $acUser);
                         $preRegisterInfo = $user->getPre_register();
                         $dsaLetter = $request->files->get('dsa_letter');
                         if ($dsaLetter) {

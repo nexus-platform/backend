@@ -312,7 +312,9 @@
                                 <div id="appointment-details" class="col-xs-12 col-sm-6"></div>
                                 <div id="customer-details" class="col-xs-12 col-sm-6"></div>
                             </div>
-                            <?php if ($this->settings_model->get_setting('require_captcha') === '1'): ?>
+                            <?php
+                                if ($this->settings_model->get_setting($ac_id, 'require_captcha') === '1'):
+                            ?>
                                 <div class="frame-content row">
                                     <div class="col-xs-12 col-sm-6">
                                         <h4 class="captcha-title">
@@ -410,6 +412,6 @@
             });
         </script>
 
-        <?php google_analytics_script(); ?>
+        <?php google_analytics_script($ac_id); ?>
     </body>
 </html>

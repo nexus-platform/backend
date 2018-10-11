@@ -239,7 +239,6 @@ window.FrontendBookApi = window.FrontendBookApi || {};
 
     function _applyUnavailableDates(unavailableDates, selectedDateString, setDate) {
         setDate = setDate || false;
-
         processingUnavailabilities = true;
 
         // Select first enabled date.

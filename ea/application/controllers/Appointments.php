@@ -60,17 +60,21 @@ class Appointments extends CI_Controller {
             redirect('installation/index');
             return;
         }
+
+        $this->load->model('companies_model');
         $ac = $this->companies_model->find($this->input->get('ac'));
         $payload = jwt_helper::decode($this->input->get('jwt'));
-        $user = $this->db->get_where('ea_users', ['id' => $payload->user_id, 'idAssessmentCenter' => $ac->id])->row_array();
+        $user = $this->db->get_where('ea_users', ['id' => $payload->user_id, 'id_assessment_center' => $ac->id])->row_array();
 
-        if (!$user) {
+        if (!$user || $user['id_roles'] != 3) {
             return 'You are not allowed to acess this resource.';
         }
         $this->load->library('session');
+        $this->load->model('roles_model');
+
         $this->session->set_userdata('user_id', $user['id']);
         $this->session->set_userdata('user_email', $user['email']);
-        $this->session->set_userdata('role_slug', $user['roles'] === '["student"]' ? 'customer' : 'provider');
+        $this->session->set_userdata('role_slug', $this->roles_model->get_role_slug($user['id_roles']));
         $this->session->set_userdata('username', $user['email']);
 
         $this->load->model('appointments_model');
@@ -78,9 +82,7 @@ class Appointments extends CI_Controller {
         $this->load->model('services_model');
         $this->load->model('customers_model');
         $this->load->model('settings_model');
-        $this->load->model('companies_model');
-        
-        
+
         try {
             $available_services = $this->services_model->get_available_services($ac);
             $available_providers = $this->providers_model->get_available_providers($ac);
@@ -146,6 +148,7 @@ class Appointments extends CI_Controller {
 
             // Load the book appointment view.
             $view = [
+                'ac_id' => $ac->id,
                 'available_services' => $available_services,
                 'available_providers' => $available_providers,
                 'company_name' => $company_name,
@@ -603,7 +606,7 @@ class Appointments extends CI_Controller {
             $this->output
                     ->set_content_type('application/json')
                     ->set_output(json_encode([
-                        'exceptions' => [exceptionToJavaScript($exc)]
+                                    //'exceptions' => [exceptionToJavaScript($exc)]
             ]));
         }
     }

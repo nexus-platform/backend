@@ -16,7 +16,7 @@ INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'customer_notifications' as `name`, '1' as `value` from `assessment_center_user` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
-	select distinct `ac_id`, 'date_format' as `name`, 'Y-m-d' as `value` from `assessment_center_user` where `is_admin` = 1;
+	select distinct `ac_id`, 'date_format' as `name`, 'DMY' as `value` from `assessment_center_user` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'time_format' as `name`, 'regular' as `value` from `assessment_center_user` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)

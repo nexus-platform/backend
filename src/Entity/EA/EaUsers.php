@@ -17,7 +17,6 @@ class EaUsers {
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -99,24 +98,34 @@ class EaUsers {
     private $status = '1';
 
     /**
-     * @var \AssessmentCenter
+     * @var int
      *
-     * @ORM\ManyToOne(targetEntity="AssessmentCenter")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_assessment_center", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="id_assessment_center", type="integer", nullable=false)
      */
-    private $idAssessmentCenter;
+    private $id_assessment_center;
 
     /**
-     * @var \EaRoles
+     * @var int
      *
-     * @ORM\ManyToOne(targetEntity="EaRoles")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_roles", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="id_roles", type="integer", nullable=false)
      */
-    private $idRoles;
+    private $id_roles;
+
+    function getId_roles() {
+        return $this->id_roles;
+    }
+
+    function setId_roles($id_roles) {
+        $this->id_roles = $id_roles;
+    }
+
+    function getId_assessment_center() {
+        return $this->id_assessment_center;
+    }
+
+    function setId_assessment_center($id_assessment_center) {
+        $this->id_assessment_center = $id_assessment_center;
+    }
 
     function getId() {
         return $this->id;
@@ -166,14 +175,6 @@ class EaUsers {
         return $this->status;
     }
 
-    function getIdAssessmentCenter(): \AssessmentCenter {
-        return $this->idAssessmentCenter;
-    }
-
-    function getIdRoles(): \EaRoles {
-        return $this->idRoles;
-    }
-
     function setId($id) {
         $this->id = $id;
     }
@@ -221,13 +222,4 @@ class EaUsers {
     function setStatus($status) {
         $this->status = $status;
     }
-
-    function setIdAssessmentCenter(\AssessmentCenter $idAssessmentCenter) {
-        $this->idAssessmentCenter = $idAssessmentCenter;
-    }
-
-    function setIdRoles(\EaRoles $idRoles) {
-        $this->idRoles = $idRoles;
-    }
-
 }

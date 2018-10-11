@@ -49,7 +49,7 @@ window.Backend = window.Backend || {};
                 at: 'bottom center'
             },
             style: {
-                classes: 'qtip-green qtip-shadow custom-qtip'
+                classes: 'qtip-blue qtip-shadow custom-qtip'
             }
         });
 

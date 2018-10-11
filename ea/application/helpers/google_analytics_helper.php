@@ -18,13 +18,13 @@
  * script. It will check whether the code is set in the database and print it, otherwise nothing
  * will be outputted. This eliminates the need for extra checking before outputting.
  */
-function google_analytics_script()
+function google_analytics_script($ac_id)
 {
     $ci =& get_instance();
 
     $ci->load->model('settings_model');
 
-    $google_analytics_code = $ci->settings_model->get_setting('google_analytics_code');
+    $google_analytics_code = $ci->settings_model->get_setting($ac_id, 'google_analytics_code');
 
     if ($google_analytics_code !== '')
     {

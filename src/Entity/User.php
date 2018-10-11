@@ -421,6 +421,10 @@ class User implements UserInterface, Serializable {
     public function isNA() {
         return in_array('na', $this->getRoles());
     }
+    
+    public function isAC() {
+        return in_array('ac', $this->getRoles());
+    }
 
     public function getFullname() {
         return $this->name . ' ' . $this->lastname;

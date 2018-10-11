@@ -33,6 +33,10 @@ class FixturesController extends Controller {
                 '<i>New Assessment Centers:</i> <b>' . $this->loadACs($entityManager) . '</b><br />' .
                 '<i>New Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />'
         ;
+        $acUsers = $entityManager->getRepository(AssessmentCenterUser::class)->findAll();
+        foreach ($acUsers as $acUser) {
+            StaticMembers::syncEaUser($entityManager, $acUser);
+        }
         $entityManager->flush();
         return new Response($res);
     }

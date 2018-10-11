@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `ea_settings` (
     DEFAULT CHARSET = utf8;
 	
 CREATE TABLE IF NOT EXISTS `ea_users` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `id` INT(11) NOT NULL,
     `first_name` VARCHAR(256),
     `last_name` VARCHAR(512),
     `email` VARCHAR(512),
@@ -214,10 +214,13 @@ ALTER TABLE `ea_services_providers`
     ON UPDATE CASCADE;
 
 ALTER TABLE `ea_users`
+    ADD CONSTRAINT `users_id` FOREIGN KEY (`id`) REFERENCES `user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     ADD CONSTRAINT `users_roles` FOREIGN KEY (`id_roles`) REFERENCES `ea_roles` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-    ADD CONSTRAINT `user_assessment_center` FOREIGN KEY (`id_assessment_center`) REFERENCES `assessment_center` (`id`)
+    ADD CONSTRAINT `users_assessment_center` FOREIGN KEY (`id_assessment_center`) REFERENCES `assessment_center` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
 

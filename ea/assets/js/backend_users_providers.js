@@ -83,22 +83,29 @@
          * Event: Add New Provider Button "Click"
          */
         $('#providers').on('click', '#add-provider', function () {
-            this.resetForm();
-            $('#filter-providers button').prop('disabled', true);
-            $('#filter-providers .results').css('color', '#AAA');
-            $('#providers .add-edit-delete-group').hide();
-            $('#providers .save-cancel-group').show();
-            $('#providers .record-details').find('input, textarea').prop('readonly', false);
-            $('#providers .record-details').find('select').prop('disabled', false);
-            $('#provider-password, #provider-password-confirm').addClass('required');
-            $('#provider-notifications').prop('disabled', false);
-            $('#providers').find('.add-break, .edit-break, .delete-break, #reset-working-plan').prop('disabled', false);
-            $('#provider-services input:checkbox').prop('disabled', false);
-            $('#providers input:checkbox').prop('disabled', false);
+            /*this.resetForm();
+             $('#filter-providers button').prop('disabled', true);
+             $('#filter-providers .results').css('color', '#AAA');
+             $('#providers .add-edit-delete-group').hide();
+             $('#providers .save-cancel-group').show();
+             $('#providers .record-details').find('input, textarea').prop('readonly', false);
+             $('#providers .record-details').find('select').prop('disabled', false);
+             $('#provider-password, #provider-password-confirm').addClass('required');
+             $('#provider-notifications').prop('disabled', false);
+             $('#providers').find('.add-break, .edit-break, .delete-break, #reset-working-plan').prop('disabled', false);
+             $('#provider-services input:checkbox').prop('disabled', false);
+             $('#providers input:checkbox').prop('disabled', false);
+             
+             // Apply default working plan
+             BackendUsers.wp.setup(GlobalVariables.workingPlan);
+             BackendUsers.wp.timepickers(false);*/
 
-            // Apply default working plan
-            BackendUsers.wp.setup(GlobalVariables.workingPlan);
-            BackendUsers.wp.timepickers(false);
+            /**
+             * Event: Invite users Button "Click"
+             */
+            var $dialog = $('#invite-user');
+            $dialog.find('.modal-header h3').text('Invite users');
+            $dialog.modal('show');
         }.bind(this));
 
         /**
@@ -142,7 +149,7 @@
             ];
 
             GeneralFunctions.displayMessageBox(EALang.delete_provider,
-                EALang.delete_record_prompt, buttons);
+                    EALang.delete_record_prompt, buttons);
         }.bind(this));
 
         /**
@@ -313,7 +320,7 @@
             }
 
             if ($('#provider-password').val().length < BackendUsers.MIN_PASSWORD_LENGTH
-                && $('#provider-password').val() != '') {
+                    && $('#provider-password').val() != '') {
                 $('#provider-password, #provider-password-confirm').closest('.form-group').addClass('has-error');
                 throw EALang.password_length_notice.replace('$number', BackendUsers.MIN_PASSWORD_LENGTH);
             }
@@ -333,9 +340,9 @@
             return true;
         } catch (message) {
             $('#providers .form-message')
-                .addClass('alert-danger')
-                .text(message)
-                .show();
+                    .addClass('alert-danger')
+                    .text(message)
+                    .show();
             return false;
         }
     };
@@ -401,10 +408,10 @@
         var dedicatedUrl = GlobalVariables.baseUrl + '/index.php?provider=' + encodeURIComponent(provider.id);
         var linkHtml = '<a href="' + dedicatedUrl + '"><span class="glyphicon glyphicon-link"></span></a>';
         $('#providers .details-view h3')
-            .find('a')
-            .remove()
-            .end()
-            .append(linkHtml);
+                .find('a')
+                .remove()
+                .end()
+                .append(linkHtml);
 
         $('#provider-services a').remove();
         $('#provider-services input:checkbox').prop('checked', false);
@@ -414,7 +421,7 @@
                     $(this).prop('checked', true);
                     // Add dedicated service-provider link.
                     dedicatedUrl = GlobalVariables.baseUrl + '/index.php?provider=' + encodeURIComponent(provider.id)
-                        + '&service=' + encodeURIComponent(serviceId);
+                            + '&service=' + encodeURIComponent(serviceId);
                     linkHtml = '<a href="' + dedicatedUrl + '"><span class="glyphicon glyphicon-link"></span></a>';
                     $(this).parent().append(linkHtml);
                 }
@@ -476,19 +483,19 @@
      */
     ProvidersHelper.prototype.getFilterHtml = function (provider) {
         var name = provider.first_name + ' ' + provider.last_name,
-            info = provider.email;
+                info = provider.email;
 
         info = (provider.mobile_number != '' && provider.mobile_number != null)
-            ? info + ', ' + provider.mobile_number : info;
+                ? info + ', ' + provider.mobile_number : info;
 
         info = (provider.phone_number != '' && provider.phone_number != null)
-            ? info + ', ' + provider.phone_number : info;
+                ? info + ', ' + provider.phone_number : info;
 
         var html =
-            '<div class="provider-row entry" data-id="' + provider.id + '">' +
-            '<strong>' + name + '</strong><br>' +
-            info + '<br>' +
-            '</div><hr>';
+                '<div class="provider-row entry" data-id="' + provider.id + '">' +
+                '<strong>' + name + '</strong><br>' +
+                info + '<br>' +
+                '</div><hr>';
 
         return html;
     };

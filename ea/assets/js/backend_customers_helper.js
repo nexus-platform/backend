@@ -104,19 +104,6 @@
         });
 
         /**
-         * Event: Add Customer Button "Click"
-         */
-        $('#add-customer').click(function () {
-            instance.resetForm();
-            $('#add-edit-delete-group').hide();
-            $('#save-cancel-group').show();
-            $('.record-details').find('input, textarea').prop('readonly', false);
-
-            $('#filter-customers button').prop('disabled', true);
-            $('#filter-customers .results').css('color', '#AAA');
-        });
-
-        /**
          * Event: Edit Customer Button "Click"
          */
         $('#edit-customer').click(function () {
@@ -187,7 +174,7 @@
             ];
 
             GeneralFunctions.displayMessageBox(EALang.delete_customer,
-                EALang.delete_record_prompt, buttons);
+                    EALang.delete_record_prompt, buttons);
         });
     };
 
@@ -243,8 +230,8 @@
      */
     CustomersHelper.prototype.validate = function () {
         $('#form-message')
-            .removeClass('alert-danger')
-            .hide();
+                .removeClass('alert-danger')
+                .hide();
         $('.has-error').removeClass('has-error');
 
         try {
@@ -271,9 +258,9 @@
             return true;
         } catch (message) {
             $('#form-message')
-                .addClass('alert-danger')
-                .text(message)
-                .show();
+                    .addClass('alert-danger')
+                    .text(message)
+                    .show();
             return false;
         }
     };
@@ -328,11 +315,11 @@
             var start = GeneralFunctions.formatDate(Date.parse(appointment.start_datetime), GlobalVariables.dateFormat, true);
             var end = GeneralFunctions.formatDate(Date.parse(appointment.end_datetime), GlobalVariables.dateFormat, true);
             var html =
-                '<div class="appointment-row" data-id="' + appointment.id + '">' +
-                start + ' - ' + end + '<br>' +
-                appointment.service.name + ', ' +
-                appointment.provider.first_name + ' ' + appointment.provider.last_name +
-                '</div>';
+                    '<div class="appointment-row" data-id="' + appointment.id + '">' +
+                    start + ' - ' + end + '<br>' +
+                    appointment.service.name + ', ' +
+                    appointment.provider.first_name + ' ' + appointment.provider.last_name +
+                    '</div>';
             $('#customer-appointments').append(html);
         });
 
@@ -390,15 +377,15 @@
         var name = customer.first_name + ' ' + customer.last_name;
         var info = customer.email;
         info = (customer.phone_number != '' && customer.phone_number != null)
-            ? info + ', ' + customer.phone_number : info;
+                ? info + ', ' + customer.phone_number : info;
 
         var html =
-            '<div class="entry" data-id="' + customer.id + '">' +
-            '<strong>' +
-            name +
-            '</strong><br>' +
-            info +
-            '</div><hr>';
+                '<div class="entry" data-id="' + customer.id + '">' +
+                '<strong>' +
+                name +
+                '</strong><br>' +
+                info +
+                '</div><hr>';
 
         return html;
     };
@@ -445,11 +432,11 @@
         var end = GeneralFunctions.formatDate(Date.parse(appointment.end_datetime), GlobalVariables.dateFormat, true);
 
         var html =
-            '<div>' +
-            '<strong>' + appointment.service.name + '</strong><br>' +
-            appointment.provider.first_name + ' ' + appointment.provider.last_name + '<br>' +
-            start + ' - ' + end + '<br>' +
-            '</div>';
+                '<div>' +
+                '<strong>' + appointment.service.name + '</strong><br>' +
+                appointment.provider.first_name + ' ' + appointment.provider.last_name + '<br>' +
+                start + ' - ' + end + '<br>' +
+                '</div>';
 
         $('#appointment-details').html(html).removeClass('hidden');
     };

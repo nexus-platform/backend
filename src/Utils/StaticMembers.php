@@ -3,6 +3,9 @@
 namespace App\Utils;
 
 use App\Entity\AppSettings;
+use App\Entity\AssessmentCenterUser;
+use App\Entity\EA\EaUsers;
+use App\Entity\EA\EaUserSettings;
 use Doctrine\Common\Persistence\ObjectManager;
 use Exception;
 use Firebase\JWT\JWT;
@@ -106,7 +109,47 @@ class StaticMembers {
     public static function executeRawSQL(ObjectManager $entityManager, $sql, $returnResult = true) {
         $statement = $entityManager->getConnection()->prepare($sql);
         $statement->execute();
-        return ($returnResult) ? $statement->fetchAll() : 1;
+        try {
+            return ($returnResult) ? $statement->fetchAll() : 1;
+        } catch (Exception $exc) {
+            $statement = $entityManager->getConnection()->prepare('SELECT ROW_COUNT() as `AFFECTED_ROWS`');
+            $statement->execute();
+            return $statement->fetchAll();
+        }
+    }
+    
+    public static function syncEaUser(ObjectManager $entityManager, AssessmentCenterUser $acUser, $mode = 1) {
+        $user = $acUser->getUser();
+        $ac = $acUser->getAc();
+        $eaUser = $entityManager->getRepository(EaUsers::class)->findOneBy(['id' => $user->getId(), 'id_assessment_center' => $ac->getId()]);
+        if ($mode === 0) {
+            $entityManager->remove($eaUser);
+        } else {
+            if (!$eaUser) {
+                //StaticMembers::executeRawSQL($entityManager, "insert into `ea_users` (`id`, ``)", $returnResult)
+                $eaUser = new EaUsers();
+                $eaUser->setId($user->getId());
+                $eaUser->setId_assessment_center($ac->getId());
+                $eaUser->setId_roles($user->getEaRole());
+                $entityManager->persist($eaUser);
+                $entityManager->flush();
+            }
+            $eaUser->setAddress($user->getAddress());
+            $eaUser->setFirstName($user->getName());
+            $eaUser->setLastName($user->getLastname());
+            $eaUser->setEmail($user->getEmail());
+            $eaUser->setStatus($acUser->getStatus());
+            $entityManager->persist($eaUser);
+            $entityManager->flush();
+            $eaUserSettings = $entityManager->getRepository(EaUserSettings::class)->findOneBy(['id_users' => $user->getId(), 'id_assessment_center' => $ac->getId()]);
+            if (!$eaUserSettings) {
+                $eaUserSettings = new EaUserSettings();
+                $eaUserSettings->setIdUsers($user->getId());
+                $eaUserSettings->setIdAssessmentCenter($ac->getId());
+            }
+            $entityManager->persist($eaUserSettings);
+            $entityManager->flush();
+        }
     }
 
 }

@@ -123,9 +123,12 @@ class Settings_Model extends CI_Model {
         if (!is_array($settings)) {
             throw new Exception('$settings argument is invalid: ' . print_r($settings, TRUE));
         }
+        
+        $this->load->library('session');
+        $ac_id = $this->session->userdata['ac']->id;
 
         foreach ($settings as $setting) {
-            $this->db->where('name', $setting['name']);
+            $this->db->where(['id_assessment_center' => $ac_id, 'name' => $setting['name']]);
             if (!$this->db->update('ea_settings', ['value' => $setting['value']])) {
                 throw new Exception('Could not save setting (' . $setting['name']
                 . ' - ' . $setting['value'] . ')');
@@ -140,8 +143,12 @@ class Settings_Model extends CI_Model {
      *
      * @return array Array of all the system settings stored in the 'ea_settings' table.
      */
-    public function get_settings() {
-        return $this->db->get('ea_settings')->result_array();
+    public function get_settings($ac_id) {
+        $this->db
+                ->select('ea_settings.*')
+                ->from('ea_settings')
+                ->where(['ea_settings.id_assessment_center' => $ac_id]);
+        return $this->db->get()->result_array();
     }
 
 }

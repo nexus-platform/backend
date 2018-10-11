@@ -2,7 +2,7 @@
 
 namespace App\Repository\EA;
 
-use App\Entity\EaUsers;
+use App\Entity\EA\EaUsers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

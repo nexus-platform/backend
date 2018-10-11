@@ -90,26 +90,19 @@ class EaUserSettings {
     private $calendarView = 'default';
 
     /**
-     * @var \AssessmentCenter
+     * @var int|null
      *
-     * @ORM\ManyToOne(targetEntity="AssessmentCenter")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_assessment_center", referencedColumnName="id")
-     * })
+     * @ORM\Column(name="id_assessment_center", type="integer", nullable=false)
      */
-    private $idAssessmentCenter;
+    private $id_assessment_center;
 
     /**
-     * @var \EaUsers
+     * @var int|null
      *
+     * @ORM\Column(name="id_users", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="EaUsers")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_users", referencedColumnName="id")
-     * })
      */
-    private $idUsers;
+    private $id_users;
 
     function getUsername() {
         return $this->username;
@@ -155,12 +148,12 @@ class EaUserSettings {
         return $this->calendarView;
     }
 
-    function getIdAssessmentCenter(): \AssessmentCenter {
-        return $this->idAssessmentCenter;
+    function getIdAssessmentCenter() {
+        return $this->id_assessment_center;
     }
 
-    function getIdUsers(): \EaUsers {
-        return $this->idUsers;
+    function getIdUsers() {
+        return $this->id_users;
     }
 
     function setUsername($username) {
@@ -207,12 +200,12 @@ class EaUserSettings {
         $this->calendarView = $calendarView;
     }
 
-    function setIdAssessmentCenter(\AssessmentCenter $idAssessmentCenter) {
-        $this->idAssessmentCenter = $idAssessmentCenter;
+    function setIdAssessmentCenter($id_assessment_center) {
+        $this->id_assessment_center = $id_assessment_center;
     }
 
-    function setIdUsers(\EaUsers $idUsers) {
-        $this->idUsers = $idUsers;
+    function setIdUsers($idUsers) {
+        $this->id_users = $idUsers;
     }
 
 }
