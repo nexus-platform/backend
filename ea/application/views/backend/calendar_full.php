@@ -64,6 +64,7 @@
 
             $(document).ready(function () {
                 BackendCalendar.initialize(GlobalVariables.calendarView);
+                iframe_resize();
             });
         </script>
         <script type="text/javascript">
@@ -82,7 +83,8 @@
         </script>
     </head>
 
-    <body onload="iframe_resize();">
+    <!--<body onload="iframe_resize();">-->
+    <body>
         <nav id="header" class="navbar">
             <div class="container-fluid">
                 <div class="navbar-header">

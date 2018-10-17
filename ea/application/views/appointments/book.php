@@ -313,7 +313,7 @@
                                 <div id="customer-details" class="col-xs-12 col-sm-6"></div>
                             </div>
                             <?php
-                                if ($this->settings_model->get_setting($ac_id, 'require_captcha') === '1'):
+                                if ($this->settings_model->get_setting('require_captcha') === '1'):
                             ?>
                                 <div class="frame-content row">
                                     <div class="col-xs-12 col-sm-6">

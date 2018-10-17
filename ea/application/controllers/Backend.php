@@ -48,7 +48,7 @@ class Backend extends CI_Controller {
     public function index($appointment_hash = '') {
         $this->session->set_userdata('dest_url', site_url('backend'));
 
-        if (!$this->session->userdata['user_id']) {
+        //if (!$this->session->userdata['user_id']) {
             $jwt = $this->input->get('jwt');
             $payload = jwt_helper::decode($jwt);
             $user = $this->db->get_where('ea_users', ['id' => $payload->user_id])->row_array();
@@ -63,7 +63,7 @@ class Backend extends CI_Controller {
                 $this->session->set_userdata('username', $user['email']);
                 $this->session->set_userdata('ac', $this->companies_model->find($this->input->get('ac')));
             }
-        }
+        //}
 
         if (!$this->_has_privileges(PRIV_APPOINTMENTS)) {
             return;
@@ -80,9 +80,9 @@ class Backend extends CI_Controller {
         $view['base_url'] = $this->config->item('base_url');
         $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
         $view['active_menu'] = PRIV_APPOINTMENTS;
-        $view['book_advance_timeout'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'book_advance_timeout');
-        $view['date_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'date_format');
-        $view['time_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'time_format');
+        $view['book_advance_timeout'] = $this->settings_model->get_setting('book_advance_timeout');
+        $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['company_name'] = $this->session->userdata['ac']->name;
         $view['available_providers'] = $this->providers_model->get_available_providers($this->session->userdata['ac']->id);
         $view['available_services'] = $this->services_model->get_available_services($this->session->userdata['ac']->id);
@@ -151,8 +151,8 @@ class Backend extends CI_Controller {
         $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
         $view['active_menu'] = PRIV_CUSTOMERS;
         $view['company_name'] = $this->session->userdata['ac']->name;
-        $view['date_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'date_format');
-        $view['time_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'time_format');
+        $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['customers'] = $this->customers_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
         $view['available_providers'] = $this->providers_model->get_available_providers($this->session->userdata['ac']->id);
         $view['available_services'] = $this->services_model->get_available_services($this->session->userdata['ac']->id);
@@ -210,8 +210,8 @@ class Backend extends CI_Controller {
         $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
         $view['active_menu'] = PRIV_SERVICES;
         $view['company_name'] = $this->session->userdata['ac']->name;
-        $view['date_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'date_format');
-        $view['time_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'time_format');
+        $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['services'] = $this->services_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
         $view['categories'] = $this->services_model->get_all_categories("id_assessment_center = " . $this->session->userdata['ac']->id);
         $this->set_user_data($view);
@@ -260,13 +260,13 @@ class Backend extends CI_Controller {
         $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
         $view['active_menu'] = PRIV_USERS;
         $view['company_name'] = $this->session->userdata['ac']->name;
-        $view['date_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'date_format');
-        $view['time_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'time_format');
+        $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['admins'] = $this->admins_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
         $view['providers'] = $this->providers_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
         $view['secretaries'] = $this->secretaries_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
         $view['services'] = $this->services_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
-        $view['working_plan'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'company_working_plan');
+        $view['working_plan'] = $this->settings_model->get_setting('company_working_plan');
         $this->set_user_data($view);
 
         $this->load->view('backend/users_full', $view);
@@ -313,10 +313,10 @@ class Backend extends CI_Controller {
         $view['user_display_name'] = $this->user_model->get_user_display_name($user_id);
         $view['active_menu'] = PRIV_SYSTEM_SETTINGS;
         $view['company_name'] = $this->session->userdata['ac']->name;
-        $view['date_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'date_format');
-        $view['time_format'] = $this->settings_model->get_setting($this->session->userdata['ac']->id, 'time_format');
+        $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['role_slug'] = $this->session->userdata('role_slug');
-        $view['system_settings'] = $this->settings_model->get_settings($this->session->userdata['ac']->id);
+        $view['system_settings'] = $this->settings_model->get_settings();
         $view['user_settings'] = $this->user_model->get_settings($user_id);
         $this->set_user_data($view);
 

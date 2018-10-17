@@ -8,9 +8,10 @@ VALUES
 
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'company_working_plan' as `name`, '{"sunday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"monday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"tuesday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"wednesday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"thursday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"friday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"saturday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]}}' as `value` from `assessment_center_user` where `is_admin` = 1;
-
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'book_advance_timeout' as `name`, '30' as `value` from `assessment_center_user` where `is_admin` = 1;
+INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
+	select distinct `ac_id`, 'company_name' as `name`, 'Assessment Centre' as `value` from `assessment_center_user` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'google_analytics_code' as `name`, '' as `value` from `assessment_center_user` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
@@ -35,3 +36,19 @@ INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'privacy_policy_content' as `name`, 'Privacy policy content.' as `value` from `assessment_center_user` where `is_admin` = 1;
 
 INSERT INTO `ea_migrations` (`version`) VALUES ('12');
+
+INSERT INTO `ea_users` (`id`, `first_name`, `last_name`, `email`, `address`, `status`, `id_roles`, `id_assessment_center`)
+    select
+	u.id,
+	u.name,
+	u.lastname,
+	u.email,
+	u.address,
+	acu.status,
+        case
+            when json_contains(u.roles, json_array('ac')) = 1 then 1
+            when json_contains(u.roles, json_array('do')) = 1 then 2
+            when json_contains(u.roles, json_array('student')) = 1 then 3
+            else 4 end `role`,
+        ac_id
+        from assessment_center_user acu join user u on (u.id = acu.user_id);

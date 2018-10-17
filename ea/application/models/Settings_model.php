@@ -32,10 +32,13 @@ class Settings_Model extends CI_Model {
      * @throws Exception If the $name argument is invalid.
      * @throws Exception If the requested $name setting does not exist in the database.
      */
-    public function get_setting($id, $name) {
+    public function get_setting($name) {
         if (!is_string($name)) { // Check argument type.
             throw new Exception('$name argument is not a string: ' . $name);
         }
+        
+        $this->load->library('session');
+        $id = $this->session->userdata['ac']->id;
 
         if ($this->db->get_where('ea_settings', ['id_assessment_center' => $id, 'name' => $name])->num_rows() == 0) { // Check if setting exists in db.
             throw new Exception('$name setting does not exist in database: ' . $name);
@@ -143,7 +146,10 @@ class Settings_Model extends CI_Model {
      *
      * @return array Array of all the system settings stored in the 'ea_settings' table.
      */
-    public function get_settings($ac_id) {
+    public function get_settings() {
+        $this->load->library('session');
+        $ac_id = $this->session->userdata['ac']->id;
+        
         $this->db
                 ->select('ea_settings.*')
                 ->from('ea_settings')

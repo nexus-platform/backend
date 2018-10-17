@@ -76,6 +76,7 @@ class Appointments extends CI_Controller {
         $this->session->set_userdata('user_email', $user['email']);
         $this->session->set_userdata('role_slug', $this->roles_model->get_role_slug($user['id_roles']));
         $this->session->set_userdata('username', $user['email']);
+        $this->session->set_userdata('ac', $ac);
 
         $this->load->model('appointments_model');
         $this->load->model('providers_model');
@@ -84,17 +85,17 @@ class Appointments extends CI_Controller {
         $this->load->model('settings_model');
 
         try {
-            $available_services = $this->services_model->get_available_services($ac);
-            $available_providers = $this->providers_model->get_available_providers($ac);
+            $available_services = $this->services_model->get_available_services($ac->id);
+            $available_providers = $this->providers_model->get_available_providers($ac->id);
             $company_name = $ac->name;
-            $date_format = $this->settings_model->get_setting($ac->id, 'date_format');
-            $time_format = $this->settings_model->get_setting($ac->id, 'time_format');
-            $display_cookie_notice = $this->settings_model->get_setting($ac->id, 'display_cookie_notice');
-            $cookie_notice_content = $this->settings_model->get_setting($ac->id, 'cookie_notice_content');
-            $display_terms_and_conditions = $this->settings_model->get_setting($ac->id, 'display_terms_and_conditions');
-            $terms_and_conditions_content = $this->settings_model->get_setting($ac->id, 'terms_and_conditions_content');
-            $display_privacy_policy = $this->settings_model->get_setting($ac->id, 'display_privacy_policy');
-            $privacy_policy_content = $this->settings_model->get_setting($ac->id, 'privacy_policy_content');
+            $date_format = $this->settings_model->get_setting('date_format');
+            $time_format = $this->settings_model->get_setting('time_format');
+            $display_cookie_notice = $this->settings_model->get_setting('display_cookie_notice');
+            $cookie_notice_content = $this->settings_model->get_setting('cookie_notice_content');
+            $display_terms_and_conditions = $this->settings_model->get_setting('display_terms_and_conditions');
+            $terms_and_conditions_content = $this->settings_model->get_setting('terms_and_conditions_content');
+            $display_privacy_policy = $this->settings_model->get_setting('display_privacy_policy');
+            $privacy_policy_content = $this->settings_model->get_setting('privacy_policy_content');
 
             // Remove the data that are not needed inside the $available_providers array.
             foreach ($available_providers as $index => $provider) {
@@ -202,11 +203,11 @@ class Appointments extends CI_Controller {
             $service = $this->services_model->get_row($appointment['id_services']);
 
             $company_settings = [
-                'company_name' => $this->settings_model->get_setting($ac->id, 'company_name'),
-                'company_email' => $this->settings_model->get_setting($ac->id, 'company_email'),
-                'company_link' => $this->settings_model->get_setting($ac->id, 'company_link'),
-                'date_format' => $this->settings_model->get_setting($ac->id, 'date_format'),
-                'time_format' => $this->settings_model->get_setting($ac->id, 'time_format')
+                'company_name' => $this->settings_model->get_setting('company_name'),
+                'company_email' => $this->settings_model->get_setting('company_email'),
+                'company_link' => $this->settings_model->get_setting('company_link'),
+                'date_format' => $this->settings_model->get_setting('date_format'),
+                'time_format' => $this->settings_model->get_setting('time_format')
             ];
 
             // :: DELETE APPOINTMENT RECORD FROM THE DATABASE.
@@ -244,7 +245,7 @@ class Appointments extends CI_Controller {
                     $email->sendDeleteAppointment($appointment, $provider, $service, $customer, $company_settings, new Email($provider['email']), new Text($this->input->post('cancel_reason')));
                 }
 
-                $send_customer = filter_var($this->settings_model->get_setting($ac->id, 'customer_notifications'), FILTER_VALIDATE_BOOLEAN);
+                $send_customer = filter_var($this->settings_model->get_setting('customer_notifications'), FILTER_VALIDATE_BOOLEAN);
 
                 if ($send_customer === TRUE) {
                     $email->sendDeleteAppointment($appointment, $provider, $service, $customer, $company_settings, new Email($customer['email']), new Text($this->input->post('cancel_reason')));
@@ -288,7 +289,7 @@ class Appointments extends CI_Controller {
         $appointment = $this->appointments_model->get_row($appointment_id);
         $provider = $this->providers_model->get_row($appointment['id_users_provider']);
         $service = $this->services_model->get_row($appointment['id_services']);
-        $company_name = $this->settings_model->get_setting($ac->id, 'company_name');
+        $company_name = $this->settings_model->get_setting('company_name');
         //get the exceptions
         $exceptions = $this->session->flashdata('book_success');
         // :: LOAD THE BOOK SUCCESS VIEW
@@ -369,7 +370,7 @@ class Appointments extends CI_Controller {
             // booking that is set in the back-office the system. Normally we might want the customer to book
             // an appointment that is at least half or one hour from now. The setting is stored in minutes.
             if (date('Y-m-d', strtotime($this->input->post('selected_date'))) === date('Y-m-d')) {
-                $book_advance_timeout = $this->settings_model->get_setting($ac->id, 'book_advance_timeout');
+                $book_advance_timeout = $this->settings_model->get_setting('book_advance_timeout');
 
                 foreach ($available_hours as $index => $value) {
                     $available_hour = strtotime($value);
@@ -413,7 +414,7 @@ class Appointments extends CI_Controller {
             $this->load->model('settings_model');
 
             // Validate the CAPTCHA string.
-            if ($this->settings_model->get_setting($ac->id, 'require_captcha') === '1' && $this->session->userdata('captcha_phrase') !== $this->input->post('captcha')) {
+            if ($this->settings_model->get_setting('require_captcha') === '1' && $this->session->userdata('captcha_phrase') !== $this->input->post('captcha')) {
                 $this->output
                         ->set_content_type('application/json')
                         ->set_output(json_encode([
@@ -444,11 +445,11 @@ class Appointments extends CI_Controller {
             $service = $this->services_model->get_row($appointment['id_services']);
 
             $company_settings = [
-                'company_name' => $this->settings_model->get_setting($ac->id, 'company_name'),
-                'company_link' => $this->settings_model->get_setting($ac->id, 'company_link'),
-                'company_email' => $this->settings_model->get_setting($ac->id, 'company_email'),
-                'date_format' => $this->settings_model->get_setting($ac->id, 'date_format'),
-                'time_format' => $this->settings_model->get_setting($ac->id, 'time_format')
+                'company_name' => $this->settings_model->get_setting('company_name'),
+                'company_link' => $this->settings_model->get_setting('company_link'),
+                'company_email' => $this->settings_model->get_setting('company_email'),
+                'date_format' => $this->settings_model->get_setting('date_format'),
+                'time_format' => $this->settings_model->get_setting('time_format')
             ];
 
             // :: SYNCHRONIZE APPOINTMENT WITH PROVIDER'S GOOGLE CALENDAR
@@ -502,7 +503,7 @@ class Appointments extends CI_Controller {
                 $customer_link = new Url(site_url('appointments/index/' . $appointment['hash']));
                 $provider_link = new Url(site_url('backend/index/' . $appointment['hash']));
 
-                $send_customer = filter_var($this->settings_model->get_setting($ac->id, 'customer_notifications'), FILTER_VALIDATE_BOOLEAN);
+                $send_customer = filter_var($this->settings_model->get_setting('customer_notifications'), FILTER_VALIDATE_BOOLEAN);
 
                 $this->load->library('ics_file');
                 $ics_stream = $this->ics_file->get_stream($appointment, $service, $provider, $customer);
@@ -893,7 +894,9 @@ class Appointments extends CI_Controller {
      */
     protected function _search_providers_by_service($service_id) {
         $this->load->model('providers_model');
-        $available_providers = $this->providers_model->get_available_providers();
+        $this->load->library('session');
+        $acId = $this->session->userdata['ac']->id;
+        $available_providers = $this->providers_model->get_available_providers($acId);
         $provider_list = array();
 
         foreach ($available_providers as $provider) {
