@@ -31,7 +31,8 @@ class Config {
     // ------------------------------------------------------------------------
 	
     const BASE_URL      = 'http://nexusea.enaebl.com';
-    const LANGUAGE      = 'english';
+    //const BASE_URL      = 'http://localhost:8082/nexus/deploy/backend-sf4-api/ea';
+	const LANGUAGE      = 'english';
     const DEBUG_MODE    = FALSE;
 
     // ------------------------------------------------------------------------
@@ -42,6 +43,7 @@ class Config {
     const DB_NAME       = 'nexus';
     const DB_USERNAME   = 'nexus';
     const DB_PASSWORD   = 'nexus';*/
+	
 	const DB_HOST       = '127.0.0.1';
     const DB_NAME       = 'nexusapp';
     const DB_USERNAME   = 'nexus';
