@@ -61,6 +61,17 @@
      *
      * @return {Array} Returns the system settings array.
      */
+    SystemSettings.prototype.validate = function () {
+        var valid = true;
+        $('#general').find('input, select').each(function () {
+            if ($(this).hasClass('required') && !$(this).val()) {
+                $(this).addClass('has-error');
+                valid = false;
+            }
+        });
+        return valid;
+    };
+    
     SystemSettings.prototype.get = function () {
         var settings = [];
 
@@ -152,10 +163,10 @@
             }
 
             // Validate company email address.
-            if (!GeneralFunctions.validateEmail($('#company-email').val())) {
+            /*if (!GeneralFunctions.validateEmail($('#company-email').val())) {
                 $('#company-email').closest('.form-group').addClass('has-error');
                 throw EALang.invalid_email;
-            }
+            }*/
 
             return true;
         } catch (message) {

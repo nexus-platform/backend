@@ -26,6 +26,7 @@ use \EA\Engine\Types\Email as EmailAddress;
  * Important: The email configuration settings are located at: /application/config/email.php
  */
 class Email {
+
     /**
      * Framework Instance
      *
@@ -46,8 +47,7 @@ class Email {
      * @param \CI_Controller $framework
      * @param array $config Contains the email configuration to be used.
      */
-    public function __construct(\CI_Controller $framework, array $config)
-    {
+    public function __construct(\CI_Controller $framework, array $config) {
         $this->framework = $framework;
         $this->config = $config;
     }
@@ -63,10 +63,8 @@ class Email {
      *
      * @return string Returns the new email html that contain the variables of the $replaceArray.
      */
-    protected function _replaceTemplateVariables(array $replaceArray, $templateHtml)
-    {
-        foreach ($replaceArray as $name => $value)
-        {
+    protected function _replaceTemplateVariables(array $replaceArray, $templateHtml) {
+        foreach ($replaceArray as $name => $value) {
             $templateHtml = str_replace($name, $value, $templateHtml);
         }
 
@@ -93,19 +91,9 @@ class Email {
      * @param \EA\Engine\Types\Text $icsStream Stream contents of the ICS file.
      */
     public function sendAppointmentDetails(
-        array $appointment,
-        array $provider,
-        array $service,
-        array $customer,
-        array $company,
-        Text $title,
-        Text $message,
-        Url $appointmentLink,
-        EmailAddress $recipientEmail,
-        Text $icsStream
+    array $appointment, array $provider, array $service, array $customer, array $company, Text $title, Text $message, Url $appointmentLink, EmailAddress $recipientEmail, Text $icsStream
     ) {
-        switch ($company['date_format'])
-        {
+        switch ($company['date_format']) {
             case 'DMY':
                 $date_format = 'd/m/Y';
                 break;
@@ -119,8 +107,7 @@ class Email {
                 throw new \Exception('Invalid date_format value: ' . $company['date_format']);
         }
 
-        switch ($company['time_format'])
-        {
+        switch ($company['time_format']) {
             case 'military':
                 $timeFormat = 'H:i';
                 break;
@@ -139,14 +126,13 @@ class Email {
             '$appointment_provider' => $provider['first_name'] . ' ' . $provider['last_name'],
             '$appointment_start_date' => date($date_format . ' ' . $timeFormat, strtotime($appointment['start_datetime'])),
             '$appointment_end_date' => date($date_format . ' ' . $timeFormat, strtotime($appointment['end_datetime'])),
-            '$appointment_link' => $appointmentLink->get(),
+            //'$appointment_link' => $appointmentLink->get(),
             '$company_link' => $company['company_link'],
             '$company_name' => $company['company_name'],
             '$customer_name' => $customer['first_name'] . ' ' . $customer['last_name'],
             '$customer_email' => $customer['email'],
             '$customer_phone' => $customer['phone_number'],
             '$customer_address' => $customer['address'],
-
             // Translations
             'Appointment Details' => $this->framework->lang->line('appointment_details_title'),
             'Service' => $this->framework->lang->line('service'),
@@ -158,7 +144,7 @@ class Email {
             'Email' => $this->framework->lang->line('email'),
             'Phone' => $this->framework->lang->line('phone'),
             'Address' => $this->framework->lang->line('address'),
-            'Appointment Link' => $this->framework->lang->line('appointment_link_title')
+                //'Appointment Link' => $this->framework->lang->line('appointment_link_title')
         ];
 
         $html = file_get_contents(__DIR__ . '/../../application/views/emails/appointment_details.php');
@@ -172,12 +158,11 @@ class Email {
         $mailer->Subject = $title->get();
         $mailer->Body = $html;
 
-        $mailer->addStringAttachment($icsStream->get(), 'invitation.ics');
+        //$mailer->addStringAttachment($icsStream->get(), 'invitation.ics');
 
-        if ( ! $mailer->Send())
-        {
+        if (!$mailer->Send()) {
             throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): '
-                . $mailer->ErrorInfo);
+            . $mailer->ErrorInfo);
         }
     }
 
@@ -200,16 +185,9 @@ class Email {
      * @param \EA\Engine\Types\Text $reason The reason why the appointment is deleted.
      */
     public function sendDeleteAppointment(
-        array $appointment,
-        array $provider,
-        array $service,
-        array $customer,
-        array $company,
-        EmailAddress $recipientEmail,
-        Text $reason
+    array $appointment, array $provider, array $service, array $customer, array $company, EmailAddress $recipientEmail, Text $reason
     ) {
-        switch ($company['date_format'])
-        {
+        switch ($company['date_format']) {
             case 'DMY':
                 $date_format = 'd/m/Y';
                 break;
@@ -223,8 +201,7 @@ class Email {
                 throw new \Exception('Invalid date_format value: ' . $company['date_format']);
         }
 
-        switch ($company['time_format'])
-        {
+        switch ($company['time_format']) {
             case 'military':
                 $timeFormat = 'H:i';
                 break;
@@ -250,7 +227,6 @@ class Email {
             '$customer_phone' => $customer['phone_number'],
             '$customer_address' => $customer['address'],
             '$reason' => $reason->get(),
-
             // Translations
             'Appointment Details' => $this->framework->lang->line('appointment_details_title'),
             'Service' => $this->framework->lang->line('service'),
@@ -277,10 +253,9 @@ class Email {
         $mailer->Subject = $this->framework->lang->line('appointment_cancelled_title');
         $mailer->Body = $html;
 
-        if ( ! $mailer->Send())
-        {
+        if (!$mailer->Send()) {
             throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): '
-                . $mailer->ErrorInfo);
+            . $mailer->ErrorInfo);
         }
     }
 
@@ -291,8 +266,7 @@ class Email {
      * @param \EA\Engine\Types\Email $recipientEmail The receiver's email address.
      * @param array $company The company settings to be included in the email.
      */
-    public function sendPassword(NonEmptyText $password, EmailAddress $recipientEmail, array $company)
-    {
+    public function sendPassword(NonEmptyText $password, EmailAddress $recipientEmail, array $company) {
         $replaceArray = [
             '$email_title' => $this->framework->lang->line('new_account_password'),
             '$email_message' => $this->framework->lang->line('new_password_is'),
@@ -313,10 +287,9 @@ class Email {
         $mailer->Subject = $this->framework->lang->line('new_account_password');
         $mailer->Body = $html;
 
-        if ( ! $mailer->Send())
-        {
+        if (!$mailer->Send()) {
             throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): '
-                . $mailer->ErrorInfo);
+            . $mailer->ErrorInfo);
         }
     }
 
@@ -325,24 +298,69 @@ class Email {
      *
      * @return \PHPMailer
      */
-    protected function _createMailer()
-    {
+    protected function _createMailer() {
         $mailer = new \PHPMailer;
 
-        if ($this->config['protocol'] === 'smtp')
-        {
+
+        if ($this->config['protocol'] === 'smtp') {
             $mailer->isSMTP();
-            $mailer->Host = $this->config['smtp_host'];
+            $this->framework->load->model('appsettings_model');
+            $appSettings = $this->framework->appsettings_model->get_settings();
+            /*$mailer->Host = $this->config['smtp_host'];
             $mailer->SMTPAuth = TRUE;
             $mailer->Username = $this->config['smtp_user'];
             $mailer->Password = $this->config['smtp_pass'];
             $mailer->SMTPSecure = $this->config['smtp_crypto'];
-            $mailer->Port = $this->config['smtp_port'];
+            $mailer->Port = $this->config['smtp_port'];*/
+            $mailer->Host = $appSettings['mail_host'];
+            $mailer->SMTPAuth = TRUE;
+            $mailer->Username = $appSettings['mail_username'];
+            $mailer->Password = $appSettings['mail_password'];
+            $mailer->SMTPSecure = $appSettings['mail_encryption'];
+            $mailer->Port = $appSettings['mail_port'];
         }
 
+        /* $mailer->isSMTP();
+          $mailer->Host = $appSettings['mail_host'];
+          $mailer->SMTPAuth = TRUE;
+          $mailer->Username = $appSettings['mail_username'];
+          $mailer->Password = $appSettings['mail_password'];
+          $mailer->SMTPSecure = $appSettings['mail_encryption'];
+          $mailer->Port = $appSettings['mail_port']; */
         $mailer->IsHTML($this->config['mailtype'] === 'html');
         $mailer->CharSet = $this->config['charset'];
 
         return $mailer;
     }
+
+    public function sendInvitation($invitation) {
+
+        // Prepare template replace array.
+        $replaceArray = [
+            '$header' => 'Hello, ' . $invitation['name'] . '.',
+            '$intro' => $invitation['sender_name'] . ' has invited you to join his/her Assessment Center on Nexus with the following message for you:',
+            '$message' => $invitation['message'],
+            '$company_name' => $invitation['ac_name'],
+            '$name' => $invitation['name'],
+            '$message' => $invitation['message'],
+            '$url' => $invitation['url']
+        ];
+
+        $html = file_get_contents(__DIR__ . '/../../application/views/emails/invitation.php');
+        $html = $this->_replaceTemplateVariables($replaceArray, $html);
+
+        $mailer = $this->_createMailer();
+
+        $mailer->From = $invitation['sender_email'];
+        $mailer->FromName = $invitation['sender_name'];
+        $mailer->AddAddress($invitation['email']);
+        $mailer->Subject = 'Join my Assessment Centre on Nexus!';
+        $mailer->Body = $html;
+
+        if (!$mailer->Send()) {
+            throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): ' . $mailer->ErrorInfo);
+        }
+        return true;
+    }
+
 }

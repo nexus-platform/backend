@@ -192,8 +192,10 @@ window.BackendSettings = window.BackendSettings || {};
          * Store the setting changes into the database.
          */
         $('.save-settings').click(function () {
-            var data = settings.get();
-            settings.save(data);
+            if (settings.validate()) {
+                var data = settings.get();
+                settings.save(data);
+            }
         });
 
         /**

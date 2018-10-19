@@ -249,6 +249,7 @@ class ACController extends MyRestController {
                         'admin' => $admin ? $admin->getUser()->__toString() : null,
                         'user_data' => $userData,
                         'slug' => $ac->getUrl(),
+                        'star_assessment_form' => $this->getStarAssessmentForm(),
                         /*'students' => $students,
                         'needs_assessors' => $needsAssessors,
                         'services' => $services,
@@ -308,6 +309,7 @@ class ACController extends MyRestController {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
             $acParams = json_decode($request->get('ac'));
+            $formData = json_decode($request->get('data'), true);
             $data = null;
             $userOk = false;
 
@@ -318,12 +320,13 @@ class ACController extends MyRestController {
                 $userOk = !is_null($payload);
             } else {
                 $userParams = $acParams->user_data;
+                
                 $params = [
                     'name' => $userParams->name,
-                    'last_name' => $userParams->last_name,
-                    'postcode' => $userParams->postcode,
                     'address' => $userParams->address,
                     'email' => $userParams->email,
+                    'last_name' => $userParams->last_name,
+                    'postcode' => $userParams->postcode,
                     'password' => $userParams->password,
                     'activation_url' => $request->get('url'),
                 ];
@@ -339,7 +342,7 @@ class ACController extends MyRestController {
                     $role = ($invitation) ? $invitation->getRole() : 'student';
                     $user = new User();
                     $user->setAddress($params['address']);
-                    $user->setPostcode($params['postcode']);
+                    $user->setPostcode(isset($params['postcode']) ? $params['postcode'] : '');
                     $user->setCreatedAt(time());
                     $user->setEmail($params['email']);
                     $user->setLastname($params['last_name']);
@@ -381,7 +384,7 @@ class ACController extends MyRestController {
                         }
                         $this->getEntityManager()->flush();
                         $code = 'success';
-                        $msg = 'You have registered with this Centre.' . ($payload ? '' : ' Redirecting to login page...');
+                        $msg = 'You have registered with this Centre.' . ($payload ? '' : ' Proceed to the login page.');
                         $data = true;
                     } else {
                         $code = 'warning';
@@ -1151,6 +1154,12 @@ class ACController extends MyRestController {
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
         }
+    }
+    
+    private function getStarAssessmentForm() {
+        $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/star_assessment_form.json';
+        $res = json_decode(file_get_contents($dir), true);
+        return $res;
     }
 
 }

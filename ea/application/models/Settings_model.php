@@ -41,7 +41,8 @@ class Settings_Model extends CI_Model {
         $id = $this->session->userdata['ac']->id;
 
         if ($this->db->get_where('ea_settings', ['id_assessment_center' => $id, 'name' => $name])->num_rows() == 0) { // Check if setting exists in db.
-            throw new Exception('$name setting does not exist in database: ' . $name);
+            //throw new Exception('$name setting does not exist in database: ' . $name);
+            return '';
         }
 
         $query = $this->db->get_where('ea_settings', ['id_assessment_center' => $id, 'name' => $name]);

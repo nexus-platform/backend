@@ -108,6 +108,7 @@
          */
         $('#edit-customer').click(function () {
             $('.record-details').find('input, textarea').prop('readonly', false);
+            $('.record-details').find('select').prop('disabled', false);
             $('#add-edit-delete-group').hide();
             $('#save-cancel-group').show();
 
@@ -138,7 +139,8 @@
                 address: $('#address').val(),
                 city: $('#city').val(),
                 zip_code: $('#zip-code').val(),
-                notes: $('#notes').val()
+                notes: $('#notes').val(),
+                status: $('#status').val()
             };
 
             if ($('#customer-id').val() != '') {
@@ -269,8 +271,9 @@
      * Bring the customer form back to its initial state.
      */
     CustomersHelper.prototype.resetForm = function () {
-        $('.record-details').find('input, textarea').val('');
+        $('.record-details').find('input, textarea, select').val('');
         $('.record-details').find('input, textarea').prop('readonly', true);
+        $('.record-details').find('select').prop('disabled', true);
 
         $('#customer-appointments').empty();
         $('#appointment-details').toggleClass('hidden', true).empty();
@@ -301,6 +304,7 @@
         $('#city').val(customer.city);
         $('#zip-code').val(customer.zip_code);
         $('#notes').val(customer.notes);
+        $('#status').val(customer.status);
 
         $('#customer-appointments').empty();
         $.each(customer.appointments, function (index, appointment) {

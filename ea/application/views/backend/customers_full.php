@@ -254,6 +254,15 @@
                                 <label class="control-label" for="notes"><?= lang('notes') ?></label>
                                 <textarea id="notes" rows="4" class="form-control"></textarea>
                             </div>
+                            
+                            <div class="form-group">
+                                <label class="control-label" for="status">Status</label>
+                                <select id="status" class="form-control">
+                                    <option></option>
+                                    <option value="0">Disabled</option>
+                                    <option value="1">Enabled</option>
+                                </select>
+                            </div>
 
                             <p class="text-center">
                                 <em id="form-message" class="text-danger"><?= lang('fields_are_required') ?></em>

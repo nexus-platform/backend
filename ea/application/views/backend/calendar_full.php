@@ -322,10 +322,10 @@
                             <fieldset>
                                 <legend>
                                     <?= lang('customer_details_title') ?>
-                                    <button id="new-customer" class="btn btn-default btn-xs"
+                                    <!--<button id="new-customer" class="btn btn-default btn-xs"
                                             title="<?= lang('clear_fields_add_existing_customer_hint') ?>"
                                             type="button"><?= lang('new') ?>
-                                    </button>
+                                    </button>-->
                                     <button id="select-customer" class="btn btn-primary btn-xs"
                                             title="<?= lang('pick_existing_customer_hint') ?>"
                                             type="button"><?= lang('select') ?>
@@ -342,43 +342,13 @@
                                     <div class="col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label for="first-name" class="control-label"><?= lang('first_name') ?> *</label>
-                                            <input id="first-name" class="required form-control">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="last-name" class="control-label"><?= lang('last_name') ?> *</label>
-                                            <input id="last-name" class="required form-control">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="email" class="control-label"><?= lang('email') ?> *</label>
-                                            <input id="email" class="required form-control">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="phone-number" class="control-label"><?= lang('phone_number') ?> *</label>
-                                            <input id="phone-number" class="required form-control">
+                                            <input readonly id="first-name" class="required form-control">
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-sm-6">
                                         <div class="form-group">
-                                            <label for="address" class="control-label"><?= lang('address') ?></label>
-                                            <input id="address" class="form-control">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="city" class="control-label"><?= lang('city') ?></label>
-                                            <input id="city" class="form-control">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="zip-code" class="control-label"><?= lang('zip_code') ?></label>
-                                            <input id="zip-code" class="form-control">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="customer-notes" class="control-label"><?= lang('notes') ?></label>
-                                            <textarea id="customer-notes" rows="2" class="form-control"></textarea>
+                                            <label for="last-name" class="control-label"><?= lang('last_name') ?> *</label>
+                                            <input readonly id="last-name" class="required form-control">
                                         </div>
                                     </div>
                                 </div>

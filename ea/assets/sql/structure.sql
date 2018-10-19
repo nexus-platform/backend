@@ -64,9 +64,11 @@ CREATE TABLE IF NOT EXISTS `ea_roles` (
 CREATE TABLE IF NOT EXISTS `ea_secretaries_providers` (
     `id_users_secretary` INT(11) NOT NULL,
     `id_users_provider` INT(11) NOT NULL,
-    PRIMARY KEY (`id_users_secretary`, `id_users_provider`),
+    `id_assessment_center` INT(11) NOT NULL,
+    PRIMARY KEY (`id_users_secretary`, `id_users_provider`, `id_assessment_center`),
     KEY `id_users_secretary` (`id_users_secretary`),
-    KEY `id_users_provider` (`id_users_provider`)
+    KEY `id_users_provider` (`id_users_provider`),
+    KEY `id_assessment_center` (`id_assessment_center`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -137,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `status` INT(11) NOT NULL DEFAULT 1,
     `id_roles` INT(11) NOT NULL,
     `id_assessment_center` INT(11) NOT NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`, `id_assessment_center`),
     KEY `id_roles` (`id_roles`)
 )
     ENGINE = InnoDB
@@ -158,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `ea_user_settings` (
     `sync_future_days` INT(11) DEFAULT '5',
     `calendar_view` VARCHAR(32) DEFAULT 'default',
     `id_assessment_center` INT(11) NOT NULL,
-    PRIMARY KEY (`id_users`)
+    PRIMARY KEY (`id_users`, `id_assessment_center`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -179,6 +181,9 @@ ALTER TABLE `ea_secretaries_providers`
     ON DELETE CASCADE
     ON UPDATE CASCADE,
     ADD CONSTRAINT `secretaries_users_provider` FOREIGN KEY (`id_users_provider`) REFERENCES `user` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `secretaries_assessment_center` FOREIGN KEY (`id_assessment_center`) REFERENCES `assessment_center` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
 

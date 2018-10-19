@@ -172,9 +172,9 @@
                         <a href="#current-user" aria-controls="current-user" role="tab" data-toggle="tab"><?= lang('current_user') ?></a>
                     </li>
                 <?php endif ?>
-                <li role="presentation">
+                <!--<li role="presentation">
                     <a href="#about-app" aria-controls="about-app" role="tab" data-toggle="tab"><?= lang('about_app') ?></a>
-                </li>
+                </li>-->
             </ul>
 
             <div class="tab-content">
@@ -206,13 +206,13 @@
                                         </span>
                                     </div>
 
-                                    <div class="form-group">
+                                    <!--<div class="form-group">
                                         <label for="company-email"><?= lang('company_email') ?> *</label>
                                         <input id="company-email" data-field="company_email" class="required form-control">
                                         <span class="help-block">
                                             <?= lang('company_email_hint') ?>
                                         </span>
-                                    </div>
+                                    </div>-->
 
                                     <div class="form-group">
                                         <label for="company-link"><?= lang('company_link') ?> *</label>

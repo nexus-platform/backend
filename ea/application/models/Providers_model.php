@@ -162,7 +162,10 @@ class Providers_Model extends CI_Model {
         }
 
         // Update provider record.
-        $this->db->where('id', $provider['id']);
+        $this->load->library('session');
+        $provider['id_assessment_center'] = $this->session->userdata['ac']->id;
+
+        $this->db->where(['id' => $provider['id'], 'id_assessment_center' => $provider['id_assessment_center']]);
         if (!$this->db->update('ea_users', $provider)) {
             throw new Exception('Could not update provider record.');
         }
@@ -425,7 +428,10 @@ class Providers_Model extends CI_Model {
             }
 
             // Settings
-            $provider['settings'] = $this->db->get_where('ea_user_settings', ['id_users' => $provider['id']])->row_array();
+            $this->load->library('session');
+            $ac_id = $this->session->userdata['ac']->id;
+
+            $provider['settings'] = $this->db->get_where('ea_user_settings', ['id_users' => $provider['id'], 'id_assessment_center' => $ac_id])->row_array();
             unset($provider['settings']['id_users']);
         }
 
@@ -461,7 +467,10 @@ class Providers_Model extends CI_Model {
             }
 
             // Settings
-            $provider['settings'] = $this->db->get_where('ea_user_settings', ['id_users' => $provider['id']])->row_array();
+            $this->load->library('session');
+            $ac_id = $this->session->userdata['ac']->id;
+        
+            $provider['settings'] = $this->db->get_where('ea_user_settings', ['id_users' => $provider['id'], 'id_assessment_center' => $ac_id])->row_array();
             unset($provider['settings']['username']);
             unset($provider['settings']['password']);
             unset($provider['settings']['salt']);
@@ -489,7 +498,9 @@ class Providers_Model extends CI_Model {
      * @return string Returns the value of the selected user setting.
      */
     public function get_setting($setting_name, $provider_id) {
-        $provider_settings = $this->db->get_where('ea_user_settings', ['id_users' => $provider_id])->row_array();
+        $this->load->library('session');
+        $ac_id = $this->session->userdata['ac']->id;
+        $provider_settings = $this->db->get_where('ea_user_settings', ['id_users' => $provider_id, 'id_assessment_center' => $ac_id])->row_array();
         return $provider_settings[$setting_name];
     }
 
@@ -503,7 +514,10 @@ class Providers_Model extends CI_Model {
      * @param int $provider_id The selected provider id.
      */
     public function set_setting($setting_name, $value, $provider_id) {
-        $this->db->where(['id_users' => $provider_id]);
+        $this->load->library('session');
+        $ac_id = $this->session->userdata['ac']->id;
+        
+        $this->db->where(['id_users' => $provider_id, 'id_assessment_center' => $ac_id]);
         return $this->db->update('ea_user_settings', [$setting_name => $value]);
     }
 
@@ -524,11 +538,12 @@ class Providers_Model extends CI_Model {
         if (count($settings) == 0 || !is_array($settings)) {
             throw new Exception('Invalid $settings argument given:' . print_r($settings, TRUE));
         }
+        $this->load->library('session');
+        $ac_id = $this->session->userdata['ac']->id;
 
         // Check if the setting record exists in db.
-        if ($this->db->get_where('ea_user_settings', ['id_users' => $provider_id])
-                        ->num_rows() == 0) {
-            $this->db->insert('ea_user_settings', ['id_users' => $provider_id]);
+        if ($this->db->get_where('ea_user_settings', ['id_users' => $provider_id, 'id_assessment_center' => $ac_id])->num_rows() == 0) {
+            $this->db->insert('ea_user_settings', ['id_users' => $provider_id, 'id_assessment_center' => $ac_id]);
         }
 
         foreach ($settings as $name => $value) {

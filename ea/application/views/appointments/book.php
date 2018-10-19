@@ -201,120 +201,30 @@
                         </div>
 
                         <div class="command-buttons">
-                            <button type="button" id="button-back-2" class="btn button-back btn-default"
-                                    data-step_index="2">
+                            <button type="button" id="button-back-2" class="btn button-back btn-default" data-step_index="2">
                                 <span class="glyphicon glyphicon-backward"></span>
                                 <?= lang('back') ?>
                             </button>
-                            <button type="button" id="button-next-2" class="btn button-next btn-primary"
-                                    data-step_index="2">
-                                        <?= lang('next') ?>
+                            <button type="button" id="button-next-2" class="btn button-next btn-primary" data-step_index="2">
+                                <?= lang('next') ?>
                                 <span class="glyphicon glyphicon-forward"></span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- ENTER CUSTOMER DATA -->
+                     <!-- APPOINTMENT DATA CONFIRMATION -->
 
                     <div id="wizard-frame-3" class="wizard-frame" style="display:none;">
-                        <div class="frame-container">
-
-                            <h3 class="frame-title"><?= lang('step_three_title') ?></h3>
-
-                            <div class="frame-content row">
-                                <div class="col-xs-12 col-sm-6">
-                                    <div class="form-group">
-                                        <label for="first-name" class="control-label"><?= lang('first_name') ?> *</label>
-                                        <input type="text" id="first-name" class="required form-control" maxlength="100" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="last-name" class="control-label"><?= lang('last_name') ?> *</label>
-                                        <input type="text" id="last-name" class="required form-control" maxlength="120" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email" class="control-label"><?= lang('email') ?> *</label>
-                                        <input type="text" id="email" class="required form-control" maxlength="120" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="phone-number" class="control-label"><?= lang('phone_number') ?> *</label>
-                                        <input type="text" id="phone-number" class="required form-control" maxlength="60" />
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-12 col-sm-6">
-                                    <div class="form-group">
-                                        <label for="address" class="control-label"><?= lang('address') ?></label>
-                                        <input type="text" id="address" class="form-control" maxlength="120" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="city" class="control-label"><?= lang('city') ?></label>
-                                        <input type="text" id="city" class="form-control" maxlength="120" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="zip-code" class="control-label"><?= lang('zip_code') ?></label>
-                                        <input type="text" id="zip-code" class="form-control" maxlength="120" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="notes" class="control-label"><?= lang('notes') ?></label>
-                                        <textarea id="notes" maxlength="500" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-
-                                <?php if ($display_terms_and_conditions): ?>
-                                    <label>
-                                        <input type="checkbox" class="required" id="accept-to-terms-and-conditions">
-                                        <?=
-                                        strtr(lang('read_and_agree_to_terms_and_conditions'), [
-                                            '{$link}' => '<a href="#" data-toggle="modal" data-target="#terms-and-conditions-modal">',
-                                            '{/$link}' => '</a>'
-                                        ])
-                                        ?>
-                                    </label>
-                                    <br>
-                                <?php endif ?>
-
-                                <?php if ($display_privacy_policy): ?>
-                                    <label>
-                                        <input type="checkbox" class="required" id="accept-to-privacy-policy">
-                                        <?=
-                                        strtr(lang('read_and_agree_to_privacy_policy'), [
-                                            '{$link}' => '<a href="#" data-toggle="modal" data-target="#privacy-policy-modal">',
-                                            '{/$link}' => '</a>'
-                                        ])
-                                        ?>
-                                    </label>
-                                    <br>
-                                <?php endif ?>
-
-                                <span id="form-message" class="text-danger"><?= lang('fields_are_required') ?></span>
-                            </div>
-                        </div>
-
-                        <div class="command-buttons">
-                            <button type="button" id="button-back-3" class="btn button-back btn-default"
-                                    data-step_index="3"><span class="glyphicon glyphicon-backward"></span>
-                                        <?= lang('back') ?>
-                            </button>
-                            <button type="button" id="button-next-3" class="btn button-next btn-primary"
-                                    data-step_index="3">
-                                        <?= lang('next') ?>
-                                <span class="glyphicon glyphicon-forward"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- APPOINTMENT DATA CONFIRMATION -->
-
-                    <div id="wizard-frame-4" class="wizard-frame" style="display:none;">
+                        
                         <div class="frame-container">
                             <h3 class="frame-title"><?= lang('step_four_title') ?></h3>
                             <div class="frame-content row">
                                 <div id="appointment-details" class="col-xs-12 col-sm-6"></div>
-                                <div id="customer-details" class="col-xs-12 col-sm-6"></div>
+                                <!--<div id="customer-details" class="col-xs-12 col-sm-6"></div>-->
                             </div>
                             <?php
-                                if ($this->settings_model->get_setting('require_captcha') === '1'):
-                            ?>
+                            if ($this->settings_model->get_setting('require_captcha') === '1'):
+                                ?>
                                 <div class="frame-content row">
                                     <div class="col-xs-12 col-sm-6">
                                         <h4 class="captcha-title">
@@ -328,10 +238,9 @@
                                 </div>
                             <?php endif; ?>
                         </div>
-
+                        
                         <div class="command-buttons">
-                            <button type="button" id="button-back-4" class="btn button-back btn-default"
-                                    data-step_index="4">
+                            <button type="button" id="button-back-3" class="btn button-back btn-default" data-step_index="3">
                                 <span class="glyphicon glyphicon-backward"></span>
                                 <?= lang('back') ?>
                             </button>

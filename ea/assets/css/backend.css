@@ -411,7 +411,7 @@ body legend {
 }
 
 #existing-customers-list div:hover {
-    background: #3DD481;
+    background: #3f51b5;
     font-weight: bold;
     color: #FFF;
     cursor: pointer;

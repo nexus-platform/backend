@@ -157,7 +157,7 @@
 
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#providers" aria-controls="providers" role="tab" data-toggle="tab"><?= lang('providers') ?></a></li>
-                <li role="presentation"><a href="#secretaries" aria-controls="secretaries" role="tab" data-toggle="tab"><?= lang('secretaries') ?></a></li>
+                <!--<li role="presentation"><a href="#secretaries" aria-controls="secretaries" role="tab" data-toggle="tab"><?= lang('secretaries') ?></a></li>-->
                 <!--<li role="presentation"><a href="#admins" aria-controls="admins" role="tab" data-toggle="tab"><?= lang('admins') ?></a></li>-->
             </ul>
 
@@ -224,7 +224,8 @@
                                 <div class="display-working-plan"><?= lang('working_plan') ?></div>
                             </div>
 
-                            <?php // This form message is outside the details view, so that it can be
+                            <?php
+                            // This form message is outside the details view, so that it can be
                             // visible when the user has working plan view active. 
                             ?>
                             <div class="form-message alert" style="display:none;"></div>
@@ -287,10 +288,10 @@
                                         </div>
                                     </div>
                                     <div class="provider-settings col-xs-12 col-sm-6">
-                                        <div class="form-group">
+                                        <!--<div class="form-group">
                                             <label for="provider-username"><?= lang('username') ?> *</label>
                                             <input id="provider-username" class="form-control required" maxlength="256">
-                                        </div>
+                                        </div>-->
 
                                         <div class="form-group">
                                             <label for="provider-password"><?= lang('password') ?> *</label>
@@ -307,6 +308,15 @@
                                             <select id="provider-calendar-view" class="form-control required">
                                                 <option value="default">Default</option>
                                                 <option value="table">Table</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="provider-status">Status *</label>
+                                            <select id="provider-status" class="form-control required">
+                                                <option></option>
+                                                <option value="0">Disabled</option>
+                                                <option value="1">Enabled</option>
                                             </select>
                                         </div>
 
@@ -330,7 +340,7 @@
                                 <button id="reset-working-plan" class="btn btn-primary"
                                         title="<?= lang('reset_working_plan') ?>">
                                     <span class="glyphicon glyphicon-repeat"></span>
-<?= lang('reset_plan') ?></button>
+                                    <?= lang('reset_plan') ?></button>
                                 <table class="working-plan table table-striped">
                                     <thead>
                                         <tr>
@@ -345,7 +355,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" id="sunday">
-<?= lang('sunday') ?>
+                                                        <?= lang('sunday') ?>
                                                     </label>
                                                 </div>
                                             </td>
@@ -357,7 +367,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" id="monday">
-<?= lang('monday') ?>
+                                                        <?= lang('monday') ?>
                                                     </label>
                                                 </div>
                                             </td>
@@ -369,7 +379,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" id="tuesday">
-<?= lang('tuesday') ?>
+                                                        <?= lang('tuesday') ?>
                                                     </label>
                                                 </div>
                                             </td>
@@ -381,7 +391,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" id="wednesday">
-<?= lang('wednesday') ?>
+                                                        <?= lang('wednesday') ?>
                                                     </label>
                                                 </div>
                                             </td>
@@ -393,7 +403,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" id="thursday">
-<?= lang('thursday') ?>
+                                                        <?= lang('thursday') ?>
                                                     </label>
                                                 </div>
                                             </td>
@@ -405,7 +415,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" id="friday">
-<?= lang('friday') ?>
+                                                        <?= lang('friday') ?>
                                                     </label>
                                                 </div>
                                             </td>
@@ -417,7 +427,7 @@
                                                 <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" id="saturday">
-<?= lang('saturday') ?>
+                                                        <?= lang('saturday') ?>
                                                     </label>
                                                 </div>
                                             </td>
@@ -432,13 +442,13 @@
                                 <h3><?= lang('breaks') ?></h3>
 
                                 <span class="help-block">
-<?= lang('add_breaks_during_each_day') ?>
+                                    <?= lang('add_breaks_during_each_day') ?>
                                 </span>
 
                                 <div>
                                     <button type="button" class="add-break btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
-<?= lang('add_break') ?>
+                                        <?= lang('add_break') ?>
                                     </button>
                                 </div>
 
@@ -492,26 +502,26 @@
                                 <div class="add-edit-delete-group btn-group">
                                     <button id="add-secretary" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
-<?= lang('add') ?>
+                                        <?= lang('add') ?>
                                     </button>
                                     <button id="edit-secretary" class="btn btn-default" disabled="disabled">
                                         <span class="glyphicon glyphicon-pencil"></span>
-<?= lang('edit') ?>
+                                        <?= lang('edit') ?>
                                     </button>
                                     <button id="delete-secretary" class="btn btn-default" disabled="disabled">
                                         <span class="glyphicon glyphicon-remove"></span>
-<?= lang('delete') ?>
+                                        <?= lang('delete') ?>
                                     </button>
                                 </div>
 
                                 <div class="save-cancel-group btn-group" style="display:none;">
                                     <button id="save-secretary" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-ok"></span>
-<?= lang('save') ?>
+                                        <?= lang('save') ?>
                                     </button>
                                     <button id="cancel-secretary" class="btn btn-default">
                                         <span class="glyphicon glyphicon-ban-circle"></span>
-<?= lang('cancel') ?>
+                                        <?= lang('cancel') ?>
                                     </button>
                                 </div>
                             </div>
@@ -647,26 +657,26 @@
                                 <div class="add-edit-delete-group btn-group">
                                     <button id="add-admin" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-plus"></span>
-<?= lang('add') ?>
+                                        <?= lang('add') ?>
                                     </button>
                                     <button id="edit-admin" class="btn btn-default" disabled="disabled">
                                         <span class="glyphicon glyphicon-pencil"></span>
-<?= lang('edit') ?>
+                                        <?= lang('edit') ?>
                                     </button>
                                     <button id="delete-admin" class="btn btn-default" disabled="disabled">
                                         <span class="glyphicon glyphicon-remove"></span>
-<?= lang('delete') ?>
+                                        <?= lang('delete') ?>
                                     </button>
                                 </div>
 
                                 <div class="save-cancel-group btn-group" style="display:none;">
                                     <button id="save-admin" class="btn btn-primary">
                                         <span class="glyphicon glyphicon-ok"></span>
-<?= lang('save') ?>
+                                        <?= lang('save') ?>
                                     </button>
                                     <button id="cancel-admin" class="btn btn-default">
                                         <span class="glyphicon glyphicon-ban-circle"></span>
-<?= lang('cancel') ?>
+                                        <?= lang('cancel') ?>
                                     </button>
                                 </div>
                             </div>
@@ -765,9 +775,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <div id="invite-user" class="modal fade" data-keyboard="true" tabindex="-1">
-                <div class="modal-dialog modal-lg">
+                <div class="modal-dialog modal-md">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -779,161 +789,26 @@
 
                             <form>
                                 <fieldset>
-                                    <legend><?= lang('appointment_details_title') ?></legend>
-
-                                    <input id="appointment-id" type="hidden">
-
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6">
                                             <div class="form-group">
-                                                <label for="select-service" class="control-label"><?= lang('service') ?> *</label>
-                                                <select id="select-service" class="required form-control">
-                                                    <?php
-                                                    // Group services by category, only if there is at least one service
-                                                    // with a parent category.
-                                                    $has_category = FALSE;
-                                                    foreach ($available_services as $service) {
-                                                        if ($service['category_id'] != NULL) {
-                                                            $has_category = TRUE;
-                                                            break;
-                                                        }
-                                                    }
-
-                                                    if ($has_category) {
-                                                        $grouped_services = array();
-
-                                                        foreach ($available_services as $service) {
-                                                            if ($service['category_id'] != NULL) {
-                                                                if (!isset($grouped_services[$service['category_name']])) {
-                                                                    $grouped_services[$service['category_name']] = array();
-                                                                }
-
-                                                                $grouped_services[$service['category_name']][] = $service;
-                                                            }
-                                                        }
-
-                                                        // We need the uncategorized services at the end of the list so
-                                                        // we will use another iteration only for the uncategorized services.
-                                                        $grouped_services['uncategorized'] = array();
-                                                        foreach ($available_services as $service) {
-                                                            if ($service['category_id'] == NULL) {
-                                                                $grouped_services['uncategorized'][] = $service;
-                                                            }
-                                                        }
-
-                                                        foreach ($grouped_services as $key => $group) {
-                                                            $group_label = ($key != 'uncategorized') ? $group[0]['category_name'] : 'Uncategorized';
-
-                                                            if (count($group) > 0) {
-                                                                echo '<optgroup label="' . $group_label . '">';
-                                                                foreach ($group as $service) {
-                                                                    echo '<option value="' . $service['id'] . '">'
-                                                                    . $service['name'] . '</option>';
-                                                                }
-                                                                echo '</optgroup>';
-                                                            }
-                                                        }
-                                                    } else {
-                                                        foreach ($available_services as $service) {
-                                                            echo '<option value="' . $service['id'] . '">'
-                                                            . $service['name'] . '</option>';
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="select-provider" class="control-label"><?= lang('provider') ?> *</label>
-                                                <select id="select-provider" class="required form-control"></select>
+                                                <label for="invite-name" class="control-label">Name *</label>
+                                                <input type="text" id="invite-name" class="required form-control" />
                                             </div>
                                         </div>
-
                                         <div class="col-xs-12 col-sm-6">
                                             <div class="form-group">
-                                                <label for="start-datetime" class="control-label"><?= lang('start_date_time') ?></label>
-                                                <input id="start-datetime" class="required form-control">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="end-datetime" class="control-label"><?= lang('end_date_time') ?></label>
-                                                <input id="end-datetime" class="required form-control">
+                                                <label for="invite-email" class="control-label">Email *</label>
+                                                <input type="text" id="invite-email" class="required form-control" />
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-6">
+                                        <div class="col-xs-12">
                                             <div class="form-group">
-                                                <label for="appointment-notes" class="control-label"><?= lang('notes') ?></label>
-                                                <textarea id="appointment-notes" class="form-control" rows="2"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </fieldset>
-
-                                <br>
-
-                                <fieldset>
-                                    <legend>
-                                        <?= lang('customer_details_title') ?>
-                                        <button id="new-customer" class="btn btn-default btn-xs"
-                                                title="<?= lang('clear_fields_add_existing_customer_hint') ?>"
-                                                type="button"><?= lang('new') ?>
-                                        </button>
-                                        <button id="select-customer" class="btn btn-primary btn-xs"
-                                                title="<?= lang('pick_existing_customer_hint') ?>"
-                                                type="button"><?= lang('select') ?>
-                                        </button>
-                                        <input id="filter-existing-customers"
-                                               placeholder="<?= lang('type_to_filter_customers') ?>"
-                                               style="display: none;" class="input-sm form-control">
-                                        <div id="existing-customers-list" style="display: none;"></div>
-                                    </legend>
-
-                                    <input id="customer-id" type="hidden">
-
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-6">
-                                            <div class="form-group">
-                                                <label for="first-name" class="control-label"><?= lang('first_name') ?> *</label>
-                                                <input id="first-name" class="required form-control">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="last-name" class="control-label"><?= lang('last_name') ?> *</label>
-                                                <input id="last-name" class="required form-control">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="email" class="control-label"><?= lang('email') ?> *</label>
-                                                <input id="email" class="required form-control">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="phone-number" class="control-label"><?= lang('phone_number') ?> *</label>
-                                                <input id="phone-number" class="required form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-6">
-                                            <div class="form-group">
-                                                <label for="address" class="control-label"><?= lang('address') ?></label>
-                                                <input id="address" class="form-control">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="city" class="control-label"><?= lang('city') ?></label>
-                                                <input id="city" class="form-control">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="zip-code" class="control-label"><?= lang('zip_code') ?></label>
-                                                <input id="zip-code" class="form-control">
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="customer-notes" class="control-label"><?= lang('notes') ?></label>
-                                                <textarea id="customer-notes" rows="2" class="form-control"></textarea>
+                                                <label for="invite-message" class="control-label">Custom message</label>
+                                                <textarea id="invite-message" class="form-control" rows="2"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -942,8 +817,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button id="save-appointment" class="btn btn-primary"><?= lang('save') ?></button>
-                            <button id="cancel-appointment" class="btn btn-default" data-dismiss="modal"><?= lang('cancel') ?></button>
+                            <button id="send-invitation" class="btn btn-primary">Send invitation</button>
+                            <button id="cancel-invitation" class="btn btn-default" data-dismiss="modal"><?= lang('cancel') ?></button>
                         </div>
                     </div>
                 </div>

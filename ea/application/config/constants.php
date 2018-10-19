@@ -87,5 +87,8 @@ define('CALENDAR_VIEW_TABLE', 'table');
 define('AVAILABILITIES_TYPE_FLEXIBLE', 'flexible');
 define('AVAILABILITIES_TYPE_FIXED', 'fixed');
 
+//define('NEXUS_FRONT_URL', 'http://localhost:8081/#/');
+define('NEXUS_FRONT_URL', 'http://nexusapp.enaebl.com/');
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

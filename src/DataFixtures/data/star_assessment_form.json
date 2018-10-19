@@ -1,0 +1,862 @@
+[
+	{
+		"title": "About this form",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<p style='text-align: center'><b>Edmund House, 10-12 Newhall Street, Birmingham B3 3EF<br/>Tel: 0121 726 2031</b><br/><a href='http://www.starassessments.co.uk'>www.starassessments.co.uk</a><br/><a href='mailto:contact@starassessments.co.uk'>email: contact@starassessments.co.uk</a></p>"
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Pre-Assessment Form</b></span><br/><p>The purpose of the DSA Study Needs Assessment is to determine what difficulties you may face due to your disability and to consider what support can be provided to overcome those difficulties.  In order to get the best outcome from this assessment, we require the following information in advance.  This will enable us to do any prior research needed, so that we can consider the full range of support available.</p>"
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Account details",
+		"components": [
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "First Name",
+						"name": "name",
+						"type": "text",
+						"max_length": 75,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Last Name",
+						"name": "last_name",
+						"type": "text",
+						"max_length": 75,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Date of Birth",
+						"name": "birth_date",
+						"type": "date",
+						"format": "DD-MM-YYYY",
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md6",
+					"content_type": "input",
+					"input": {
+						"title": "Home Address",
+						"name": "address",
+						"type": "text",
+						"required": false,
+						"max_length": 512,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md6",
+					"content_type": "input",
+					"input": {
+						"title": "Term Address",
+						"name": "term_address",
+						"type": "text",
+						"required": false,
+						"max_length": 512,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Mobile",
+						"name": "mobile",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Telephone",
+						"name": "phone",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Email",
+						"name": "email",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Password",
+						"name": "password",
+						"type": "password",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Confirm your password",
+						"name": "password_confirm",
+						"type": "password",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Today's Date",
+						"name": "today_date",
+						"type": "date",
+						"format": "DD-MM-YYYY",
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Postcode",
+						"name": "postcode",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Assessment Information",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Have you previously had a Needs Assessment?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Previous Assessment - Yes",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Previous Assessment - No",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input" : {
+						"title": "If you have been previously assessed for DSA funding, please give date and details, and attach copy of report, if available",
+						"name": "Previously assessed for DSA funding",
+						"type": "text",
+						"max_length": 1024,
+						"rows": 5,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Funding Body"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "SFE",
+						"name": "Funding Body - SFE",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "SFW",
+						"name": "Funding Body - SFW",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "SFNI",
+						"name": "Funding Body - SFNI",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "SAAS",
+						"name": "Funding Body - SAAS",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "NHS",
+						"name": "Funding Body - NHS",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Have you received a DSA eligibility letter from your Funding Body?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "DSA eligibility letter - Yes",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "DSA eligibility letter - No",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input": {
+						"title": "Customer Reference Number (CRN)",
+						"name": "CRN",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Course title"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Full Time",
+						"name": "Full Time",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Part Time",
+						"name": "Part Time",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Postgraduate",
+						"name": "Postgraduate",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Undergraduate",
+						"name": "Undergraduate",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md3",
+					"content_type": "input",
+					"input": {
+						"title": "Year of Study",
+						"name": "Year of Study",
+						"type": "number",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Course Start",
+						"name": "Course Start",
+						"type": "date",
+						"format": "DD-MM-YYYY",
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Course End",
+						"name": "Course End",
+						"type": "date",
+						"format": "DD-MM-YYYY",
+						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "University/Institution name",
+						"name": "University name",
+						"type": "text",
+						"max_length": 150,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md8",
+					"content_type": "input",
+					"input" : {
+						"title": "University/Institution address",
+						"name": "University address",
+						"type": "text",
+						"max_length": 150,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Disability Team Information (if known)</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Named Contact",
+						"name": "Disability Team Named Contact",
+						"type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Telephone",
+						"name": "Disability Team Telephone",
+						"type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Email",
+						"name": "Disability Team Email",
+						"type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "<span style='color: orange'><b>Course Leader Information (if known)</b></span>"
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Named Contact",
+						"name": "Course Leader Named Contact",
+						"type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Telephone",
+						"name": "Course Leader Telephone",
+						"type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Email",
+						"name": "Course Leader Email",
+						"type": "text",
+						"max_length": 50,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+		]
+	},
+	
+	{
+		"title": "Additional Information",
+		"components": [
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Do you give us permission to share your medical records with your Assessor?"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Share your medical records - Yes",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Share your medical records - No",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "We will not disclose your identity to your university / college without your permission.  However, it may be helpful for us to contact your disability officer / course leader for information regarding your course.  Please confirm if you are happy to give your permission"
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Happy to give your permission - Yes",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Happy to give your permission - No",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input" : {
+						"title": "What type of disability are you being assessed for (you will find this in your DSA eligibility letter)?",
+						"name": "Type of disability",
+						"type": "text",
+						"max_length": 512,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input" : {
+						"title": "What are the main difficulties caused by your disability?",
+						"name": "Main difficulties",
+						"type": "text",
+						"max_length": 512,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input" : {
+						"title": "What type of support have you received in the past (e.g. in school / college)? e.g. did you get extra time for exams, or did you get 1:1 support, etc.",
+						"name": "Support received",
+						"type": "text",
+						"max_length": 512,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "input",
+					"input" : {
+						"title": "What type of equipment do you have access to (e.g. computer, tablet, smartphone).  Please provide details of the make and model of each, and do feel free to bring along any such piece of equipment you use to your assessment.",
+						"name": "Type of equipment",
+						"type": "text",
+						"max_length": 512,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "Do you have special access requirements for your assessment? E.g. ergonomic chair, parking, etc."
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Special access requirements - Yes",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Special access requirements - No",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md12",
+					"content_type": "html",
+					"html": "I give my consent for another person to observe or participate in the Assessment for the purposes of quality assurance and training of personnel."
+				}
+			],
+			[
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "Yes",
+						"name": "Consent for another person - Yes",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md2",
+					"content_type": "input",
+					"input": {
+						"title": "No",
+						"name": "Consent for another person - No",
+						"type": "checkbox",
+						"required": false,
+						"value": false,
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			]
+			
+		]
+	},
+	
+	{
+		"title": "Documents",
+		"components": [
+			[
+				{
+                    "class": "md12",
+                    "content_type": "input",
+                    "input": {
+                        "title": "Student Signature",
+                        "name": "Student Signature",
+                        "type": "signature",
+						"required": true,
+                        "value": "",
+                        "disabled": false,
+                        "read_only": false
+                    }
+                }
+			]
+		]
+	}
+	
+]

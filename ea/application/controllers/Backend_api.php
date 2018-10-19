@@ -13,9 +13,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @since       v1.0.0
  * ---------------------------------------------------------------------------- */
 
-use \EA\Engine\Types\Text;
-use \EA\Engine\Types\Email;
-use \EA\Engine\Types\Url;
+use EA\Engine\Notifications\Email as Email2;
+use EA\Engine\Types\Email;
+use EA\Engine\Types\Text;
+use EA\Engine\Types\Url;
 
 /**
  * Backend API Controller
@@ -179,13 +180,13 @@ class Backend_api extends CI_Controller {
             $end_date = $this->db->escape(date('Y-m-d', strtotime($_POST['end_date'] . ' +1 day')));
             
             $this->load->library('session');
-            
+            $ac_id = $this->session->userdata['ac']->id;
 
             $where_clause = $where_id . ' = ' . $record_id . '
                 AND ((start_datetime > ' . $start_date . ' AND start_datetime < ' . $end_date . ') 
                 or (end_datetime > ' . $start_date . ' AND end_datetime < ' . $end_date . ') 
                 or (start_datetime <= ' . $start_date . ' AND end_datetime >= ' . $end_date . ')) 
-                AND is_unavailable = 0 AND id_services in (SELECT id FROM ea_services where id_assessment_center = ' . $this->session->userdata['ac']->id . ')';
+                AND is_unavailable = 0 AND id_services in (SELECT id FROM ea_services where id_assessment_center = ' . $ac_id . ')';
 
             $response['appointments'] = $this->appointments_model->get_batch($where_clause);
 
@@ -232,7 +233,7 @@ class Backend_api extends CI_Controller {
             $this->load->model('services_model');
             $this->load->model('customers_model');
             $this->load->model('settings_model');
-
+            
             // :: SAVE CUSTOMER CHANGES TO DATABASE
             if ($this->input->post('customer_data')) {
                 $customer = json_decode($this->input->post('customer_data'), TRUE);
@@ -242,7 +243,7 @@ class Backend_api extends CI_Controller {
                     throw new Exception('You do not have the required privileges for this task.');
                 }
 
-                $customer['id'] = $this->customers_model->add($customer);
+                //$customer['id'] = $this->customers_model->add($customer);
             }
 
             // :: SAVE APPOINTMENT CHANGES TO DATABASE
@@ -302,7 +303,7 @@ class Backend_api extends CI_Controller {
             // :: SEND EMAIL NOTIFICATIONS TO PROVIDER AND CUSTOMER
             try {
                 $this->config->load('email');
-                $email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+                $email = new Email2($this, $this->config->config);
 
                 $send_provider = $this->providers_model
                         ->get_setting('notifications', $provider['id']);
@@ -418,7 +419,7 @@ class Backend_api extends CI_Controller {
             // :: SEND NOTIFICATION EMAILS TO PROVIDER AND CUSTOMER
             try {
                 $this->config->load('email');
-                $email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+                $email = new Email2($this, $this->config->config);
 
                 $send_provider = $this->providers_model
                         ->get_setting('notifications', $provider['id']);
@@ -1005,10 +1006,12 @@ class Backend_api extends CI_Controller {
             if ($this->privileges[PRIV_USERS]['view'] == FALSE) {
                 throw new Exception('You do not have the required privileges for this task.');
             }
+            $this->load->library('session');
 
             $this->load->model('providers_model');
             $key = $this->db->escape_str($this->input->post('key'));
-            $where = '(first_name LIKE "%' . $key . '%" OR last_name LIKE "%' . $key . '%" ' .
+            
+            $where = 'id_assessment_center = ' . $this->session->userdata['ac']->id . ' and (first_name LIKE "%' . $key . '%" OR last_name LIKE "%' . $key . '%" ' .
                     'OR email LIKE "%' . $key . '%" OR mobile_number LIKE "%' . $key . '%" ' .
                     'OR phone_number LIKE "%' . $key . '%" OR address LIKE "%' . $key . '%" ' .
                     'OR city LIKE "%' . $key . '%" OR state LIKE "%' . $key . '%" ' .
@@ -1209,6 +1212,22 @@ class Backend_api extends CI_Controller {
                 $this->load->model('settings_model');
                 $settings = json_decode($this->input->post('settings'), TRUE);
                 $this->settings_model->save_settings($settings);
+                $name = null;
+                $link = null;
+                foreach ($settings as $setting) {
+                    if ($setting['name'] === 'company_name') {
+                        $name = $setting['value'];
+                    } elseif ($setting['name'] === 'company_link') {
+                        $link = $setting['value'];
+                    }
+                    if ($name && $link) {
+                        break;
+                    }
+                }
+                $this->load->library('session');
+                $ac_id = $this->session->userdata['ac']->id;
+                
+                $this->db->simple_query("update `assessment_center` set `name` = '$name', `url` = '$link' where `id` = $ac_id");
             } else {
                 if ($this->input->post('type') == SETTINGS_USER) {
                     if ($this->privileges[PRIV_USER_SETTINGS]['edit'] == FALSE) {
@@ -1349,6 +1368,38 @@ class Backend_api extends CI_Controller {
             $this->load->model('providers_model');
             $result = $this->providers_model->set_setting('google_calendar', $this->input->post('calendar_id'), $this->input->post('provider_id'));
 
+            $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode($result ? AJAX_SUCCESS : AJAX_FAILURE));
+        } catch (Exception $exc) {
+            $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(['exceptions' => [exceptionToJavaScript($exc)]]));
+        }
+    }
+    
+    public function ajax_send_invitation() {
+        try {
+            $this->config->load('email');
+            $email = new Email2($this, $this->config->config);
+            $invitation = json_decode($this->input->post('invitation'), TRUE);
+            $this->load->library('session');
+            $this->load->helper('static_helper');
+            $invitationToken = static_helper::random_str(64);
+            $invitation['ac_id'] = $this->session->userdata['ac']->id;
+            $invitation['ac_name'] = $this->session->userdata['ac']->name;
+            $invitation['sender_email'] = $this->session->userdata['username'];
+            $invitation['sender_name'] = $this->session->userdata['fullname'];
+            $invitation['url'] = NEXUS_FRONT_URL . 'assessment-centre/' . $this->session->userdata['ac']->url . '/signup/' . $invitationToken;
+            $result = $email->sendInvitation($invitation);
+            if (result) {
+                $invitation['text'] = $invitation['message'];
+                $invitation['token'] = $invitationToken;
+                $invitation['sender_id'] = $this->session->userdata['user_id'];
+                $invitation['role'] = 'na';
+                unset($invitation['ac_name'], $invitation['sender_name'], $invitation['sender_email'], $invitation['url'], $invitation['message']);
+                $this->db->insert('user_invitation', $invitation);
+            }
             $this->output
                     ->set_content_type('application/json')
                     ->set_output(json_encode($result ? AJAX_SUCCESS : AJAX_FAILURE));

@@ -43,7 +43,7 @@ window.BackendCalendarApi = window.BackendCalendarApi || {};
         if (customer !== undefined) {
             data.customer_data = JSON.stringify(customer);
         }
-
+        
         $.ajax({
             url: url,
             type: 'POST',

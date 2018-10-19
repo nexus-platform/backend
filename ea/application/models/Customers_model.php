@@ -128,8 +128,10 @@ class Customers_Model extends CI_Model {
                 unset($customer[$key]);
             }
         }
+        $this->load->library('session');
+        $customer['id_assessment_center'] = $this->session->userdata['ac']->id;
 
-        $this->db->where('id', $customer['id']);
+        $this->db->where(['id'=> $customer['id'], 'id_assessment_center' => $customer['id_assessment_center']]);
         if (!$this->db->update('ea_users', $customer)) {
             throw new Exception('Could not update customer to the database.');
         }
@@ -245,8 +247,8 @@ class Customers_Model extends CI_Model {
         if ($num_rows == 0) {
             return FALSE;
         }
-
-        return $this->db->delete('ea_users', ['id' => $customer_id]);
+        $this->load->library('session');
+        return $this->db->delete('ea_users', ['id' => $customer_id, 'id_assessment_center' => $this->session->userdata['ac']->id]);
     }
 
     /**

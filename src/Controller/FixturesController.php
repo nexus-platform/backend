@@ -7,6 +7,7 @@ use App\Entity\AssessmentCenterUser;
 use App\Entity\Country;
 use App\Entity\DisabilityOfficer;
 use App\Entity\DsaForm;
+use App\Entity\EA\EaUsers;
 use App\Entity\NMH;
 use App\Entity\University;
 use App\Entity\UniversityDsaForm;
@@ -33,11 +34,18 @@ class FixturesController extends Controller {
                 '<i>New Assessment Centers:</i> <b>' . $this->loadACs($entityManager) . '</b><br />' .
                 '<i>New Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />'
         ;
+        $entityManager->flush();
         $acUsers = $entityManager->getRepository(AssessmentCenterUser::class)->findAll();
+        StaticMembers::executeRawSQL($entityManager, 'delete from `ea_users`', false);
+        
         foreach ($acUsers as $acUser) {
             StaticMembers::syncEaUser($entityManager, $acUser);
         }
         $entityManager->flush();
+//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `first_name` = (select `name` from `user` where `id` = `ea`.`id`)', false);
+//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `last_name` = (select `lastname` from `user` where `id` = `ea`.`id`)', false);
+//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `email` = (select `email` from `user` where `id` = `ea`.`id`)', false);
+//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `address` = (select `address` from `user` where `id` = `ea`.`id`)', false);
         return new Response($res);
     }
 

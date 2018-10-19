@@ -61,6 +61,7 @@ class Backend extends CI_Controller {
                 $this->session->set_userdata('user_email', $user['email']);
                 $this->session->set_userdata('role_slug', $this->roles_model->get_role_slug($user['id_roles']));
                 $this->session->set_userdata('username', $user['email']);
+                $this->session->set_userdata('fullname', $user['first_name'] . ' ' . $user['last_name']);
                 $this->session->set_userdata('ac', $this->companies_model->find($this->input->get('ac')));
             }
         //}
@@ -83,10 +84,10 @@ class Backend extends CI_Controller {
         $view['book_advance_timeout'] = $this->settings_model->get_setting('book_advance_timeout');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
         $view['time_format'] = $this->settings_model->get_setting('time_format');
-        $view['company_name'] = $this->session->userdata['ac']->name;
+        $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['available_providers'] = $this->providers_model->get_available_providers($this->session->userdata['ac']->id);
         $view['available_services'] = $this->services_model->get_available_services($this->session->userdata['ac']->id);
-        $view['customers'] = $this->customers_model->get_batch();
+        $view['customers'] = $this->customers_model->get_batch('id_assessment_center = ' . $this->session->userdata['ac']->id);
         $user = $this->user_model->get_settings($this->session->userdata('user_id'));
         $view['calendar_view'] = $user['settings']['calendar_view'];
         $this->set_user_data($view);
@@ -150,7 +151,7 @@ class Backend extends CI_Controller {
         $view['base_url'] = $this->config->item('base_url');
         $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
         $view['active_menu'] = PRIV_CUSTOMERS;
-        $view['company_name'] = $this->session->userdata['ac']->name;
+        $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
         $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['customers'] = $this->customers_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
@@ -209,7 +210,7 @@ class Backend extends CI_Controller {
         $view['base_url'] = $this->config->item('base_url');
         $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
         $view['active_menu'] = PRIV_SERVICES;
-        $view['company_name'] = $this->session->userdata['ac']->name;
+        $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
         $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['services'] = $this->services_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
@@ -259,7 +260,7 @@ class Backend extends CI_Controller {
         $view['base_url'] = $this->config->item('base_url');
         $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
         $view['active_menu'] = PRIV_USERS;
-        $view['company_name'] = $this->session->userdata['ac']->name;
+        $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
         $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['admins'] = $this->admins_model->get_batch("id_assessment_center = " . $this->session->userdata['ac']->id);
@@ -312,7 +313,7 @@ class Backend extends CI_Controller {
         $view['base_url'] = $this->config->item('base_url');
         $view['user_display_name'] = $this->user_model->get_user_display_name($user_id);
         $view['active_menu'] = PRIV_SYSTEM_SETTINGS;
-        $view['company_name'] = $this->session->userdata['ac']->name;
+        $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
         $view['time_format'] = $this->settings_model->get_setting('time_format');
         $view['role_slug'] = $this->session->userdata('role_slug');
@@ -320,9 +321,7 @@ class Backend extends CI_Controller {
         $view['user_settings'] = $this->user_model->get_settings($user_id);
         $this->set_user_data($view);
 
-        $this->load->view('backend/header', $view);
-        $this->load->view('backend/settings', $view);
-        $this->load->view('backend/footer', $view);
+        $this->load->view('backend/settings_full', $view);
     }
 
     /**

@@ -11,9 +11,13 @@ INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'book_advance_timeout' as `name`, '30' as `value` from `assessment_center_user` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
-	select distinct `ac_id`, 'company_name' as `name`, 'Assessment Centre' as `value` from `assessment_center_user` where `is_admin` = 1;
+	select distinct `ac_id`, 'company_name' as `name`, (select `name` from `assessment_center` where `id` = `acu`.`ac_id`) as `value` from `assessment_center_user` `acu` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'google_analytics_code' as `name`, '' as `value` from `assessment_center_user` where `is_admin` = 1;
+INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
+	select distinct `ac_id`, 'company_email' as `name`, '' as `value` from `assessment_center_user` where `is_admin` = 1;
+INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
+	select distinct `ac_id`, 'company_link' as `name`, (select `url` from `assessment_center` where `id` = `acu`.`ac_id`) as `value` from `assessment_center_user` `acu` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)
 	select distinct `ac_id`, 'customer_notifications' as `name`, '1' as `value` from `assessment_center_user` where `is_admin` = 1;
 INSERT INTO `ea_settings` (`id_assessment_center`, `name`, `value`)

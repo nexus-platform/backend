@@ -4,7 +4,7 @@
 </head>
 <body style="font: 13px arial, helvetica, tahoma;">
     <div class="email-container" style="width: 650px; border: 1px solid #eee;">
-        <div id="header" style="background-color: #3DD481; border-bottom: 4px solid #1A865F;
+        <div id="header" style="background-color: #3f51b5; border-bottom: 4px solid #727dbd;
                 height: 45px; padding: 10px 15px;">
             <strong id="logo" style="color: white; font-size: 20px;
                     text-shadow: 1px 1px 1px #8F8888; margin-top: 10px; display: inline-block">
@@ -54,9 +54,11 @@
                     <td style="padding: 3px;">$customer_address</td>
                 </tr>
             </table>
+            
+            <br />
 
-            <h2>Appointment Link</h2>
-            <a href="$appointment_link" style="width: 600px;">$appointment_link</a>
+            <!--<h2>Appointment Link</h2>
+            <a href="$appointment_link" style="width: 600px;">$appointment_link</a>-->
         </div>
     </div>
 </body>

@@ -83,26 +83,6 @@
          * Event: Add New Provider Button "Click"
          */
         $('#providers').on('click', '#add-provider', function () {
-            /*this.resetForm();
-             $('#filter-providers button').prop('disabled', true);
-             $('#filter-providers .results').css('color', '#AAA');
-             $('#providers .add-edit-delete-group').hide();
-             $('#providers .save-cancel-group').show();
-             $('#providers .record-details').find('input, textarea').prop('readonly', false);
-             $('#providers .record-details').find('select').prop('disabled', false);
-             $('#provider-password, #provider-password-confirm').addClass('required');
-             $('#provider-notifications').prop('disabled', false);
-             $('#providers').find('.add-break, .edit-break, .delete-break, #reset-working-plan').prop('disabled', false);
-             $('#provider-services input:checkbox').prop('disabled', false);
-             $('#providers input:checkbox').prop('disabled', false);
-             
-             // Apply default working plan
-             BackendUsers.wp.setup(GlobalVariables.workingPlan);
-             BackendUsers.wp.timepickers(false);*/
-
-            /**
-             * Event: Invite users Button "Click"
-             */
             var $dialog = $('#invite-user');
             $dialog.find('.modal-header h3').text('Invite users');
             $dialog.modal('show');
@@ -155,6 +135,19 @@
         /**
          * Event: Save Provider Button "Click"
          */
+        $('#send-invitation').on('click', function () {
+            var invitation = {
+                name: $('#invite-name').val(),
+                email: $('#invite-email').val(),
+                message: $('#invite-message').val()
+            };
+            
+            if (!this.validateInvitation()) {
+                return;
+            }
+            this.saveInvitation(invitation);
+        }.bind(this));
+        
         $('#providers').on('click', '#save-provider', function () {
             var provider = {
                 first_name: $('#provider-first-name').val(),
@@ -167,6 +160,7 @@
                 state: $('#provider-state').val(),
                 zip_code: $('#provider-zip-code').val(),
                 notes: $('#provider-notes').val(),
+                status: $('#provider-status').val(),
                 settings: {
                     username: $('#provider-username').val(),
                     working_plan: JSON.stringify(BackendUsers.wp.get()),
@@ -269,6 +263,30 @@
             this.filter('', response.id, true);
         }.bind(this), 'json').fail(GeneralFunctions.ajaxFailureHandler);
     };
+    
+    /**
+     * Save invitation
+     *
+     * @param {Object} invitation Contains the admin record data. If an 'id' value is provided
+     * then the update operation is going to be executed.
+     */
+    ProvidersHelper.prototype.saveInvitation = function (invitation) {
+        var postUrl = GlobalVariables.baseUrl + '/index.php/backend_api/ajax_send_invitation';
+        var postData = {
+            csrfToken: GlobalVariables.csrfToken,
+            invitation: JSON.stringify(invitation)
+        };
+
+        $.post(postUrl, postData, function (response) {
+            if (!GeneralFunctions.handleAjaxExceptions(response)) {
+                return;
+            }
+            this.resetInvitationForm();
+            var $dialog = $('#invite-user');
+            $dialog.modal('hide');
+            Backend.displayNotification('The invitation has been sent');
+        }.bind(this), 'json').fail(GeneralFunctions.ajaxFailureHandler);
+    };
 
     /**
      * Delete a provider record from database.
@@ -346,6 +364,41 @@
             return false;
         }
     };
+    
+    /**
+     * Validates a provider record.
+     *
+     * @return {Boolean} Returns the validation result.
+     */
+    ProvidersHelper.prototype.validateInvitation = function () {
+        $('#invite-user .has-error').removeClass('has-error');
+
+        try {
+            // Validate required fields.
+            var missingRequired = false;
+            $('#invite-user .required').each(function () {
+                if ($(this).val() == '' || $(this).val() == undefined) {
+                    $(this).closest('.form-group').addClass('has-error');
+                    missingRequired = true;
+                }
+            });
+            if (missingRequired) {
+                throw EALang.fields_are_required;
+            }
+            // Validate user email.
+            if (!GeneralFunctions.validateEmail($('#invite-email').val())) {
+                $('#invite-email').closest('.form-group').addClass('has-error');
+                throw EALang.invalid_email;
+            }
+            return true;
+        } catch (message) {
+            $('#invite-user .form-message')
+                    .addClass('alert-danger')
+                    .text(message)
+                    .show();
+            return false;
+        }
+    };
 
     /**
      * Resets the admin tab form back to its initial state.
@@ -362,6 +415,7 @@
         $('#providers .record-details').find('select').prop('disabled', true);
         $('#providers .form-message').hide();
         $('#provider-notifications').removeClass('active');
+        $('#provider-status').val('');
         $('#provider-notifications').prop('disabled', true);
         $('#provider-services input:checkbox').prop('disabled', true);
         $('#providers .add-break, #reset-working-plan').prop('disabled', true);
@@ -376,6 +430,10 @@
         $('#provider-services input:checkbox').prop('checked', false);
         $('#provider-services a').remove();
         $('#providers .breaks tbody').empty();
+    };
+    
+    ProvidersHelper.prototype.resetInvitationForm = function () {
+        $('#invite-user .form-control').val('');
     };
 
     /**
@@ -395,6 +453,7 @@
         $('#provider-state').val(provider.state);
         $('#provider-zip-code').val(provider.zip_code);
         $('#provider-notes').val(provider.notes);
+        $('#provider-status').val(provider.status);
 
         $('#provider-username').val(provider.settings.username);
         $('#provider-calendar-view').val(provider.settings.calendar_view);
@@ -405,13 +464,13 @@
         }
 
         // Add dedicated provider link.
-        var dedicatedUrl = GlobalVariables.baseUrl + '/index.php?provider=' + encodeURIComponent(provider.id);
+        /*var dedicatedUrl = GlobalVariables.baseUrl + '/index.php?provider=' + encodeURIComponent(provider.id);
         var linkHtml = '<a href="' + dedicatedUrl + '"><span class="glyphicon glyphicon-link"></span></a>';
         $('#providers .details-view h3')
                 .find('a')
                 .remove()
                 .end()
-                .append(linkHtml);
+                .append(linkHtml);*/
 
         $('#provider-services a').remove();
         $('#provider-services input:checkbox').prop('checked', false);
@@ -420,15 +479,16 @@
                 if ($(this).attr('data-id') == serviceId) {
                     $(this).prop('checked', true);
                     // Add dedicated service-provider link.
-                    dedicatedUrl = GlobalVariables.baseUrl + '/index.php?provider=' + encodeURIComponent(provider.id)
+                    /*dedicatedUrl = GlobalVariables.baseUrl + '/index.php?provider=' + encodeURIComponent(provider.id)
                             + '&service=' + encodeURIComponent(serviceId);
                     linkHtml = '<a href="' + dedicatedUrl + '"><span class="glyphicon glyphicon-link"></span></a>';
-                    $(this).parent().append(linkHtml);
+                    $(this).parent().append(linkHtml);*/
                 }
             });
         });
 
         // Display working plan
+        $('.work-start, .work-end').val('');
         $('#providers .breaks tbody').empty();
         var workingPlan = $.parseJSON(provider.settings.working_plan);
         BackendUsers.wp.setup(workingPlan);
