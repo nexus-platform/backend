@@ -237,9 +237,9 @@ class ACController extends MyRestController {
                             $this->getEntityManager()->persist($user);
                             $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
                         }
-                        /*if ($invitation) {
+                        if ($invitation) {
                             $this->getEntityManager()->remove($invitation);
-                        }*/
+                        }
                         $this->getEntityManager()->flush();
                         $code = 'success';
                         $msg = 'Registration successful.';
