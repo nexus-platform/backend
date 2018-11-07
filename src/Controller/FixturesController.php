@@ -27,25 +27,37 @@ class FixturesController extends Controller {
      */
     public function fixtures(Request $request) {
         $entityManager = $this->getDoctrine()->getManager();
+
+        $statement = $entityManager->getConnection()->prepare('delete from `dsa_form_filled`');
+        $statement->execute();
+        $statement = $entityManager->getConnection()->prepare('delete from `dsa_form`');
+        $statement->execute();
+        $statement = $entityManager->getConnection()->prepare('delete from `notification`');
+        $statement->execute();
+        $statement = $entityManager->getConnection()->prepare('delete from `assessment_center_service_assessor`');
+        $statement->execute();
+        $statement = $entityManager->getConnection()->prepare('delete from `user`');
+        $statement->execute();
+        $statement = $entityManager->getConnection()->prepare('delete from `university`');
+        $statement->execute();
+        $statement = $entityManager->getConnection()->prepare('delete from `assessment_center`');
+        $statement->execute();
+
         $originDir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data';
-        $res = '<i>Loaded DSA Forms:</i> <b>' . $this->loadDSAForms($entityManager, "$originDir/dsa_forms_json") . '</b><br />' .
-                '<i>Users added:</i> <b>' . $this->loadUsers($entityManager) . '</b><br />' .
+
+        $res = '<i>Universities:</i> <b>' . $this->loadDOfficer($entityManager, "$originDir/disability-officer/") . '</b><br />' .
+                '<i>DSA Forms:</i> <b>' . $this->loadDSAForms($entityManager, "$originDir/dsa_forms_json/") . '</b><br />' .
+                '<i>Users:</i> <b>' . $this->loadUsers($entityManager) . '</b><br />' .
                 '<i>Universities managed by DO:</i> <b>' . $this->loadUniversitiesForms($entityManager) . '</b><br />' .
-                '<i>New Assessment Centers:</i> <b>' . $this->loadACs($entityManager) . '</b><br />' .
-                '<i>New Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />'
+                '<i>Assessment Centers:</i> <b>' . $this->loadACs($entityManager, "$originDir/disability-officer/") . '</b><br />' .
+                '<i>Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />'
         ;
-        $entityManager->flush();
         $acUsers = $entityManager->getRepository(AssessmentCenterUser::class)->findAll();
         StaticMembers::executeRawSQL($entityManager, 'delete from `ea_users`', false);
-        
         foreach ($acUsers as $acUser) {
             StaticMembers::syncEaUser($entityManager, $acUser);
         }
         $entityManager->flush();
-//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `first_name` = (select `name` from `user` where `id` = `ea`.`id`)', false);
-//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `last_name` = (select `lastname` from `user` where `id` = `ea`.`id`)', false);
-//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `email` = (select `email` from `user` where `id` = `ea`.`id`)', false);
-//        StaticMembers::executeRawSQL($entityManager, 'update `ea_users` `ea` set `address` = (select `address` from `user` where `id` = `ea`.`id`)', false);
         return new Response($res);
     }
 
@@ -53,14 +65,20 @@ class FixturesController extends Controller {
         $files = scandir($originDir);
         $count = 0;
         foreach ($files as $file) {
-            $item = $entityManager->getRepository(DsaForm::class)->findOneBy(['code' => str_replace('.json', '', $file)]);
-            if ($item) {
+            if ($file !== '.' && $file !== '..') {
+                $item = new DsaForm();
                 $url = "$originDir/$file";
+                $item->setActive(1);
+                $name = str_replace('.json', '', $file);
+                $item->setName($name);
+                $item->setCode($name);
+                $item->setBase("$name.pdf");
                 $item->setContent(json_decode(file_get_contents($url)));
                 $entityManager->persist($item);
                 $count++;
             }
         }
+        $entityManager->flush();
         return $count;
     }
 
@@ -70,10 +88,11 @@ class FixturesController extends Controller {
         $res = '';
         $pass = sha1('a');
         $usersNeeded = 3;
-        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('do')) = 1")[0]['count'];
+        $usersCount = 0;
         $res .= ($usersNeeded - $usersCount) . ' DOs';
         while ($usersCount < $usersNeeded) {
             $usersCount++;
+            $university = $universities[$usersCount];
             $user = new User();
             $user->setCreatedAt(time());
             $user->setEmail("do$usersCount@nexus.uk");
@@ -82,12 +101,16 @@ class FixturesController extends Controller {
             $user->setPassword($pass);
             $user->setRoles(["do"]);
             $user->setStatus(1);
-            $user->setUniversity($universities[$usersCount]);
+            $user->setUniversity($university);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
+            /*$entityManager->flush();
+            $university->setManager($user);
+            $entityManager->persist($university);
+            $entityManager->flush();*/
         }
-
-        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('student')) = 1")[0]['count'];
+        
+        $usersCount = 0;
         $res .= ', ' . ($usersNeeded - $usersCount) . ' Students';
         while ($usersCount < $usersNeeded) {
             $usersCount++;
@@ -102,9 +125,9 @@ class FixturesController extends Controller {
             $user->setUniversity($universities[$usersCount]);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
+            
         }
-
-        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('ac')) = 1")[0]['count'];
+        $usersCount = 0;
         $res .= ', ' . ($usersNeeded - $usersCount) . ' AC Managers';
         while ($usersCount < $usersNeeded) {
             $usersCount++;
@@ -120,7 +143,7 @@ class FixturesController extends Controller {
             $entityManager->persist($user);
         }
 
-        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('na')) = 1")[0]['count'];
+        $usersCount = 0;
         $res .= ', ' . ($usersNeeded - $usersCount) . ' NAs';
         while ($usersCount < $usersNeeded) {
             $usersCount++;
@@ -136,20 +159,20 @@ class FixturesController extends Controller {
             $entityManager->persist($user);
         }
 
-        $usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('admin')) = 1")[0]['count'];
-        if ($usersCount < 1) {
-            $user = new User();
-            $user->setCreatedAt(time());
-            $user->setEmail('admin@nexus.uk');
-            $user->setName("John");
-            $user->setLastname('Snow');
-            $user->setPassword($pass);
-            $user->setRoles(["admin"]);
-            $user->setStatus(1);
-            $user->setToken(sha1(StaticMembers::random_str(32)));
-            $entityManager->persist($user);
-            $res .= ', 1 App Admin';
-        }
+        //$usersCount = StaticMembers::executeRawSQL($entityManager, "SELECT count(*) as `count` FROM `user` where json_contains(roles, json_array('admin')) = 1")[0]['count'];
+
+        $user = new User();
+        $user->setCreatedAt(time());
+        $user->setEmail('admin@nexus.uk');
+        $user->setName("John");
+        $user->setLastname('Snow');
+        $user->setPassword($pass);
+        $user->setRoles(["admin"]);
+        $user->setStatus(1);
+        $user->setToken(sha1(StaticMembers::random_str(32)));
+        $entityManager->persist($user);
+        $res .= ', 1 App Admin';
+
         $entityManager->flush();
         StaticMembers::executeRawSQL($entityManager, "UPDATE `user` set `password` = '$pass'", false);
         $res = trim($res, ",");
@@ -165,8 +188,9 @@ class FixturesController extends Controller {
         $univs = $statement->fetchAll();
         $count = 0;
         foreach ($univs as $univ) {
+            $count++;
             $univEntity = $entityManager->getRepository(University::class)->find($univ['id']);
-            $univEntity->setManager($entityManager->getRepository(User::class)->findOneBy(['email' => 'do@nexus.uk']));
+            $univEntity->setManager($entityManager->getRepository(User::class)->findOneBy(['email' => "do$count@nexus.uk"]));
             $entityManager->persist($univEntity);
             foreach ($forms as $form) {
                 $univForm = new UniversityDsaForm();
@@ -176,18 +200,15 @@ class FixturesController extends Controller {
                 $univForm->setDsa_form_slug($form->getCode());
                 $entityManager->persist($univForm);
             }
-            $count++;
+            
         }
         return $count;
     }
 
     private function activateACs(ObjectManager $entityManager) {
-        $entities = $entityManager->getRepository(AssessmentCenterUser::class)->getActiveACs();
         $acs = $entityManager->getRepository(AssessmentCenter::class)->findAll();
-        $res = 0;
+        $count = 0;
         if ($acs) {
-            $count = count($entities);
-            $res = 3 - $count;
             while ($count < 3) {
                 $count++;
                 //Setting the AC manager
@@ -229,11 +250,11 @@ class FixturesController extends Controller {
                 }
             }
         }
-        return $res;
+        $entityManager->flush();
+        return $count;
     }
 
-    private function loadACs(ObjectManager $entityManager) {
-        $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data//assessment-centre/';
+    private function loadACs(ObjectManager $entityManager, $dir) {
         $count = 0;
 
         if ($dh = opendir($dir)) {
@@ -260,6 +281,7 @@ class FixturesController extends Controller {
             }
             closedir($dh);
         }
+        $entityManager->flush();
         return $count;
     }
 
@@ -331,19 +353,13 @@ class FixturesController extends Controller {
         }
     }
 
-    private function loadDOfficer(ObjectManager $entityManager) {
-        $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/disability-officer/';
+    private function loadDOfficer(ObjectManager $entityManager, $dir) {
+        $count = 0;
         if ($dh = opendir($dir)) {
-            $statement = $entityManager->getConnection()->prepare('DELETE FROM `disability_officer`');
-            $statement->execute();
-            $statement = $entityManager->getConnection()->prepare('DELETE FROM `university`');
-            $statement->execute();
-            $i = 0;
             $country = $entityManager->getRepository(Country::class)->find(182);
 
             while (($file = readdir($dh)) !== false) {
                 if ($file != '..' && $file != '.') {
-
                     //$contents = file_get_contents($dir . $file);
                     //$contents = html_entity_decode(utf8_encode(file_get_contents($dir . $file)));
                     $results = json_decode(html_entity_decode(utf8_encode(file_get_contents($dir . $file))), true);
@@ -366,6 +382,8 @@ class FixturesController extends Controller {
                         $entityManager->persist($do);
                     }
 
+                    $count++;
+
                     /* $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $results['email']]);
                       if ($results['email'] != '' && !$user) {
                       $user = new User();
@@ -381,7 +399,9 @@ class FixturesController extends Controller {
                 }
             }
             closedir($dh);
+            $entityManager->flush();
         }
+        return $count;
     }
 
 }

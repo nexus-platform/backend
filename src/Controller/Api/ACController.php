@@ -86,6 +86,7 @@ class ACController extends MyRestController {
             $code = '';
             $msg = '';
             $userRole = '';
+            $invitation = null;
 
             if ($invitationToken) {
                 $invitation = $this->getEntityManager()->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
@@ -101,23 +102,12 @@ class ACController extends MyRestController {
                 $userData = [
                     'name' => '',
                     'last_name' => '',
-                    'email' => '',
+                    'email' => $invitation ? $invitation->getEmail() : '',
                     'postcode' => '',
                     'address' => '',
                     'password' => '',
                     'password_confirm' => '',
                 ];
-                /*$students = [];
-                $needsAssessors = [];
-                $services = [];
-                $settings = [];
-                $appointmentRestrictions = [];
-
-                $settings['availability_type'] = $ac->getAvailability_type();
-                $settings['name'] = $ac->getName();
-                $settings['token'] = $ac->getUrl();
-                $settings['address'] = $ac->getAddress();
-                $settings['telephone'] = $ac->getTelephone();*/
 
                 if ($user) {
                     if (!$user->isDO()) {
@@ -133,102 +123,6 @@ class ACController extends MyRestController {
                             'password' => 'password',
                             'password_confirm' => 'password',
                         ];
-
-                        /*$acUsers = $ac->getAssessment_center_users();
-                        foreach ($acUsers as $acUser) {
-                            $userAux = $acUser->getUser();
-                            if ($userAux->isStudent()) {
-                                $students[] = [
-                                    'id' => $userAux->getId(),
-                                    'name' => $userAux->getFullname(),
-                                    'institute' => $userAux->getUniversity()->getName(),
-                                    'status' => $acUser->getStatus(),
-                                ];
-                            } else if ($userAux->isNA()) {
-                                $naServicesAux = $this->getEntityManager()->getRepository(AssessmentCenterServiceAssessor::class)->findNAServicesByAC($ac, $userAux);
-                                $naServices = [];
-                                foreach ($naServicesAux as $naService) {
-                                    $serviceAux = $naService->getService();
-                                    $naServices[] = [
-                                        'id' => $serviceAux->getId(),
-                                        'name' => $serviceAux->getName(),
-                                        'description' => $serviceAux->getDescription(),
-                                        'duration' => $serviceAux->getDuration(),
-                                        'attendants_number' => $serviceAux->getAttendants_number(),
-                                        'price' => $serviceAux->getPrice(),
-                                        'currency' => $serviceAux->getCurrency(),
-                                    ];
-                                }
-
-                                //Working plan
-                                /* $workingPlan = [
-                                  'Monday' => [],
-                                  'Tuesday' => [],
-                                  'Wednesday' => [],
-                                  'Thursday' => [],
-                                  'Friday' => [],
-                                  'Saturday' => [],
-                                  'Sunday' => [],
-                                  ];
-                                  $otherWPs = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->getWorkingPlansForOtherACs($userAux, $ac);
-                                  foreach ($otherWPs as $otherWP) {
-                                  foreach ($workingPlan as $day => $plan) {
-                                  if (isset($otherWP[$day]) && isset($workingPlan[$day])) {
-                                  unset($workingPlan[$day]);
-                                  }
-                                  }
-                                  }
-                                  $currentWP = $acUser->getWorking_plan();
-                                  foreach ($currentWP as $key => $value) {
-                                  $currentWP = array();
-                                  } */
-
-                                /*$needsAssessors[] = [
-                                    'id' => $userAux->getId(),
-                                    'name' => $userAux->getFullname(),
-                                    'email' => $userAux->getEmail(),
-                                    'services' => $naServices,
-                                    'status' => $acUser->getStatus(),
-                                ];
-                            }
-                        }
-
-                        $acServices = $ac->getAssessment_center_services();
-                        foreach ($acServices as $acService) {
-                            $services[] = [
-                                'id' => $acService->getId(),
-                                'name' => $acService->getName(),
-                                'description' => $acService->getDescription(),
-                                'duration' => $acService->getDuration(),
-                                'attendants_number' => $acService->getAttendants_number(),
-                                'price' => $acService->getPrice(),
-                                'currency' => $acService->getCurrency(),
-                            ];
-                        }
-                        usort($services, function($a, $b) {
-                            return strcmp($a['name'], $b['name']);
-                        });
-
-                        $currTimestamp = time();
-                        $minTimestamp = $currTimestamp + 86400;
-                        $maxTimestamp = $currTimestamp + 2592000;
-                        $minDate = date('Y-m-d', $minTimestamp);
-                        $maxDate = date('Y-m-d', $maxTimestamp);
-                        $allowedDates = [];
-
-                        for ($i = $minTimestamp; $i <= $maxTimestamp; $i += 86400) {
-                            $date = date('N', $i);
-                            if (!in_array($date, [6, 7])) {
-                                $allowedDates[] = date('Y-m-d', $i);
-                            }
-                        }
-
-                        $appointmentRestrictions = [
-                            'min_date' => $minDate,
-                            'max_date' => $maxDate,
-                            'allowed_dates' => $allowedDates,
-                            'needs_assessors' => []
-                        ];*/
                     } else {
                         $code = 'error';
                         $msg = 'Access denied';
@@ -250,11 +144,6 @@ class ACController extends MyRestController {
                         'user_data' => $userData,
                         'slug' => $ac->getUrl(),
                         'star_assessment_form' => $this->getStarAssessmentForm(),
-                        /*'students' => $students,
-                        'needs_assessors' => $needsAssessors,
-                        'services' => $services,
-                        'settings' => $settings,
-                        'appointment_restrictions' => $appointmentRestrictions,*/
                     ];
                     $code = 'success';
                     $msg = 'AC loaded';
@@ -268,37 +157,6 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
         }
     }
-
-    /*private function syncEaUser(AssessmentCenterUser $acUser, $mode = 1) {
-        $user = $acUser->getUser();
-        $ac = $acUser->getAc();
-        $eaUser = $this->getEntityManager()->getRepository(EaUsers::class)->findOneBy(['id' => $user->getId(), 'id_assessment_center' => $ac->getId()]);
-        if ($mode === 0) {
-            $this->getEntityManager()->remove($eaUser);
-        } else {
-            if (!$eaUser) {
-                $eaUser = new EaUsers();
-                $eaUser->setId($user->getId());
-                $eaUser->setId_assessment_center($ac->getId());
-                $eaUser->setId_roles($user->getEaRole());
-                $this->getEntityManager()->persist($eaUser);
-                $this->getEntityManager()->flush();
-            }
-            $eaUser->setAddress($user->getAddress());
-            $eaUser->setFirstName($user->getName());
-            $eaUser->setLastName($user->getLastname());
-            $eaUser->setEmail($user->getEmail());
-            $eaUser->setStatus($acUser->getStatus());
-            $this->getEntityManager()->persist($eaUser);
-            $eaUserSettings = $this->getEntityManager()->getRepository(EaUserSettings::class)->findOneBy(['id_users' => $user->getId(), 'id_assessment_center' => $ac->getId()]);
-            if (!$eaUserSettings) {
-                $eaUserSettings = new EaUserSettings();
-                $eaUserSettings->setIdUsers($user->getId());
-                $eaUserSettings->setIdAssessmentCenter($ac->getId());
-            }
-            $this->getEntityManager()->persist($eaUserSettings);
-        }
-    }*/
 
     /**
      * Registers with AC
@@ -379,12 +237,12 @@ class ACController extends MyRestController {
                             $this->getEntityManager()->persist($user);
                             $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
                         }
-                        if ($invitation) {
+                        /*if ($invitation) {
                             $this->getEntityManager()->remove($invitation);
-                        }
+                        }*/
                         $this->getEntityManager()->flush();
                         $code = 'success';
-                        $msg = 'You have registered with this Centre.' . ($payload ? '' : ' Proceed to the login page.');
+                        $msg = 'Registration successful.';
                         $data = true;
                     } else {
                         $code = 'warning';

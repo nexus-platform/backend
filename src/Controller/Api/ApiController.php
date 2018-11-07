@@ -26,8 +26,7 @@ class ApiController extends MyRestController {
      */
     public function getCountries(Request $request) {
         try {
-            $entityManager = $this->getDoctrine()->getManager();
-            $data = $entityManager->getRepository(Country::class)->getActiveCountries();
+            $data = $this->getEntityManager()->getRepository(Country::class)->getActiveCountries();
             $code = 'success';
             $msg = 'Countries loaded.';
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
@@ -42,8 +41,7 @@ class ApiController extends MyRestController {
      */
     public function getUniversities(Request $request) {
         try {
-            $entityManager = $this->getDoctrine()->getManager();
-            $data = $entityManager->getRepository(University::class)->getActiveUniversitiesByCountry($request->get('country_id'));
+            $data = $this->getEntityManager()->getRepository(University::class)->getActiveUniversitiesByCountry($request->get('country_id'));
             $code = 'success';
             $msg = 'Universities loaded.';
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
@@ -66,11 +64,10 @@ class ApiController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
 
                 if ($user) {
-                    $appointments = $entityManager->getRepository(EaAppointment::class)->findBy($user->isStudent() ? ['student' => $user] : ['provider' => $user, 'is_unavailable' => false]);
+                    $appointments = $this->getEntityManager()->getRepository(EaAppointment::class)->findBy($user->isStudent() ? ['student' => $user] : ['provider' => $user, 'is_unavailable' => false]);
                     $data = [];
                     foreach ($appointments as $appointment) {
                         $student = $appointment->getStudent();

@@ -138,12 +138,12 @@ class StaticMembers {
             $eaUser->setStatus($acUser->getStatus());
             $entityManager->persist($eaUser);
             $entityManager->flush();
-
+            
             $eaUserSettings = new EaUserSettings();
             $eaUserSettings->setIdUsers($user->getId());
             $eaUserSettings->setIdAssessmentCenter($ac->getId());
-
             $entityManager->persist($eaUserSettings);
+            
             $entityManager->flush();
         }
     }
