@@ -3,7 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\DsaFormFilled;
-use App\Entity\EaUsers;
+use App\Entity\EA\EaUsers;
 use App\Entity\Notification;
 use App\Entity\User;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -38,7 +38,7 @@ class MyRestController extends FOSRestController {
             $payload = JWT::decode($jwt, $this->key, ['HS256']);
             if ($payload->exp > time() && $payload->ip === $request->getClientIp()) {
                 $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
-                return ['code' => 'success', 'user' => $user];
+                return ['code' => 'success', 'msg' => 'User verified', 'user' => $user];
             }
             return ['code' => 'error', 'msg' => 'Invalid credentials.'];
         } catch (Exception $exc) {
@@ -210,9 +210,9 @@ class MyRestController extends FOSRestController {
                 $eaUser = new EaUsers();
                 $eaUser->setAddress($user->getAddress());
                 $eaUser->setEmail($user->getEmail());
-                $eaUser->setFirstName($user->getNname());
+                $eaUser->setFirstName($user->getName());
                 $eaUser->setLastName($user->getLastname());
-                $eaUser->setIdRoles($this->getEntityManager()->find('App\Entity\EaRoles', $user->getEaRole()));
+                $eaUser->setId_roles($user->getEaRole());
                 $eaUser->setZipCode($user->getPostcode());
                 $this->getEntityManager()->persist($eaUser);
                 break;

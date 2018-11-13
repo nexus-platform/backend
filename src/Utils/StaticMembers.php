@@ -81,7 +81,7 @@ class StaticMembers {
                 ->setEncryption($appSettings->getMailEncryption());
         $mailer = new Swift_Mailer($transport);
         $message = (new Swift_Message($subject))
-                ->setFrom(['no-reply@nexus.co.uk' => 'Nexus Platform'])
+                ->setFrom([$appSettings->getMailUsername() => 'Nexus Platform'])
                 ->setTo($recipients)
                 ->setBody($body, 'text/html');
         return $mailer->send($message);

@@ -1,7 +1,25 @@
-<h3>We're really pleased to count on you!</h3>
-<p>Dear {{ name }}, your user account is fully functional from now on.</p>
-<p>To login, navigate to <a href="{{ login_url }}">this link</a>.</p>
-<p>If you cannot see the link, copy/paste this address on your browser's navigation bar: {{ login_url }}</p>
-<br />
-<p>Thanks for joining us!</p>
-<img src="{{ absolute_url(asset('images/logo.png')) }}">
+<html>
+    <head>
+        <title>Nexus Platform</title>
+    </head>
+    <body style="font: 13px arial, helvetica, tahoma;">
+        <div class="email-container" style="width: 650px; border: 1px solid #eee;">
+            <div id="header" style="background-color: #3f51b5; border-bottom: 4px solid #727dbd; height: 45px; padding: 10px 15px;">
+                <strong id="logo" style="color: white; font-size: 20px; text-shadow: 1px 1px 1px #8F8888; margin-top: 10px; display: inline-block">{{ dsa }}</strong>
+            </div>
+
+            <div id="content" style="padding: 10px 15px;">
+                <h3>We're really pleased to count on you!</h3>
+                <p>Dear {{ name }}, your user account is fully functional from now on.</p>
+                <p>To login, navigate to <a href="{{ homeUrl }}">this link</a>.</p>
+                <p>If you cannot see the link, copy/paste this address on your browser's address bar:<br/><i>{{ homeUrl }}</i></p>
+                <br />
+                <p>Thanks for joining us!</p>
+            </div>
+
+            <div id="footer" style="padding: 10px; text-align: center; margin-top: 10px; border-top: 1px solid #EEE; background: #FAFAFA;">
+                Powered by <a href="{{ homeUrl }}" style="text-decoration: none;">Nexus Platform</a>
+            </div>
+        </div>
+    </body>
+</html>

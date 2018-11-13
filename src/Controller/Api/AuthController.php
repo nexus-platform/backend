@@ -140,98 +140,36 @@ class AuthController extends MyRestController {
     }
 
     /**
-     * Activates an user account.
-     * @FOSRest\Post(path="/api/activate-account")
-     */
-    public function activateAccountAction(Request $request) {
-        $params = [
-            'token' => $request->get('token'),
-            'login_url' => $request->get('login_url'),
-        ];
-
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token'], 'status' => 0]);
-        $data = null;
-
-        if ($user) {
-            $user->setStatus(1);
-            $this->updateEaUser($user, 'create');
-            $this->getEntityManager()->flush();
-            $subject = 'Your Nexus account is active!';
-            $fullName = $user->getName() . ' ' . $user->getLastname();
-            $body = $this->renderView('email/activated_account.html.twig', ['name' => $fullName, 'login_url' => $params['login_url']]);
-            $recipients = [$user->getEmail() => $fullName];
-            StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients);
-            $code = 'success';
-            $preRegister = $user->getPre_register();
-
-            if (isset($preRegister['form_url'])) {
-                $msg = "Your account has been activated. You'll be redirected to your form in a few seconds...";
-                $now = time();
-                $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
-                $payload = [
-                    'iss' => $homeUrl,
-                    'aud' => $homeUrl,
-                    'iat' => $now,
-                    'exp' => $now + 604800, //a week
-                    'user_id' => $user->getId(),
-                ];
-                $univ = $user->getUniversity();
-                $jwt = $this->encodeJWT($payload);
-                $data = [
-                    'is_guest' => false,
-                    'email' => $user->getEmail(),
-                    'jwt' => $jwt,
-                    'roles' => $user->getRoles(),
-                    'acs' => $user->getAssessmentCentres('slug'),
-                    'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
-                    'fullname' => $user->getFullname(),
-                    'redirect' => $preRegister['form_url'],
-                ];
-            } else {
-                $msg = "Your account has been activated. You may now proceed to the login page.";
-                $redirect = null;
-            }
-        } else {
-            $code = 'error';
-            $redirect = null;
-            $msg = 'Invalid parameter supplied: ' . $params['token'];
-        }
-        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
-    }
-
-    /**
      * Generates a new token for resetting password.
      * @FOSRest\Post(path="/api/request-password-reset")
      */
-    public function requestPasswordResetAction(Request $request) {
-        $params = [
-            'email' => $request->get('email', ''),
-            'url' => $request->get('url', ''),
-        ];
+    public function requestPasswordReset(Request $request) {
+        $params = json_decode($request->getContent(), true);
 
         $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
-
         if (!$user) {
-            $code = 'warning';
-            $msg = 'The email address you entered was not found on our server.';
-        } else {
-            $user->setToken(sha1(StaticMembers::random_str()));
-            $this->getEntityManager()->persist($user);
-
-            $subject = 'Reset your Nexus password';
-            $fullName = $user->getName() . ' ' . $user->getLastname();
-            $body = $this->renderView('email/request_password_reset.html.twig', ['name' => $fullName, 'url' => $params['url'] . '/' . $user->getToken()]);
-            $recipients = [$user->getEmail() => $fullName];
-
-            if (StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
-                $code = 'success';
-                $msg = "An email has been sent to your address with instructions on how to reset your password.";
-                $this->getEntityManager()->flush();
-            } else {
-                $code = 'error';
-                $msg = 'The email server is not responding. Please, try again later.';
-            }
+            return new JsonResponse(['code' => 'warning', 'msg' => 'The email address you entered was not found on our server.'], Response::HTTP_OK);
         }
+
+        $user->setToken(sha1(StaticMembers::random_str()));
+        $this->getEntityManager()->persist($user);
+
+        $subject = 'Reset your Nexus password';
+        $fullName = $user->getName() . ' ' . $user->getLastname();
+        $univ = $user->getUniversity();
+        $company = $univ ? $univ->getName() : 'Nexus Platform';
+        $body = $this->renderView('email/request_password_reset.html.twig', ['dsa' => $company, 'name' => $fullName, 'activation_url' => $params['activation_url'] . '/' . $user->getToken(), 'home_url' => $params['home_url']]);
+        $recipients = [$user->getEmail() => $fullName];
+
+        if (StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
+            $code = 'success';
+            $msg = "Check your inbox for instructions on how to reset your password.";
+            $this->getEntityManager()->flush();
+        } else {
+            $code = 'error';
+            $msg = 'The email server is not responding. Please, try again later.';
+        }
+
         return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
     }
 
@@ -239,39 +177,32 @@ class AuthController extends MyRestController {
      * Resets user password.
      * @FOSRest\Post(path="/api/reset-password")
      */
-    public function resetPasswordAction(Request $request) {
-        try {
-            $params = [
-                'token' => $request->get('token', null),
-                'password' => $request->get('password', null),
-                'login_url' => $request->get('login_url', ''),
-            ];
-
-            $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token']]);
-
-            if ($user && $params['password']) {
-                $user->setPassword(sha1($params['password']));
-                $user->setToken(sha1(StaticMembers::random_str()));
-                $this->getEntityManager()->persist($user);
-                $this->getEntityManager()->flush();
-
-                $subject = 'Nexus password reset';
-                $fullName = $user->getName() . ' ' . $user->getLastname();
-                $body = $this->renderView('email/reset_password.html.twig', ['name' => $fullName, 'login_url' => $params['login_url']]);
-                $recipients = [$user->getEmail() => $fullName];
-                StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients);
-                $code = 'success';
-                $msg = "Your password has been successfully restored. You may now proceed to the login page.";
-            } else {
-                $code = 'error';
-                $msg = 'Invalid parameter supplied: ' . $params['token'];
-            }
-            return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
-        } catch (Exception $exc) {
-            $code = 'error';
-            $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
+    public function resetPassword(Request $request) {
+        $params = json_decode($request->getContent(), true);
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token']]);
+        if (!$user) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token']], Response::HTTP_OK);
         }
+        if (!($params['password'] && $params['password'] === $params['password_confirm'])) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Passwords do not match'], Response::HTTP_OK);
+        }
+
+        $user->setPassword(sha1($params['password']));
+        $user->setToken(sha1(StaticMembers::random_str()));
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+
+        $subject = 'Your Nexus password has been reset';
+        $fullName = $user->getName() . ' ' . $user->getLastname();
+        $univ = $user->getUniversity();
+        $company = $univ ? $univ->getName() : 'Nexus Platform';
+        $body = $this->renderView('email/reset_password.html.twig', ['dsa' => $company, 'name' => $fullName, 'home_url' => $params['home_url']]);
+        $recipients = [$user->getEmail() => $fullName];
+        StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients);
+        $code = 'success';
+        $msg = "Your password has been successfully restored. You may now proceed to the login page.";
+
+        return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
     }
 
     /**
@@ -279,25 +210,22 @@ class AuthController extends MyRestController {
      * @FOSRest\Post(path="/api/verify-token")
      */
     public function verifyTokenAction(Request $request) {
-        try {
-            $params = [
-                'token' => $request->get('token', null),
-            ];
-            $user = $this->getDoctrine()->getManager()->getRepository(User::class)->findOneBy(['token' => $params['token']]);
+        $params = json_decode($request->getContent(), true);
+        $user = $this->getDoctrine()->getManager()->getRepository(User::class)->findOneBy(['token' => $params['token']]);
 
-            if ($params['token'] && $user) {
-                $code = 'success';
-                $msg = 'Token verified';
+        if ($params['token'] && $user) {
+            $code = 'success';
+            $msg = 'Token verified';
+            $univ = $user->getUniversity();
+            $homeUrl = '';
+            if ($univ) {
+                $homeUrl = '/dsa/' . $univ->getToken() . '/login';
             } else {
-                $code = 'error';
-                $msg = 'Invalid parameter supplied: ' . $params['token'];
+                $homeUrl = $user->getPre_register()['reset_password_origin'];
             }
-            return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
-        } catch (Exception $exc) {
-            $code = 'error';
-            $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'home_url' => $homeUrl], Response::HTTP_OK);
         }
+        return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token']], Response::HTTP_OK);
     }
 
     /**

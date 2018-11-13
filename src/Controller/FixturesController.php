@@ -7,7 +7,6 @@ use App\Entity\AssessmentCenterUser;
 use App\Entity\Country;
 use App\Entity\DisabilityOfficer;
 use App\Entity\DsaForm;
-use App\Entity\EA\EaUsers;
 use App\Entity\NMH;
 use App\Entity\University;
 use App\Entity\UniversityDsaForm;
@@ -104,10 +103,6 @@ class FixturesController extends Controller {
             $user->setUniversity($university);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
-            /*$entityManager->flush();
-            $university->setManager($user);
-            $entityManager->persist($university);
-            $entityManager->flush();*/
         }
         
         $usersCount = 0;
@@ -290,8 +285,7 @@ class FixturesController extends Controller {
                         $ac->setTelephone(trim(explode(':', $results['phone'])[1]));
                         $ac->setAddress($results['address']);
                         $ac->setEmail($results['email']);
-                        $url = $this->alphabeticString($results['name']);
-                        $ac->setUrl($url);
+                        $ac->setUrl($this->alphabeticString($results['name']));
                         $entityManager->persist($ac);
                         $count++;
                     }
@@ -385,7 +379,7 @@ class FixturesController extends Controller {
                     $univ = new University();
                     $univ->setCountry($country);
                     $univ->setName($results['name']);
-                    $univ->setToken(StaticMembers::random_str(32));
+                    $univ->setToken($this->alphabeticString($results['name']));
                     $univ->setDomains([$univ->getToken()]);
                     $univ->setPages($univ->getDomains());
                     $entityManager->persist($univ);

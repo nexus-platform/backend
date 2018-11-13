@@ -2,12 +2,9 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\AssessmentCenter;
-use App\Entity\AssessmentCenterUser;
-use App\Entity\Country;
+use App\Entity\AppSettings;
 use App\Entity\DsaForm;
 use App\Entity\DsaFormFilled;
-use App\Entity\Notification;
 use App\Entity\QrCode as QrCode2;
 use App\Entity\University;
 use App\Entity\UniversityDsaForm;
@@ -25,6 +22,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Brand controller.
@@ -114,7 +112,7 @@ class DOController extends MyRestController {
                         'name' => $item->getName(),
                         'code' => $item->getCode(),
                         'active' => $item->getActive(),
-                        'route' => 'dsa-form/' . $univ->getToken() . '/' . $univForm->getDsa_form_slug(),
+                        'route' => '/dsa/' . $univ->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug(),
                         'file_status' => file_exists($formsDir . $item->getBase()),
                     ];
                 }
@@ -173,6 +171,7 @@ class DOController extends MyRestController {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
             $data = null;
+            $code = 'error';
 
             if ($payload) {
                 $entityManager = $this->getDoctrine()->getManager();
@@ -388,7 +387,7 @@ class DOController extends MyRestController {
                             if ($data['full_submit']) {
                                 $disabOfficers = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 $headline = date('Y/m/d H:i:s', $now);
-                                $route = 'dsa-form/' . $univFromUser->getToken() . '/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
+                                $route = 'dsa/' . $univFromUser->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
                                 $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="/#/my-dsa-forms">here</a>.', $headline, $user, 1, 2);
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $entityManager->getRepository(User::class)->find($do['id']);
@@ -446,7 +445,7 @@ class DOController extends MyRestController {
                         'pdf_name' => $form->getName(),
                         'status' => $filledForm->getStatus(),
                         'status_desc' => $this->getFormStatusDesc($filledForm->getStatus()),
-                        'route' => 'dsa-form/' . $univ->getToken() . '/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId(),
+                        'route' => '/dsa/' . $univ->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId(),
                         'created_at' => date('Y/m/d H:i:s', $filledForm->getCreated_at()),
                     ];
                 }
@@ -669,7 +668,7 @@ class DOController extends MyRestController {
                         'pdf_code' => $form->getCode(),
                         'filename' => $filledForm->getFilename(),
                         'status' => $filledForm->getStatus(),
-                        'route' => 'dsa-form/' . $univ->getToken() . '/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId(),
+                        'route' => '/dsa/' . $univ->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId(),
                         'status_desc' => $this->getFormStatusDesc($filledForm->getStatus()),
                         'created_at' => date('Y/m/d H:i:s', $filledForm->getCreated_at()),
                     ];
@@ -821,7 +820,7 @@ class DOController extends MyRestController {
                                             $filledForm->setFilename($filledName);
                                             $entityManager->persist($filledForm);
                                             $now = time();
-                                            $this->createNotification('You have approved a new form', 'The "' . $filledForm->getDsaForm()->getName() . '" submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . 'by <i>' . $student->__toString() . '</i>', date('Y/m/d H:i:s', $now), $user, 1, 2);
+                                            $this->createNotification('You have approved a new form', 'The "' . $filledForm->getDsaForm()->getName() . '" submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . ' by <b>' . $student->__toString() . '</b>.', date('Y/m/d H:i:s', $now), $user, 1, 2);
                                             $this->createNotification('Your form has been approved', 'Your ' . $filledForm->getDsaForm()->getName() . ', submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . ', has been approved by <i>' . $user->__toString() . '</i>', date('Y/m/d H:i:s', $now), $student, 1, 1);
                                             $entityManager->flush();
                                             $data = $filledForm->getStatus();
@@ -987,10 +986,10 @@ class DOController extends MyRestController {
                             $entityManager->persist($filledForm);
                             $entityManager->flush();
 
-                            $route = 'dsa-form/' . $univFromUser->getToken() . '/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
+                            $route = 'dsa/' . $univFromUser->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
 
                             if ($user->isStudent()) {
-                                $this->createNotification('You have submitted a new comment', '<b>' . $fieldName . '</b> input field from your <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
+                                $this->createNotification('You have submitted a new comment', 'You commented <b>' . $fieldName . '</b> input field from <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
                                 $disabOfficers = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $entityManager->getRepository(User::class)->find($do['id']);
@@ -1026,6 +1025,208 @@ class DOController extends MyRestController {
             $msg = $exc->getMessage();
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
         }
+    }
+
+    /**
+     * Validates DSA office
+     * @FOSRest\Get(path="/api/get-dsa-info")
+     */
+    public function getDsaInfo(Request $request) {
+        $data = [];
+        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $request->get('slug')]);
+        if (!$univ) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+        }
+        $data['dsaName'] = $univ->getName();
+        $userData = $this->getRequestUser($request);
+
+        if (isset($userData['user'])) {
+            $userUniv = $userData['user']->getUniversity();
+            if ($userUniv !== $univ) {
+                return new JsonResponse(['code' => 'warning', 'msg' => 'You need to cancel your registration with ' . $userUniv->getName() . ' before accessing another DSA service.', 'data' => $data], Response::HTTP_OK);
+            }
+        }
+        return new JsonResponse(['code' => 'success', 'msg' => 'Access granted', 'data' => $data], Response::HTTP_OK);
+    }
+
+    /**
+     * Logs an user in.
+     * @FOSRest\Post(path="/api/dsa-login")
+     */
+    public function dsaLogin(Request $request) {
+        $data = null;
+        $params = json_decode($request->getContent(), true);
+        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
+
+        if (!$univ) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => $data], Response::HTTP_OK);
+        }
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => sha1($params['password']), 'university' => $univ]);
+
+        if ($user && $user->getStatus() === 1) {
+            $now = time();
+            $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $payload = [
+                'iss' => $homeUrl,
+                'aud' => $homeUrl,
+                'iat' => $now,
+                'exp' => $now + 43200, //12 hours
+                'user_id' => $user->getId(),
+                'ip' => $request->getClientIp(),
+            ];
+            $jwt = $this->encodeJWT($payload);
+
+            if ($jwt) {
+                $data = [
+                    'is_guest' => false,
+                    'email' => $user->getEmail(),
+                    'jwt' => $jwt,
+                    'roles' => $user->getRoles(),
+                    'acs' => $user->getAssessmentCentres('slug'),
+                    'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
+                    'fullname' => $user->getFullname()
+                ];
+                $code = 'success';
+                $msg = "Credentials verified";
+            } else {
+                $code = 'error';
+                $msg = 'Your data could not be encoded.';
+            }
+        } else {
+            $code = 'error';
+            $msg = !$user ? "Invalid username or password." : "Your user account is inactive.";
+        }
+        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+    }
+
+    /**
+     * Registers a new user.
+     * @FOSRest\Post(path="/api/dsa-signup")
+     */
+    public function dsaSignup(Request $request) {
+        $params = json_decode($request->getContent(), true);
+
+        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['dsa']]);
+        if (!$univ) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters'], Response::HTTP_OK);
+        }
+
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
+
+        if ($user) {
+            if ($user->getStatus() === 1) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'The email address you entered is already registered.'], Response::HTTP_OK);
+            }
+        } else {
+            $user = new User();
+        }
+
+        $user->setAddress($params['address']);
+        $user->setCreatedAt(time());
+        $user->setEmail($params['email']);
+        $user->setLastname($params['last_name']);
+        $user->setName($params['name']);
+        $user->setPostcode($params['postcode']);
+        $user->setPassword(sha1($params['password']));
+        $user->setRoles(["student"]);
+        $user->setStatus(0);
+        $user->setPre_register(['form_url' => $params['form_url'] ? $params['form_url'] : $params['home_url']]);
+        $user->setToken(sha1(StaticMembers::random_str()));
+        $user->setUniversity($univ);
+        $this->getEntityManager()->persist($user);
+
+        $subject = 'Activate your Nexus account';
+        $fullName = $user->getName() . ' ' . $user->getLastname();
+        $body = $this->renderView('email/signup.html.twig', ['homeUrl' => $params['home_url'], 'dsa' => $univ->getName(), 'subject' => $subject, 'name' => $fullName, 'activation_url' => $params['activation_url'] . '/' . $user->getToken()]);
+        $recipients = [$user->getEmail() => $fullName];
+
+        if (StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
+            $code = 'success';
+            $msg = "Check your inbox for instructions on how to activate your account.";
+            $this->getEntityManager()->flush();
+        } else {
+            $code = 'error';
+            $msg = 'The email server is not responding. Please, try again later.';
+            $this->getEntityManager()->remove($user);
+        }
+        return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
+    }
+
+    /**
+     * Activates an user account.
+     * @FOSRest\Post(path="/api/dsa-activate-account")
+     */
+    public function activateAccount(Request $request) {
+        $params = json_decode($request->getContent(), true);
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token'], 'status' => 0]);
+
+        if (!$user) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token'], 'data' => null], Response::HTTP_OK);
+        }
+
+        $user->setStatus(1);
+        $univ = $user->getUniversity();
+
+        $subject = 'Your Nexus account is active!';
+        $fullName = $user->getName() . ' ' . $user->getLastname();
+        $preRegister = $user->getPre_register();
+        $body = $this->renderView('email/activated_account.html.twig', ['name' => $fullName, 'homeUrl' => $preRegister['form_url'], 'dsa' => $univ->getName(), 'subject' => $subject]);
+        $recipients = [$user->getEmail() => $fullName];
+
+        StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients);
+        $code = 'success';
+
+        $msg = "Your account has been activated. You'll be redirected in a few seconds...";
+        $now = time();
+        $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $payload = [
+            'iss' => $homeUrl,
+            'aud' => $homeUrl,
+            'iat' => $now,
+            'exp' => $now + 604800, //a week
+            'user_id' => $user->getId(),
+            'ip' => $request->getClientIp(),
+        ];
+
+        $jwt = $this->encodeJWT($payload);
+        $data = [
+            'is_guest' => false,
+            'email' => $user->getEmail(),
+            'jwt' => $jwt,
+            'roles' => $user->getRoles(),
+            'acs' => $user->getAssessmentCentres('slug'),
+            'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
+            'fullname' => $user->getFullname(),
+            'redirect' => parse_url($preRegister['form_url'], PHP_URL_FRAGMENT),
+        ];
+        $this->getEntityManager()->flush();
+        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+    }
+    
+    /**
+     * Activates an user account.
+     * @FOSRest\Post(path="/api/cancel-dsa-registration")
+     */
+    public function cancelDsaRegistration(Request $request) {
+        $user = $this->getRequestUser($request);
+
+        if ($user['code'] !== 'success') {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+        }
+        $user = $user['user'];
+        
+        $params = json_decode($request->getContent(), true);
+        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
+        
+        if (!$univ || $univ !== $user->getUniversity()) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+        }
+
+        $user->setStatus(0);
+        $user->setUniversity(null);
+        $this->getEntityManager()->flush();
+        return new JsonResponse(['code' => 'success', 'msg' => 'You are no longer registered with ' . $univ->getName(), 'data' => null], Response::HTTP_OK);
     }
 
 }
