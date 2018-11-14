@@ -60,6 +60,14 @@ class DsaForm {
      * */
     private $univ_dsa_form;
 
+    function getFilledForms() {
+        return $this->filledForms;
+    }
+
+    function setFilledForms($filledForms) {
+        $this->filledForms = $filledForms;
+    }
+
     function getUniv_dsa_form() {
         return $this->univ_dsa_form;
     }

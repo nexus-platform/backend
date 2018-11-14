@@ -38,7 +38,9 @@ class MyRestController extends FOSRestController {
             $payload = JWT::decode($jwt, $this->key, ['HS256']);
             if ($payload->exp > time() && $payload->ip === $request->getClientIp()) {
                 $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
-                return ['code' => 'success', 'msg' => 'User verified', 'user' => $user];
+                if ($user) {
+                    return ['code' => 'success', 'msg' => 'User verified', 'user' => $user];
+                }
             }
             return ['code' => 'error', 'msg' => 'Invalid credentials.'];
         } catch (Exception $exc) {

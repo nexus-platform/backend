@@ -3,15 +3,11 @@
 namespace App\Controller\Api;
 
 use App\Entity\AppSettings;
-use App\Entity\EaUsers;
 use App\Entity\University;
 use App\Entity\User;
-use App\Repository\DBRepository;
 use App\Utils\StaticMembers;
 use Exception;
-use Firebase\JWT\JWT;
 use FOS\RestBundle\Controller\Annotations as FOSRest;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -345,6 +341,33 @@ class AuthController extends MyRestController {
             $msg = $exc->getMessage();
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
         }
+    }
+    
+    /**
+     * Changes password
+     * @FOSRest\Post(path="/api/change-password")
+     */
+    public function changePassword(Request $request) {
+        $user = $this->getRequestUser($request);
+
+        if ($user['code'] !== 'success') {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+        }
+        $user = $user['user'];
+        $params = json_decode($request->getContent(), true);
+        
+        if ($user->getPassword() !== sha1($params['current_password'])) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid current password'], Response::HTTP_OK);
+        }
+        
+        if ($params['password'] !== $params['password_confirm']) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Password do not match'], Response::HTTP_OK);
+        }
+        
+        $user->setPassword(sha1($params['password']));
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+        return new JsonResponse(['code' => 'success', 'msg' => 'Password updated'], Response::HTTP_OK);
     }
 
 }
