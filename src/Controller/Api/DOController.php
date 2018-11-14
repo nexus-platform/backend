@@ -404,7 +404,7 @@ class DOController extends MyRestController {
                                 $headline = date('Y/m/d H:i:s', $now);
                                 $route = 'dsa/' . $univFromUser->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
                                 $myFormsRoute = 'dsa/' . $univFromUser->getToken() . '/my-dsa-forms/index';
-                                $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="' . $myFormsRoute . '">here</a>.', $headline, $user, 1, 2);
+                                $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="/#/' . $myFormsRoute . '">here</a>.', $headline, $user, 1, 2);
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $entityManager->getRepository(User::class)->find($do['id']);
                                     $this->createNotification('New DSA Form submitted by ' . $user->__toString(), 'A new "' . $item->getName() . '" has been submitted. You can review it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
