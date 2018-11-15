@@ -1244,5 +1244,20 @@ class DOController extends MyRestController {
         $this->getEntityManager()->flush();
         return new JsonResponse(['code' => 'success', 'msg' => 'You are no longer registered with ' . $univ->getName(), 'data' => null], Response::HTTP_OK);
     }
+    
+    /**
+     * Retrieve user's signature.
+     * @FOSRest\Get(path="/api/get-previous-signature")
+     */
+    public function getPreviousSignature(Request $request) {
+        $user = $this->getRequestUser($request);
+
+        if ($user['code'] !== 'success') {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+        }
+        
+        $user = $user['user'];
+        return new JsonResponse(['code' => 'success', 'msg' => 'Signature loaded', 'data' => $user->getSignature()], Response::HTTP_OK);
+    }
 
 }
