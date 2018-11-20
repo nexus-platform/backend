@@ -18,7 +18,6 @@ use FOS\RestBundle\Controller\Annotations as FOSRest;
 use mikehaertl\pdftk\Pdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use setasign\Fpdi\TcpdfFpdi;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,8 +37,8 @@ class DOController extends MyRestController {
     public function getUniversityAction(Request $request) {
         try {
             $token = $request->get('university_token', null);
-            $entityManager = $this->getDoctrine()->getManager();
-            $item = $entityManager->getRepository(University::class)->findOneBy(['token' => $token]);
+            //$entityManager = $this->getDoctrine()->getManager();
+            $item = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $token]);
 
             if ($item) {
                 $data = [
@@ -87,11 +86,11 @@ class DOController extends MyRestController {
 
     private function getDsaForms(ObjectManager $entityManager, $payload) {
         $formsDir = $this->container->getParameter('kernel.project_dir') . '/public/dsa_forms/';
-        $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+        $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
         $res = [];
-        
+
         if ($user->isDO()) {
-            $items = $entityManager->getRepository(DsaForm::class)->findBy(['active' => 1]);
+            $items = $this->getDoctrine()->getManager()->getRepository(DsaForm::class)->findBy(['active' => 1]);
             foreach ($items as $dsaForm) {
                 $res[] = [
                     'id' => $dsaForm->getId(),
@@ -130,8 +129,8 @@ class DOController extends MyRestController {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                //$entityManager = $this->getDoctrine()->getManager();
+                $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univ = $user->getUniversity();
                 $univForms = $univ->getUniv_dsa_form();
                 $forms = [];
@@ -175,13 +174,13 @@ class DOController extends MyRestController {
             $code = 'error';
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                //$entityManager = $this->getDoctrine()->getManager();
+                $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univSlug = $request->get('univ_slug');
-                $univFromSlug = $entityManager->getRepository(University::class)->findOneBy(['token' => $univSlug]);
+                $univFromSlug = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $univSlug]);
                 $univFromUser = $user->getUniversity();
                 $formSlug = $request->get('form_slug');
-                $univForm = $entityManager->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univFromUser, 'dsa_form_slug' => $formSlug]);
+                $univForm = $this->getDoctrine()->getManager()->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univFromUser, 'dsa_form_slug' => $formSlug]);
 
                 if ($univFromSlug === $univFromUser && $univForm) {
                     $dsaForm = $univForm->getDsa_form();
@@ -190,9 +189,9 @@ class DOController extends MyRestController {
 
                     $formId = $request->get('entity_id', null);
                     $data = $dsaForm->getContent();
-                    
+
                     if ($formId != '0') {
-                        $filledForm = $entityManager->getRepository(DsaFormFilled::class)->find($formId);
+                        $filledForm = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->find($formId);
                         if ($filledForm) {
                             $filledFormUser = $filledForm->getUser();
                             if (($user === $filledFormUser && ($filledForm->getStatus() == 0 || $filledForm->getStatus() == 2)) || ($user->isDO() && $user->getUniversity() === $filledFormUser->getUniversity())) {
@@ -310,9 +309,9 @@ class DOController extends MyRestController {
             $data = null;
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                $filledForm = $entityManager->getRepository(DsaFormFilled::class)->findOneBy(['id' => $formId, 'user' => $user]);
+                //$entityManager = $this->getDoctrine()->getManager();
+                $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
+                $filledForm = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->findOneBy(['id' => $formId, 'user' => $user]);
                 if (!$filledForm) {
                     $filledForm = new DsaFormFilled();
                 }
@@ -370,18 +369,18 @@ class DOController extends MyRestController {
             if ($data || $signaturesInfo) {
                 $payload = $this->decodeJWT($jwt);
                 if ($payload) {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                    $univFromSlug = $entityManager->getRepository(University::class)->findOneBy(['token' => $request->get('univ_slug')]);
+                    //$entityManager = $this->getDoctrine()->getManager();
+                    $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
+                    $univFromSlug = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $request->get('univ_slug')]);
                     $univFromUser = $user->getUniversity();
-                    $univForm = $entityManager->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univFromUser, 'dsa_form_slug' => $request->get('form_slug')]);
+                    $univForm = $this->getDoctrine()->getManager()->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univFromUser, 'dsa_form_slug' => $request->get('form_slug')]);
 
                     if ($univFromSlug === $univFromUser && $univForm) {
                         $item = $univForm->getDsa_form();
                         if ($data['id'] === 0) {
                             $filledForm = new DsaFormFilled();
                         } else {
-                            $filledForm = $entityManager->getRepository(DsaFormFilled::class)->findOneBy(['id' => $data['id'], 'user' => $user]);
+                            $filledForm = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->findOneBy(['id' => $data['id'], 'user' => $user]);
                         }
 
                         if ($filledForm) {
@@ -395,8 +394,8 @@ class DOController extends MyRestController {
                             $filledForm->setCreated_at($now);
                             $filledForm->setSignatures($signaturesInfo);
                             $filledForm->setStatus($data['full_submit'] ? 1 : 0);
-                            $entityManager->persist($filledForm);
-                            $entityManager->flush();
+                            $this->getDoctrine()->getManager()->persist($filledForm);
+                            $this->getDoctrine()->getManager()->flush();
                             $code = 'success';
 
                             if ($data['full_submit']) {
@@ -406,11 +405,11 @@ class DOController extends MyRestController {
                                 $myFormsRoute = 'dsa/' . $univFromUser->getToken() . '/my-dsa-forms/index';
                                 $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="/#/' . $myFormsRoute . '">here</a>.', $headline, $user, 1, 2);
                                 foreach ($disabOfficers as $do) {
-                                    $doEntity = $entityManager->getRepository(User::class)->find($do['id']);
+                                    $doEntity = $this->getDoctrine()->getManager()->getRepository(User::class)->find($do['id']);
                                     $this->createNotification('New DSA Form submitted by ' . $user->__toString(), 'A new "' . $item->getName() . '" has been submitted. You can review it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
                                 }
                                 $msg = "Your form has been submitted.";
-                                $entityManager->flush();
+                                $this->getDoctrine()->getManager()->flush();
                             } else {
                                 $msg = "Progress saved";
                             }
@@ -448,14 +447,14 @@ class DOController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                //$entityManager = $this->getDoctrine()->getManager();
+                $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univ = $user->getUniversity();
-                $filledForms = $entityManager->getRepository(DsaFormFilled::class)->findBy(['user' => $user], ['created_at' => 'desc']);
+                $filledForms = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->findBy(['user' => $user], ['created_at' => 'desc']);
                 $data = [];
                 foreach ($filledForms as $filledForm) {
                     $form = $filledForm->getDsaForm();
-                    $univForm = $entityManager->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univ, 'dsa_form' => $form]);
+                    $univForm = $this->getDoctrine()->getManager()->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univ, 'dsa_form' => $form]);
                     $data[] = [
                         'id' => $filledForm->getId(),
                         'pdf_name' => $form->getName(),
@@ -501,11 +500,11 @@ class DOController extends MyRestController {
             if ($payload) {
                 $file = $request->get('file');
                 if ($file && $this->validatePNGImage($file)) {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                    //$entityManager = $this->getDoctrine()->getManager();
+                    $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                     $user->setSignature($file);
-                    $entityManager->persist($user);
-                    $entityManager->flush();
+                    $this->getDoctrine()->getManager()->persist($user);
+                    $this->getDoctrine()->getManager()->flush();
                     $data = $file;
                     $code = 'success';
                     $msg = 'Signature has been uploaded';
@@ -516,14 +515,14 @@ class DOController extends MyRestController {
             } else {
                 $randomCode = $request->get('random_code');
                 if ($randomCode) {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $qrCode = $entityManager->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
+                    //$entityManager = $this->getDoctrine()->getManager();
+                    $qrCode = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
                     if ($qrCode) {
                         $file = $request->get('file');
                         if ($file && $this->validatePNGImage($file)) {
                             $qrCode->setContent($file);
-                            $entityManager->persist($qrCode);
-                            $entityManager->flush();
+                            $this->getDoctrine()->getManager()->persist($qrCode);
+                            $this->getDoctrine()->getManager()->flush();
                             $code = 'success';
                             $msg = 'Signature has been uploaded';
                         } else {
@@ -558,20 +557,20 @@ class DOController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                //$entityManager = $this->getDoctrine()->getManager();
+                $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $randomCode = StaticMembers::random_str(16);
-                $qrEntity = $entityManager->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
+                $qrEntity = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
                 while ($qrEntity) {
                     $randomCode = StaticMembers::random_str(16);
-                    $qrEntity = $entityManager->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
+                    $qrEntity = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
                 }
                 $qrEntity = new QrCode2();
                 $qrEntity->setCreated_at(time());
                 $qrEntity->setRandom_code($randomCode);
                 $qrEntity->setUser($user);
-                $entityManager->persist($qrEntity);
-                $entityManager->flush();
+                $this->getDoctrine()->getManager()->persist($qrEntity);
+                $this->getDoctrine()->getManager()->flush();
                 $options = new QROptions([
                     'version' => 5,
                     'outputType' => QRCode::OUTPUT_MARKUP_SVG,
@@ -606,13 +605,13 @@ class DOController extends MyRestController {
             if ($payload) {
                 $randomCode = $request->get('random_code');
                 if ($randomCode) {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                    $qrEntity = $entityManager->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode, 'user' => $user]);
+                    //$entityManager = $this->getDoctrine()->getManager();
+                    $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
+                    $qrEntity = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode, 'user' => $user]);
                     if ($qrEntity && $qrEntity->getContent()) {
                         $data = $qrEntity->getContent();
-                        /* $entityManager->remove($qrEntity);
-                          $entityManager->flush(); */
+                        /* $this->getDoctrine()->getManager()->remove($qrEntity);
+                          $this->getDoctrine()->getManager()->flush(); */
                         $code = 'success';
                         $msg = 'Signature has been retrieved';
                     } else {
@@ -665,16 +664,16 @@ class DOController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+                //$entityManager = $this->getDoctrine()->getManager();
+                $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univ = $user->getUniversity();
-                $students = $entityManager->getRepository(User::class)->findBy(['university' => $univ]);
-                $filledForms = $entityManager->getRepository(DsaFormFilled::class)->findBy([/* 'status' => [1, 2, 3], */'user' => $students]);
+                $students = $this->getDoctrine()->getManager()->getRepository(User::class)->findBy(['university' => $univ]);
+                $filledForms = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->findBy([/* 'status' => [1, 2, 3], */'user' => $students]);
                 $data = [];
 
                 foreach ($filledForms as $filledForm) {
                     $form = $filledForm->getDsaForm();
-                    $univForm = $entityManager->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univ, 'dsa_form' => $form]);
+                    $univForm = $this->getDoctrine()->getManager()->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univ, 'dsa_form' => $form]);
                     $data[] = [
                         'id' => $filledForm->getId(),
                         'student_name' => $filledForm->getUser()->__toString(),
@@ -746,9 +745,9 @@ class DOController extends MyRestController {
             if ($payload) {
                 $formId = $request->get('form_id');
                 if ($formId) {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                    $filledForm = $entityManager->getRepository(DsaFormFilled::class)->find($formId);
+                    //$entityManager = $this->getDoctrine()->getManager();
+                    $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
+                    $filledForm = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->find($formId);
                     if ($filledForm) {
                         switch ($filledForm->getStatus()) {
                             case 0:
@@ -830,27 +829,27 @@ class DOController extends MyRestController {
                                                 unlink($signaturePath);
                                                 unlink($destinationPath);
                                                 rename($mergedPath, $destinationPath);
-                                                $entityManager->persist($filledForm);
+                                                $this->getDoctrine()->getManager()->persist($filledForm);
                                             }
                                             $filledForm->setStatus(3);
                                             $filledForm->setFilename($filledName);
-                                            $entityManager->persist($filledForm);
+                                            $this->getDoctrine()->getManager()->persist($filledForm);
                                             $now = time();
                                             $this->createNotification('You have approved a new form', 'The "' . $filledForm->getDsaForm()->getName() . '" submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . ' by <b>' . $student->__toString() . '</b>.', date('Y/m/d H:i:s', $now), $user, 1, 2);
                                             $this->createNotification('Your form has been approved', 'Your ' . $filledForm->getDsaForm()->getName() . ', submitted on ' . date('Y/m/d H:i:s', $filledForm->getCreated_at()) . ', has been approved by <i>' . $user->__toString() . '</i>', date('Y/m/d H:i:s', $now), $student, 1, 1);
-                                            $entityManager->flush();
+                                            $this->getDoctrine()->getManager()->flush();
                                             $data = $filledForm->getStatus();
                                             $code = 'success';
                                             $msg = "The form has been approved.";
                                         } else {
                                             $code = 'error';
                                             $msg = $pdf->getError();
-                                            $entityManager->refresh($filledForm);
+                                            $this->getDoctrine()->getManager()->refresh($filledForm);
                                         }
                                     } else {
                                         $code = 'error';
                                         $msg = 'Specified PDF Form does not exist on the filesystem';
-                                        $entityManager->refresh($filledForm);
+                                        $this->getDoctrine()->getManager()->refresh($filledForm);
                                     }
                                 } else {
                                     $code = 'error';
@@ -884,45 +883,51 @@ class DOController extends MyRestController {
      * @FOSRest\Post(path="/api/set-institute-info")
      */
     public function setDsaFormsParamsAction(Request $request) {
-        try {
-            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            $payload = $this->decodeJWT($jwt);
-
-            if ($payload) {
-                $univSlug = $request->get('slug');
-                $data = $request->get('data');
-                $entityManager = $this->getDoctrine()->getManager();
-                $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-
-                if ($user->isDO() && $univSlug) {
-                    $univ = $user->getUniversity();
-                    $univ->setToken($univSlug);
-                    $entityManager->persist($univ);
-                    foreach ($data as $itemData) {
-                        $item = $entityManager->getRepository(UniversityDsaForm::class)->find($itemData['id']);
-                        if ($item) {
-                            $item->setActive($itemData['active']);
-                            $item->setDsa_form_slug($itemData['slug']);
-                            $entityManager->persist($item);
-                        }
-                    }
-                    $entityManager->flush();
-                    $code = 'success';
-                    $msg = "Your changes have been submitted.";
-                } else {
-                    $code = 'error';
-                    $msg = 'Invalid or missing parameters.';
-                }
-            } else {
-                $code = 'error';
-                $msg = 'Invalid parameter supplied. You may need to renew your session.';
-            }
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
-        } catch (Exception $exc) {
-            $code = 'error';
-            $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+        $user = $this->getRequestUser($request);
+        if ($user['code'] !== 'success') {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
         }
+
+        $user = $user['user'];
+        $params = json_decode($request->getContent(), true);
+        $univ = $user->getUniversity();
+
+        if (!$user->isDO() || !$univ) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters.', 'data' => null], Response::HTTP_OK);
+        }
+
+        $slug = strtolower(trim($params['slug']));
+        //45, 48-57, 97-122
+
+        $slugChars = str_split($slug);
+        $slugLength = count($slugChars);
+
+        for ($i = 0; $i < $slugLength; $i++) {
+            $charAscii = ord($slugChars[$i]);
+            if (!($charAscii === 45 || ($charAscii >= 48 && $charAscii <= 57) || ($charAscii >= 97 && $charAscii <= 122))) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Institute ID cannot contain whitespaces or special characters.', 'data' => null], Response::HTTP_OK);
+            }
+        }
+
+        if (!$this->getEntityManager()->getRepository(University::class)->isUnique($univ->getId(), 'token', $slug)) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'That identifier has been assigned to another institute.', 'data' => null], Response::HTTP_OK);
+        }
+
+        $oldToken = $univ->getToken();
+        if ($oldToken !== $slug) {
+            $univ->setToken($slug);
+            $this->getDoctrine()->getManager()->persist($univ);
+        }
+        foreach ($params['univ_forms'] as $univForm) {
+            $item = $this->getDoctrine()->getManager()->getRepository(UniversityDsaForm::class)->find($univForm['id']);
+            if ($item && $item->getUniversity() === $univ) {
+                $item->setActive($univForm['active']);
+                $item->setDsa_form_slug($univForm['slug']);
+                $this->getDoctrine()->getManager()->persist($item);
+            }
+        }
+        $this->getDoctrine()->getManager()->flush();
+        return new JsonResponse(['code' => 'success', 'msg' => 'Your institute has been updated.', 'data' => ['old_token' => $oldToken, 'new_token' => $slug]], Response::HTTP_OK);
     }
 
     /**
@@ -932,8 +937,8 @@ class DOController extends MyRestController {
     public function setValidateRandomCodeAction(Request $request) {
         try {
             $randomCode = $request->get('random_code');
-            $entityManager = $this->getDoctrine()->getManager();
-            $qrCode = $entityManager->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
+            //$entityManager = $this->getDoctrine()->getManager();
+            $qrCode = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
             if ($qrCode) {
                 $data = $qrCode->getRandom_code();
                 $code = 'success';
@@ -966,11 +971,11 @@ class DOController extends MyRestController {
                 $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
                 $payload = $this->decodeJWT($jwt);
                 if ($payload) {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                    $univFromSlug = $entityManager->getRepository(University::class)->findOneBy(['token' => $univSlug]);
+                    //$entityManager = $this->getDoctrine()->getManager();
+                    $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
+                    $univFromSlug = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $univSlug]);
                     $univFromUser = $user->getUniversity();
-                    $univForm = $entityManager->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univFromUser, 'dsa_form_slug' => $formSlug]);
+                    $univForm = $this->getDoctrine()->getManager()->getRepository(UniversityDsaForm::class)->findOneBy(['university' => $univFromUser, 'dsa_form_slug' => $formSlug]);
 
                     if ($univFromSlug === $univFromUser && $univForm) {
                         $dsaForm = $univForm->getDsa_form();
@@ -983,7 +988,7 @@ class DOController extends MyRestController {
                             $filledForm->setContent([]);
                             $filledForm->setStatus(0);
                         } else {
-                            $filledForm = $entityManager->getRepository(DsaFormFilled::class)->findOneBy(['id' => $entityId]);
+                            $filledForm = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->findOneBy(['id' => $entityId]);
                         }
 
                         if ($filledForm && ($filledForm->getUser() === $user || $filledForm->getUser()->getUniversity()->getManager() === $user)) {
@@ -999,8 +1004,8 @@ class DOController extends MyRestController {
                             if ($filledForm->getStatus() === 1 && $user->isDO()) {
                                 $filledForm->setStatus(2);
                             }
-                            $entityManager->persist($filledForm);
-                            $entityManager->flush();
+                            $this->getDoctrine()->getManager()->persist($filledForm);
+                            $this->getDoctrine()->getManager()->flush();
 
                             $route = 'dsa/' . $univFromUser->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
 
@@ -1008,7 +1013,7 @@ class DOController extends MyRestController {
                                 $this->createNotification('You have submitted a new comment', 'You commented <b>' . $fieldName . '</b> input field from <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
                                 $disabOfficers = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 foreach ($disabOfficers as $do) {
-                                    $doEntity = $entityManager->getRepository(User::class)->find($do['id']);
+                                    $doEntity = $this->getDoctrine()->getManager()->getRepository(User::class)->find($do['id']);
                                     $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
                                 }
                             } else {
@@ -1017,7 +1022,7 @@ class DOController extends MyRestController {
                             }
                             $msg = "Your comment has been submitted.";
                             $code = 'success';
-                            $entityManager->flush();
+                            $this->getDoctrine()->getManager()->flush();
                             $entityId = $filledForm->getId();
                         } else {
                             $code = 'error';
@@ -1101,7 +1106,12 @@ class DOController extends MyRestController {
                     'roles' => $user->getRoles(),
                     'acs' => $user->getAssessmentCentres('slug'),
                     'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
-                    'fullname' => $user->getFullname()
+                    'fullname' => $user->getFullname(),
+                    'institute' => [
+                        'type' => 'dsa',
+                        'slug' => $univ->getToken(),
+                        'name' => $univ->getName(),
+                    ],
                 ];
                 $code = 'success';
                 $msg = "Credentials verified";
@@ -1131,7 +1141,7 @@ class DOController extends MyRestController {
         $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
 
         if ($user) {
-            if ($user->getStatus() === 1) {
+            if ($user->getUniversity()) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'The email address you entered is already registered.'], Response::HTTP_OK);
             }
         } else {
@@ -1219,32 +1229,7 @@ class DOController extends MyRestController {
         $this->getEntityManager()->flush();
         return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
     }
-    
-    /**
-     * Activates an user account.
-     * @FOSRest\Post(path="/api/cancel-dsa-registration")
-     */
-    public function cancelDsaRegistration(Request $request) {
-        $user = $this->getRequestUser($request);
 
-        if ($user['code'] !== 'success') {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
-        }
-        
-        $user = $user['user'];
-        $params = json_decode($request->getContent(), true);
-        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
-        
-        if (!$univ || $univ !== $user->getUniversity()) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
-        }
-
-        $user->setStatus(0);
-        $user->setUniversity(null);
-        $this->getEntityManager()->flush();
-        return new JsonResponse(['code' => 'success', 'msg' => 'You are no longer registered with ' . $univ->getName(), 'data' => null], Response::HTTP_OK);
-    }
-    
     /**
      * Retrieve user's signature.
      * @FOSRest\Get(path="/api/get-previous-signature")
@@ -1255,7 +1240,7 @@ class DOController extends MyRestController {
         if ($user['code'] !== 'success') {
             return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
         }
-        
+
         $user = $user['user'];
         return new JsonResponse(['code' => 'success', 'msg' => 'Signature loaded', 'data' => $user->getSignature()], Response::HTTP_OK);
     }

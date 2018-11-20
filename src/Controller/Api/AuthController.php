@@ -342,7 +342,7 @@ class AuthController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
         }
     }
-    
+
     /**
      * Changes password
      * @FOSRest\Post(path="/api/change-password")
@@ -355,19 +355,45 @@ class AuthController extends MyRestController {
         }
         $user = $user['user'];
         $params = json_decode($request->getContent(), true);
-        
+
         if ($user->getPassword() !== sha1($params['current_password'])) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Invalid current password'], Response::HTTP_OK);
         }
-        
+
         if ($params['password'] !== $params['password_confirm']) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Password do not match'], Response::HTTP_OK);
         }
-        
+
         $user->setPassword(sha1($params['password']));
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
         return new JsonResponse(['code' => 'success', 'msg' => 'Password updated'], Response::HTTP_OK);
+    }
+
+    /**
+     * Activates an user account.
+     * @FOSRest\Post(path="/api/cancel-registration")
+     */
+    public function cancelRegistration(Request $request) {
+        $user = $this->getRequestUser($request);
+        if ($user['code'] !== 'success') {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+        }
+        $user = $user['user'];
+        $params = json_decode($request->getContent(), true);
+
+        switch ($params['type']) {
+            case 'dsa':
+                $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
+                if (!$univ || $univ !== $user->getUniversity()) {
+                    return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+                }
+                $user->setUniversity(null);
+                $this->getEntityManager()->flush();
+                return new JsonResponse(['code' => 'success', 'msg' => 'You are no longer registered with ' . $univ->getName(), 'data' => null], Response::HTTP_OK);
+            default:
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+        }
     }
 
 }

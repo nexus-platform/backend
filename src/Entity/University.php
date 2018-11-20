@@ -9,10 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(iri="http://bib.schema.org/University")
- *
  * @ORM\Entity(repositoryClass="App\Repository\UniversityRepository")
- *
- * @author Julian Santana <juliansminf@gmail.com>
  */
 class University {
 
