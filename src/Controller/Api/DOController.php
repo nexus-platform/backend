@@ -1077,53 +1077,52 @@ class DOController extends MyRestController {
     public function dsaLogin(Request $request) {
         $data = null;
         $params = json_decode($request->getContent(), true);
+
         $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
 
         if (!$univ) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => $data], Response::HTTP_OK);
         }
 
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => sha1($params['password']), 'university' => $univ]);
+        $pass = sha1($params['password']);
 
-        if ($user && $user->getStatus() === 1) {
-            $now = time();
-            $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
-            $payload = [
-                'iss' => $homeUrl,
-                'aud' => $homeUrl,
-                'iat' => $now,
-                'exp' => $now + 43200, //12 hours
-                'user_id' => $user->getId(),
-                'ip' => $request->getClientIp(),
-            ];
-            $jwt = $this->encodeJWT($payload);
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass, 'university' => $univ]);
 
-            if ($jwt) {
-                $data = [
-                    'is_guest' => false,
-                    'email' => $user->getEmail(),
-                    'jwt' => $jwt,
-                    'roles' => $user->getRoles(),
-                    'acs' => $user->getAssessmentCentres('slug'),
-                    'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
-                    'fullname' => $user->getFullname(),
-                    'institute' => [
-                        'type' => 'dsa',
-                        'slug' => $univ->getToken(),
-                        'name' => $univ->getName(),
-                    ],
-                ];
-                $code = 'success';
-                $msg = "Credentials verified";
-            } else {
-                $code = 'error';
-                $msg = 'Your data could not be encoded.';
-            }
-        } else {
-            $code = 'error';
-            $msg = !$user ? "Invalid username or password." : "Your user account is inactive.";
+        if (!$user || $user->getStatus() === 0) {
+            return new JsonResponse(['code' => 'error', 'msg' => !$user ? "Invalid username or password." : "Your user account is inactive.", 'data' => $data], Response::HTTP_OK);
         }
-        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+
+        $now = time();
+        $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $payload = [
+            'iss' => $homeUrl,
+            'aud' => $homeUrl,
+            'iat' => $now,
+            'exp' => $now + 43200, //12 hours
+            'user_id' => $user->getId(),
+            'ip' => $request->getClientIp(),
+        ];
+        $jwt = $this->encodeJWT($payload);
+
+        if (!$jwt) {
+            return new JsonResponse(['code' => 'error', 'msg' => 'Your data could not be encoded.', 'data' => $data], Response::HTTP_OK);
+        }
+        $data = [
+            'is_guest' => false,
+            'email' => $user->getEmail(),
+            'jwt' => $jwt,
+            'roles' => $user->getRoles(),
+            'acs' => $user->getAssessmentCentres('slug'),
+            'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
+            'fullname' => $user->getFullname(),
+            'institute' => [
+                'type' => 'dsa',
+                'slug' => $univ->getToken(),
+                'name' => $univ->getName(),
+            ],
+        ];
+
+        return new JsonResponse(['code' => 'success', 'msg' => 'Credentials verified', 'data' => $data], Response::HTTP_OK);
     }
 
     /**
