@@ -143,6 +143,7 @@ class ACController extends MyRestController {
                         'admin' => $admin ? $admin->getUser()->__toString() : null,
                         'user_data' => $userData,
                         'slug' => $ac->getUrl(),
+                        'ac_name' => $ac->getName(),
                         'star_assessment_form' => $this->getStarAssessmentForm(),
                     ];
                     $code = 'success';
