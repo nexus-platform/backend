@@ -166,6 +166,11 @@ class User implements UserInterface, Serializable {
         }
         return false;
     }
+    
+    function hasRegisteredWithAnyAC() {
+        $acUsers = $this->getAssessment_center_users();
+        return $acUsers ? true : false;
+    }
 
     function getAssessment_center_users() {
         return $this->assessment_center_users;
@@ -432,7 +437,7 @@ class User implements UserInterface, Serializable {
     
     public function isEnabledInAC(ObjectManager $entityManager, AssessmentCenter $ac) {
         $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $this]);
-        return $acUser->getStatus();
+        return $acUser ? $acUser->getStatus() : 0;
     }
     
     public function getEaRole() {

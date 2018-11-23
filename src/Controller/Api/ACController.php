@@ -70,35 +70,55 @@ class ACController extends MyRestController {
     }
 
     /**
-     * Retrieves an university.
+     * Retrieves data from AC.
      * @FOSRest\Get(path="/api/get-ac-info")
      */
     public function getACInfo(Request $request) {
         try {
-            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            $payload = $this->decodeJWT($jwt);
-            $slug = $request->get('slug');
-            $invitationToken = $request->get('invitation_token');
-
-            $user = $payload ? $this->getEntityManager()->getRepository(User::class)->find($payload->user_id) : null;
-            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
-            $data = null;
-            $code = '';
-            $msg = '';
-            $userRole = '';
+            $user = $this->getRequestUser($request);
+            if ($user['code'] === 'success') {
+                $user = $user['user'];
+            } else {
+                $user = null;
+            }
+            
+            $params = [
+                'slug' => $request->get('slug'),
+                'invitation_token' => $request->get('invitation_token'),
+            ];
+            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug']]);
+            $userRole = null;
             $invitation = null;
 
-            if ($invitationToken) {
-                $invitation = $this->getEntityManager()->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
+            if ($params['invitation_token']) {
+                $invitation = $this->getEntityManager()->getRepository(UserInvitation::class)->findOneBy(['token' => $params['invitation_token']]);
                 if ($ac && $invitation && $ac === $invitation->getAc()) {
                     $userRole = $invitation->getRole();
                 } else {
-                    $code = 'error';
+                    return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => null], Response::HTTP_OK);
                 }
             }
-            if ($ac && $code === '') {
-                $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
-                $registered = false;
+
+            $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
+            $registered = false;
+
+            if ($user) {
+                if ($user->isDO()) {
+                    return new JsonResponse(['code' => 'error', 'msg' => 'Access denied.', 'data' => null], Response::HTTP_OK);
+                }
+                $userRole = $user->getRoles()[0];
+                $isAdmin = $admin->getUser() === $user;
+                $registered = $user->hasRegisteredWith($ac);
+                $userData = [
+                    'name' => $user->getName(),
+                    'last_name' => $user->getLastname(),
+                    'email' => $user->getEmail(),
+                    'postcode' => $user->getPostcode(),
+                    'address' => $user->getAddress(),
+                    'password' => 'password',
+                    'password_confirm' => 'password',
+                ];
+            } else {
                 $userData = [
                     'name' => '',
                     'last_name' => '',
@@ -108,52 +128,23 @@ class ACController extends MyRestController {
                     'password' => '',
                     'password_confirm' => '',
                 ];
-
-                if ($user) {
-                    if (!$user->isDO()) {
-                        $userRole = $user->getRoles()[0];
-                        $isAdmin = $admin->getUser() === $user;
-                        $registered = $user->hasRegisteredWith($ac);
-                        $userData = [
-                            'name' => $user->getName(),
-                            'last_name' => $user->getLastname(),
-                            'email' => $user->getEmail(),
-                            'postcode' => $user->getPostcode(),
-                            'address' => $user->getAddress(),
-                            'password' => 'password',
-                            'password_confirm' => 'password',
-                        ];
-                    } else {
-                        $code = 'error';
-                        $msg = 'Access denied';
-                    }
-                } else {
-                    $isAdmin = false;
-                    if ($userRole === '') {
-                        $userRole = 'student';
-                    }
-                }
-
-                if ($code === '') {
-                    $data = [
-                        'id' => $ac->getId(),
-                        'registered' => $registered,
-                        'is_admin' => $isAdmin,
-                        'role' => $userRole,
-                        'admin' => $admin ? $admin->getUser()->__toString() : null,
-                        'user_data' => $userData,
-                        'slug' => $ac->getUrl(),
-                        'name' => $ac->getName(),
-                        'star_assessment_form' => $this->getStarAssessmentForm(),
-                    ];
-                    $code = 'success';
-                    $msg = 'AC loaded';
-                }
-            } else {
-                $code = 'error';
-                $msg = 'Invalid parameter.';
+                $isAdmin = false;
+                $userRole = $userRole ? $userRole : 'student';
             }
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+
+            $data = [
+                'id' => $ac->getId(),
+                'registered' => $registered,
+                'is_admin' => $isAdmin,
+                'role' => $userRole,
+                'admin' => $admin ? $admin->getUser()->__toString() : null,
+                'user_data' => $userData,
+                'slug' => $ac->getUrl(),
+                'name' => $ac->getName(),
+                'star_assessment_form' => $this->getStarAssessmentForm(),
+            ];
+
+            return new JsonResponse(['code' => 'success', 'msg' => 'AC loaded', 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
         }
@@ -179,7 +170,7 @@ class ACController extends MyRestController {
                 $userOk = !is_null($payload);
             } else {
                 $userParams = $acParams->user_data;
-                
+
                 $params = [
                     'name' => $userParams->name,
                     'address' => $userParams->address,
@@ -1014,7 +1005,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
         }
     }
-    
+
     private function getStarAssessmentForm() {
         $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/star_assessment_form.json';
         $res = json_decode(file_get_contents($dir), true);

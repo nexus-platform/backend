@@ -1053,8 +1053,10 @@ class DOController extends MyRestController {
      * @FOSRest\Get(path="/api/get-dsa-info")
      */
     public function getDsaInfo(Request $request) {
-        $data = [];
-        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $request->get('slug')]);
+        $params = [
+            'slug' => $request->get('slug')
+        ];
+        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
         if (!$univ) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
         }
@@ -1069,166 +1071,7 @@ class DOController extends MyRestController {
         }
         return new JsonResponse(['code' => 'success', 'msg' => 'Access granted', 'data' => $data], Response::HTTP_OK);
     }
-
-    /**
-     * Logs an user in.
-     * @FOSRest\Post(path="/api/dsa-login")
-     */
-    public function dsaLogin(Request $request) {
-        $data = null;
-        $params = json_decode($request->getContent(), true);
-
-        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
-
-        if (!$univ) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => $data], Response::HTTP_OK);
-        }
-
-        $pass = sha1($params['password']);
-
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass, 'university' => $univ]);
-
-        if (!$user || $user->getStatus() === 0) {
-            return new JsonResponse(['code' => 'error', 'msg' => !$user ? "Invalid username or password." : "Your user account is inactive.", 'data' => $data], Response::HTTP_OK);
-        }
-
-        $now = time();
-        $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $payload = [
-            'iss' => $homeUrl,
-            'aud' => $homeUrl,
-            'iat' => $now,
-            'exp' => $now + 43200, //12 hours
-            'user_id' => $user->getId(),
-            'ip' => $request->getClientIp(),
-        ];
-        $jwt = $this->encodeJWT($payload);
-
-        if (!$jwt) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Your data could not be encoded.', 'data' => $data], Response::HTTP_OK);
-        }
-        $data = [
-            'is_guest' => false,
-            'email' => $user->getEmail(),
-            'jwt' => $jwt,
-            'roles' => $user->getRoles(),
-            'acs' => $user->getAssessmentCentres('slug'),
-            'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
-            'fullname' => $user->getFullname(),
-            'institute' => [
-                'type' => 'dsa',
-                'slug' => $univ->getToken(),
-                'name' => $univ->getName(),
-            ],
-        ];
-
-        return new JsonResponse(['code' => 'success', 'msg' => 'Credentials verified', 'data' => $data], Response::HTTP_OK);
-    }
-
-    /**
-     * Registers a new user.
-     * @FOSRest\Post(path="/api/dsa-signup")
-     */
-    public function dsaSignup(Request $request) {
-        $params = json_decode($request->getContent(), true);
-
-        $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['dsa']]);
-        if (!$univ) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters'], Response::HTTP_OK);
-        }
-
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
-
-        if ($user) {
-            if ($user->getUniversity()) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'The email address you entered is already registered.'], Response::HTTP_OK);
-            }
-        } else {
-            $user = new User();
-        }
-
-        $user->setAddress($params['address']);
-        $user->setCreatedAt(time());
-        $user->setEmail($params['email']);
-        $user->setLastname($params['last_name']);
-        $user->setName($params['name']);
-        $user->setPostcode($params['postcode']);
-        $user->setPassword(sha1($params['password']));
-        $user->setRoles(["student"]);
-        $user->setStatus(0);
-        $user->setPre_register(['form_url' => $params['form_url'] ? $params['form_url'] : $params['home_url']]);
-        $user->setToken(sha1(StaticMembers::random_str()));
-        $user->setUniversity($univ);
-        $this->getEntityManager()->persist($user);
-
-        $subject = 'Activate your Nexus account';
-        $fullName = $user->getName() . ' ' . $user->getLastname();
-        $body = $this->renderView('email/signup.html.twig', ['homeUrl' => $params['home_url'], 'dsa' => $univ->getName(), 'subject' => $subject, 'name' => $fullName, 'activation_url' => $params['activation_url'] . '/' . $user->getToken()]);
-        $recipients = [$user->getEmail() => $fullName];
-
-        if (StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients) > 0) {
-            $code = 'success';
-            $msg = "Check your inbox for instructions on how to activate your account.";
-            $this->getEntityManager()->flush();
-        } else {
-            $code = 'error';
-            $msg = 'The email server is not responding. Please, try again later.';
-            $this->getEntityManager()->remove($user);
-        }
-        return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
-    }
-
-    /**
-     * Activates an user account.
-     * @FOSRest\Post(path="/api/dsa-activate-account")
-     */
-    public function activateAccount(Request $request) {
-        $params = json_decode($request->getContent(), true);
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token'], 'status' => 0]);
-
-        if (!$user) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token'], 'data' => null], Response::HTTP_OK);
-        }
-
-        $user->setStatus(1);
-        $univ = $user->getUniversity();
-
-        $subject = 'Your Nexus account is active!';
-        $fullName = $user->getName() . ' ' . $user->getLastname();
-        $preRegister = $user->getPre_register();
-        $body = $this->renderView('email/activated_account.html.twig', ['name' => $fullName, 'homeUrl' => $preRegister['form_url'], 'dsa' => $univ->getName(), 'subject' => $subject]);
-        $recipients = [$user->getEmail() => $fullName];
-
-        StaticMembers::sendMail($this->getEntityManager()->getRepository(AppSettings::class)->find(1), $subject, $body, $recipients);
-        $code = 'success';
-
-        $msg = "Your account has been activated. You'll be redirected in a few seconds...";
-        $now = time();
-        $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $payload = [
-            'iss' => $homeUrl,
-            'aud' => $homeUrl,
-            'iat' => $now,
-            'exp' => $now + 604800, //a week
-            'user_id' => $user->getId(),
-            'ip' => $request->getClientIp(),
-        ];
-
-        $jwt = $this->encodeJWT($payload);
-        $data = [
-            'is_guest' => false,
-            'email' => $user->getEmail(),
-            'jwt' => $jwt,
-            'roles' => $user->getRoles(),
-            'acs' => $user->getAssessmentCentres('slug'),
-            'is_univ_manager' => $univ ? $univ->getManager() === $user : false,
-            'fullname' => $user->getFullname(),
-            'redirect' => parse_url($preRegister['form_url'], PHP_URL_FRAGMENT),
-        ];
-        $this->getEntityManager()->flush();
-        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
-    }
-
+    
     /**
      * Retrieve user's signature.
      * @FOSRest\Get(path="/api/get-previous-signature")
