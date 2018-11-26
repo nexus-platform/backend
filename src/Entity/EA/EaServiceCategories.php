@@ -38,7 +38,7 @@ class EaServiceCategories
     /**
      * @var \AssessmentCenter
      *
-     * @ORM\ManyToOne(targetEntity="AssessmentCenter")
+     * @ORM\ManyToOne(targetEntity="App\Entity\AssessmentCenter")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_assessment_center", referencedColumnName="id")
      * })

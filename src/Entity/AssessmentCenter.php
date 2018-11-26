@@ -47,6 +47,11 @@ class AssessmentCenter {
     private $telephone;
 
     /**
+     * @ORM\Column(type="integer", length=1)
+     */
+    private $automatic_booking;
+
+    /**
      * @var AssessmentForm[]|ArrayCollection
      *
      * @ORM\OneToMany(
@@ -85,6 +90,14 @@ class AssessmentCenter {
      * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterService", mappedBy="ac")
      * */
     private $assessment_center_services;
+
+    function getAutomatic_booking() {
+        return $this->automatic_booking;
+    }
+
+    function setAutomatic_booking($automatic_booking) {
+        $this->automatic_booking = $automatic_booking;
+    }
 
     function getAvailability_type() {
         return $this->availability_type;

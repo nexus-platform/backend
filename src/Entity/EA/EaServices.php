@@ -73,7 +73,7 @@ class EaServices
     /**
      * @var \AssessmentCenter
      *
-     * @ORM\ManyToOne(targetEntity="AssessmentCenter")
+     * @ORM\ManyToOne(targetEntity="App\Entity\AssessmentCenter")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_assessment_center", referencedColumnName="id")
      * })
@@ -93,7 +93,7 @@ class EaServices
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="idServices")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="idServices")
      */
     private $idUsers;
 

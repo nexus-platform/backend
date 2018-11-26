@@ -374,8 +374,8 @@ class AuthController extends MyRestController {
         $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
 
         if ($user) {
-            $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['user' => $user]);
-            if (($params['target'] === 'dsa' && $user->getUniversity()) || ($params['target'] === 'ac' && $acUser)) {
+            $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['user' => $user, 'status' => 1]);
+            if (($params['target'] === 'dsa' && $user->getUniversity()) || ($params['target'] === 'ac' && $acUser && $user->isStudent())) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'The email address you entered is already registered.'], Response::HTTP_OK);
             }
         } else {
@@ -439,14 +439,13 @@ class AuthController extends MyRestController {
     public function activateAccount(Request $request) {
         $params = json_decode($request->getContent(), true);
         $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token'], 'status' => 0]);
-        
+
         if (!$user) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token'], 'data' => null], Response::HTTP_OK);
         }
 
-        $user->setStatus(1);
         $preRegister = $user->getPre_register();
-        
+
         if ($preRegister['target'] === 'dsa') {
             $target = $user->getUniversity();
         } else if ($preRegister['target'] === 'ac') {
@@ -454,7 +453,17 @@ class AuthController extends MyRestController {
             if (!$target) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'This institution no longer exists', 'data' => null], Response::HTTP_OK);
             }
+            if ($user->isStudent()) {
+                $preRegister['assessment_form'] = null;
+                $preRegister['booking_available'] = $target->getAutomatic_booking();
+            } else {
+                $preRegister['assessment_form'] = [];
+                $preRegister['booking_available'] = 1;
+            }
+            $user->setPre_register($preRegister);
         }
+
+        $user->setStatus(1);
 
         $subject = 'Your Nexus account is active!';
         $fullName = $user->getName() . ' ' . $user->getLastname();

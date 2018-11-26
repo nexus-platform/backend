@@ -83,7 +83,7 @@ class EaAppointments
     /**
      * @var \User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_users_customer", referencedColumnName="id")
      * })
@@ -93,7 +93,7 @@ class EaAppointments
     /**
      * @var \User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_users_provider", referencedColumnName="id")
      * })

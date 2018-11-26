@@ -26,11 +26,11 @@
 				{
 					"class": "md4",
 					"content_type": "input",
-					"input" : {
-						"title": "Mobile",
-						"name": "mobile",
+					"input": {
+						"title": "First Name",
+						"name": "name",
 						"type": "text",
-						"max_length": 20,
+						"max_length": 75,
 						"required": false,
 						"value": "",
 						"disabled": false,
@@ -40,11 +40,11 @@
 				{
 					"class": "md4",
 					"content_type": "input",
-					"input" : {
-						"title": "Telephone",
-						"name": "phone",
+					"input": {
+						"title": "Last Name",
+						"name": "last_name",
 						"type": "text",
-						"max_length": 20,
+						"max_length": 75,
 						"required": false,
 						"value": "",
 						"disabled": false,
@@ -102,11 +102,99 @@
 					"class": "md4",
 					"content_type": "input",
 					"input" : {
+						"title": "Mobile",
+						"name": "mobile",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Telephone",
+						"name": "phone",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Email",
+						"name": "email",
+						"type": "text",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Password",
+						"name": "password",
+						"type": "password",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Confirm your password",
+						"name": "password_confirm",
+						"type": "password",
+						"max_length": 20,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				},
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
 						"title": "Today's Date",
 						"name": "today_date",
 						"type": "date",
 						"format": "DD-MM-YYYY",
 						"max_length": 10,
+						"required": false,
+						"value": "",
+						"disabled": false,
+						"read_only": false
+					}
+				}
+			],
+			[
+				{
+					"class": "md4",
+					"content_type": "input",
+					"input" : {
+						"title": "Postcode",
+						"name": "postcode",
+						"type": "text",
+						"max_length": 20,
 						"required": false,
 						"value": "",
 						"disabled": false,

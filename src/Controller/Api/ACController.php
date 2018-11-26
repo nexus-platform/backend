@@ -118,6 +118,11 @@ class ACController extends MyRestController {
                     'password' => 'password',
                     'password_confirm' => 'password',
                 ];
+                if ($user->isStudent()) {
+                    $preRegister = $user->getPre_register();
+                    $userData['assessment_form_sent'] = ($preRegister['assessment_form'] !== null);
+                    $userData['booking_available'] = ($preRegister['booking_available'] === 1);
+                }
             } else {
                 $userData = [
                     'name' => '',

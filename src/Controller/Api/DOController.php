@@ -897,7 +897,6 @@ class DOController extends MyRestController {
         }
 
         $slug = strtolower(trim($params['slug']));
-        //45, 48-57, 97-122
 
         $slugChars = str_split($slug);
         $slugLength = count($slugChars);
