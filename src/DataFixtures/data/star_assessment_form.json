@@ -31,7 +31,7 @@
 						"name": "mobile",
 						"type": "text",
 						"max_length": 20,
-						"required": false,
+						"required": true,
 						"value": "",
 						"disabled": false,
 						"read_only": false
@@ -60,7 +60,7 @@
 						"type": "date",
 						"format": "DD-MM-YYYY",
 						"max_length": 10,
-						"required": false,
+						"required": true,
 						"value": "",
 						"disabled": false,
 						"read_only": false
@@ -123,33 +123,14 @@
 			[
 				{
 					"class": "md12",
-					"content_type": "html",
-					"html": "Have you previously had a Needs Assessment?"
-				}
-			],
-			[
-				{
-					"class": "md2",
 					"content_type": "input",
 					"input": {
-						"title": "Yes",
-						"name": "Previous Assessment - Yes",
-						"type": "checkbox",
+						"title": "Have you previously had a Needs Assessment?",
+						"name": "Previous Assessment",
+						"type": "radio_group",
 						"required": false,
-						"value": false,
-						"disabled": false,
-						"read_only": false
-					}
-				},
-				{
-					"class": "md2",
-					"content_type": "input",
-					"input": {
-						"title": "No",
-						"name": "Previous Assessment - No",
-						"type": "checkbox",
-						"required": false,
-						"value": false,
+						"value": "",
+						"options": ["Yes", "No"],
 						"disabled": false,
 						"read_only": false
 					}
@@ -282,7 +263,7 @@
 			],
 			[
 				{
-					"class": "md4",
+					"class": "md5",
 					"content_type": "input",
 					"input": {
 						"title": "Customer Reference Number (CRN)",
@@ -329,9 +310,7 @@
 						"disabled": false,
 						"read_only": false
 					}
-				}
-			],
-			[
+				},
 				{
 					"class": "md2",
 					"content_type": "input",
@@ -747,27 +726,6 @@
 				}
 			]
 			
-		]
-	},
-	
-	{
-		"title": "Documents",
-		"components": [
-			[
-				{
-                    "class": "md12",
-                    "content_type": "input",
-                    "input": {
-                        "title": "Student Signature",
-                        "name": "Student Signature",
-                        "type": "signature",
-						"required": true,
-                        "value": "",
-                        "disabled": false,
-                        "read_only": false
-                    }
-                }
-			]
 		]
 	}
 	

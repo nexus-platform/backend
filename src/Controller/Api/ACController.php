@@ -81,7 +81,7 @@ class ACController extends MyRestController {
             } else {
                 $user = null;
             }
-            
+
             $params = [
                 'slug' => $request->get('slug'),
                 'invitation_token' => $request->get('invitation_token'),
@@ -120,8 +120,8 @@ class ACController extends MyRestController {
                 ];
                 if ($user->isStudent()) {
                     $preRegister = $user->getPre_register();
-                    $userData['assessment_form_sent'] = ($preRegister['assessment_form'] !== null);
-                    $userData['booking_available'] = ($preRegister['booking_available'] === 1);
+                    $userData['dsa_letter_full_submit'] = ($preRegister['dsa_letter_full_submit'] !== null);
+                    $userData['ac_booking_enabled'] = ($preRegister['ac_booking_enabled'] === 1);
                 }
             } else {
                 $userData = [
@@ -157,100 +157,40 @@ class ACController extends MyRestController {
 
     /**
      * Registers with AC
-     * @FOSRest\Post(path="/api/register-with-ac")
+     * @FOSRest\Post(path="/api/submit-ac-form")
      */
-    public function registerWithAC(Request $request) {
+    public function submitACForm(Request $request) {
         try {
-            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            $payload = $this->decodeJWT($jwt);
-            $acParams = json_decode($request->get('ac'));
+            $user = $this->getRequestUser($request);
+            if ($user['code'] !== 'success') {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+            }
+
+            $dsaLetter = $request->files->get('dsa_letter');
+            $slug = $request->get('slug');
             $formData = json_decode($request->get('data'), true);
-            $data = null;
-            $userOk = false;
-
-            $invitation = null;
-
-            if ($payload) {
-                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
-                $userOk = !is_null($payload);
-            } else {
-                $userParams = $acParams->user_data;
-
-                $params = [
-                    'name' => $userParams->name,
-                    'address' => $userParams->address,
-                    'email' => $userParams->email,
-                    'last_name' => $userParams->last_name,
-                    'postcode' => $userParams->postcode,
-                    'password' => $userParams->password,
-                    'activation_url' => $request->get('url'),
-                ];
-                $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
-
-                if ($user) {
-                    $code = 'warning';
-                    $msg = 'The email address you entered is already registered';
-                    $userOk = false;
-                } else {
-                    $invitationToken = $request->get('invitation_token');
-                    $invitation = $this->getEntityManager()->getRepository(UserInvitation::class)->findOneBy(['token' => $invitationToken]);
-                    $role = ($invitation) ? $invitation->getRole() : 'student';
-                    $user = new User();
-                    $user->setAddress($params['address']);
-                    $user->setPostcode(isset($params['postcode']) ? $params['postcode'] : '');
-                    $user->setCreatedAt(time());
-                    $user->setEmail($params['email']);
-                    $user->setLastname($params['last_name']);
-                    $user->setName($params['name']);
-                    $user->setPassword(sha1($params['password']));
-                    $user->setRoles([$role]);
-                    $user->setStatus(1);
-                    $user->setToken(sha1(StaticMembers::random_str()));
-                    $this->getEntityManager()->persist($user);
-                    $this->getEntityManager()->flush();
-                    $userOk = true;
-                }
+            if (!$dsaLetter || !$slug || !$formData) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Missing parameters', 'data' => null], Response::HTTP_OK);
             }
-
-            if ($userOk) {
-                $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($acParams->id);
-                if ($ac) {
-                    $acUser = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $user]);
-                    if (!$acUser) {
-                        $acUser = new AssessmentCenterUser();
-                        $acUser->setAc($ac);
-                        $acUser->setIs_admin(0);
-                        $acUser->setStatus(1);
-                        $acUser->setUser($user);
-                        $this->getEntityManager()->persist($acUser);
-                        $this->getEntityManager()->flush();
-                        StaticMembers::syncEaUser($this->getEntityManager(), $acUser);
-                        $preRegisterInfo = $user->getPre_register();
-                        $dsaLetter = $request->files->get('dsa_letter');
-                        if ($dsaLetter) {
-                            $dsaLetterFilename = $user->getId() . '.' . $dsaLetter->getClientOriginalExtension();
-                            $preRegisterInfo['dsa_letter'] = $dsaLetterFilename;
-                            $user->setPre_register($preRegisterInfo);
-                            $this->getEntityManager()->persist($user);
-                            $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
-                        }
-                        if ($invitation) {
-                            $this->getEntityManager()->remove($invitation);
-                        }
-                        $this->getEntityManager()->flush();
-                        $code = 'success';
-                        $msg = 'Registration successful.';
-                        $data = true;
-                    } else {
-                        $code = 'warning';
-                        $msg = 'You have already registered with this Centre.';
-                    }
-                } else {
-                    $code = 'error';
-                    $msg = 'Invalid user.';
-                }
+            
+            $user = $user['user'];
+            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
+            if (!$user->hasRegisteredWith($ac)) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Unregistered user.', 'data' => null], Response::HTTP_OK);
             }
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+            
+            $bookingStatus = $ac->getAutomatic_booking();
+            $dsaLetterFilename = $user->getId() . '.' . $dsaLetter->getClientOriginalExtension();
+            $preRegisterInfo['dsa_letter'] = $dsaLetterFilename;
+            $preRegisterInfo['dsa_letter_full_submit'] = $formData['full_submit'];
+            $preRegisterInfo['dsa_letter_total_inputs'] = $formData['total_inputs'];
+            $preRegisterInfo['dsa_letter_filled_inputs'] = $formData['filled_inputs'];
+            $preRegisterInfo['ac_booking_enabled'] = $bookingStatus;
+            $user->setPre_register($preRegisterInfo);
+            $this->getEntityManager()->persist($user);
+            $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
+            
+            return new JsonResponse(['code' => 'success', 'msg' => 'Your form has been submitted.', 'data' => ['dsa_letter_full_submit' => $formData['full_submit'], 'ac_booking_enabled' => $bookingStatus]], Response::HTTP_OK);
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();

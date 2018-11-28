@@ -454,11 +454,8 @@ class AuthController extends MyRestController {
                 return new JsonResponse(['code' => 'error', 'msg' => 'This institution no longer exists', 'data' => null], Response::HTTP_OK);
             }
             if ($user->isStudent()) {
-                $preRegister['assessment_form'] = null;
-                $preRegister['booking_available'] = $target->getAutomatic_booking();
-            } else {
-                $preRegister['assessment_form'] = [];
-                $preRegister['booking_available'] = 1;
+                $preRegister['dsa_letter_full_submit'] = false;
+                $preRegister['ac_booking_enabled'] = $target->getAutomatic_booking();
             }
             $user->setPre_register($preRegister);
         }
@@ -494,7 +491,7 @@ class AuthController extends MyRestController {
             'acs' => $user->getAssessmentCentres('slug'),
             'is_univ_manager' => ($preRegister['target'] === 'dsa' ? $target->getManager() === $user : false),
             'fullname' => $user->getFullname(),
-            'redirect' => parse_url($preRegister['redirect_url'], PHP_URL_FRAGMENT),
+            'redirect' => $preRegister['redirect_url'],
         ];
         $this->getEntityManager()->flush();
         return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
