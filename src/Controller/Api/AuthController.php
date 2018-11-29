@@ -336,14 +336,36 @@ class AuthController extends MyRestController {
         if (!$jwt) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Your data could not be encoded.', 'data' => null], Response::HTTP_OK);
         }
+        
+        $univ = $params['target'] === 'dsa' ? $target : $user->getUniversity();
+        $ac = $params['target'] === 'ac' ? $target : $user->getAC();
+        $registrations = [];
+        if ($univ) {
+            $registrations['dsa'] = [
+                'type' => 'University DSA Office',
+                'component' => 'dsa',
+                'slug' => $univ->getToken(),
+                'name' => $target->getName(),
+            ];
+        }
+        if ($ac) {
+            $registrations['ac'] = [
+                'type' => 'Assessment Centre',
+                'component' => 'assessment-centre',
+                'slug' => $ac->getUrl(),
+                'name' => $ac->getName(),
+            ];
+        }
+        
         $data = [
             'is_guest' => false,
             'email' => $user->getEmail(),
             'jwt' => $jwt,
             'roles' => $user->getRoles(),
-            'acs' => $user->getAssessmentCentres('slug'),
+            'acs' => $user->isDO() ? $user->getAssessmentCentres('slug') : null,
             'is_univ_manager' => $params['target'] === 'dsa' ? ($target ? $target->getManager() === $user : false) : false,
             'fullname' => $user->getFullname(),
+            'registrations' => $registrations,
             'institute' => [
                 'type' => $params['target'],
                 'slug' => $params['target'] === 'dsa' ? $target->getToken() : $target->getUrl(),

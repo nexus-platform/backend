@@ -86,7 +86,11 @@ class ACController extends MyRestController {
                 'slug' => $request->get('slug'),
                 'invitation_token' => $request->get('invitation_token'),
             ];
+            
             $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug']]);
+            if (!$ac) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => null], Response::HTTP_OK);
+            }
             $userRole = null;
             $invitation = null;
 
@@ -100,11 +104,19 @@ class ACController extends MyRestController {
             }
 
             $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
+            if (!$admin) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'This Centre cannot be accessed because there is no Manager associated to it.', 'data' => null], Response::HTTP_OK);
+            }
+
             $registered = false;
+            $acFormProgress = null;
 
             if ($user) {
                 if ($user->isDO()) {
                     return new JsonResponse(['code' => 'error', 'msg' => 'Access denied.', 'data' => null], Response::HTTP_OK);
+                }
+                if ($user->hasRegisteredWithAnyAC() && !$user->hasRegisteredWith($ac)) {
+                    return new JsonResponse(['code' => 'error', 'msg' => 'You need to cancel your registration with your current Centre before accessing another one.', 'data' => null], Response::HTTP_OK);
                 }
                 $userRole = $user->getRoles()[0];
                 $isAdmin = $admin->getUser() === $user;
@@ -119,9 +131,12 @@ class ACController extends MyRestController {
                     'password_confirm' => 'password',
                 ];
                 if ($user->isStudent()) {
-                    $preRegister = $user->getPre_register();
-                    $userData['dsa_letter_full_submit'] = ($preRegister['dsa_letter_full_submit'] !== null);
-                    $userData['ac_booking_enabled'] = ($preRegister['ac_booking_enabled'] === 1);
+                    $preRegisterInfo = $user->getPre_register();
+                    $acFormProgress = isset($preRegisterInfo['ac_form']) ? $preRegisterInfo['ac_form'] : null;
+                    $userData['ac_form_full_submit'] = isset($preRegisterInfo['ac_form_full_submit']) ? $preRegisterInfo['ac_form_full_submit'] : false;
+                    $userData['ac_booking_enabled'] = isset($preRegisterInfo['ac_booking_enabled']) ? $preRegisterInfo['ac_booking_enabled'] : false;
+                    $userData['ac_form'] = $acFormProgress;
+                    $userData['dsa_letter'] = isset($preRegisterInfo['dsa_letter']) ? $preRegisterInfo['dsa_letter'] : null;
                 }
             } else {
                 $userData = [
@@ -137,6 +152,8 @@ class ACController extends MyRestController {
                 $userRole = $userRole ? $userRole : 'student';
             }
 
+            $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
+
             $data = [
                 'id' => $ac->getId(),
                 'registered' => $registered,
@@ -146,7 +163,8 @@ class ACController extends MyRestController {
                 'user_data' => $userData,
                 'slug' => $ac->getUrl(),
                 'name' => $ac->getName(),
-                'star_assessment_form' => $this->getStarAssessmentForm(),
+                'star_assessment_form' => $starAssessmentForm[0],
+                'star_assessment_form_filled' => $starAssessmentForm[1],
             ];
 
             return new JsonResponse(['code' => 'success', 'msg' => 'AC loaded', 'data' => $data], Response::HTTP_OK);
@@ -166,31 +184,46 @@ class ACController extends MyRestController {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
             }
 
+            $user = $user['user'];
+            $preRegisterInfo = $user->getPre_register();
             $dsaLetter = $request->files->get('dsa_letter');
             $slug = $request->get('slug');
             $formData = json_decode($request->get('data'), true);
-            if (!$dsaLetter || !$slug || !$formData) {
+            if (!$slug || !$formData || (!$dsaLetter && $formData['full_submit'] && !isset($preRegisterInfo['dsa_letter']))) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Missing parameters', 'data' => null], Response::HTTP_OK);
             }
             
-            $user = $user['user'];
             $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
-            if (!$user->hasRegisteredWith($ac)) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Unregistered user.', 'data' => null], Response::HTTP_OK);
+            if (!$user->isStudent() || !$user->hasRegisteredWith($ac)) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user.', 'data' => null], Response::HTTP_OK);
             }
             
+            if ($dsaLetter) {
+                $dsaLetterFilename = $user->getId() . '.' . $dsaLetter->getClientOriginalExtension();
+                $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
+                $preRegisterInfo['dsa_letter'] = $dsaLetterFilename;
+            }
+
             $bookingStatus = $ac->getAutomatic_booking();
-            $dsaLetterFilename = $user->getId() . '.' . $dsaLetter->getClientOriginalExtension();
-            $preRegisterInfo['dsa_letter'] = $dsaLetterFilename;
-            $preRegisterInfo['dsa_letter_full_submit'] = $formData['full_submit'];
-            $preRegisterInfo['dsa_letter_total_inputs'] = $formData['total_inputs'];
-            $preRegisterInfo['dsa_letter_filled_inputs'] = $formData['filled_inputs'];
-            $preRegisterInfo['ac_booking_enabled'] = $bookingStatus;
+            $preRegisterInfo['ac_booking_enabled'] = $formData['full_submit'] ? $bookingStatus : 0;
+            $preRegisterInfo['ac_form_full_submit'] = $formData['full_submit'];
+            $preRegisterInfo['ac_form_total_inputs'] = $formData['total_inputs'];
+            $preRegisterInfo['ac_form_filled_inputs'] = $formData['filled_inputs'];
+            unset($formData['full_submit'], $formData['total_inputs'], $formData['filled_inputs']);
+            $preRegisterInfo['ac_form'] = $formData;
             $user->setPre_register($preRegisterInfo);
             $this->getEntityManager()->persist($user);
-            $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
+            $this->getEntityManager()->flush();
             
-            return new JsonResponse(['code' => 'success', 'msg' => 'Your form has been submitted.', 'data' => ['dsa_letter_full_submit' => $formData['full_submit'], 'ac_booking_enabled' => $bookingStatus]], Response::HTTP_OK);
+            if ($preRegisterInfo['ac_form_full_submit']) {
+                $headline = date('Y/m/d H:i:s', time());
+                $myAcForm = 'my-ac-form';
+                $this->createNotification('You have submitted an Assessment Form', 'Your form has been submitted to ' . $ac->getName() . '. You can check its content <a href="/#/' . $myAcForm . '">here</a>.', $headline, $user, 1, 2);
+                $acForm = 'ac-form/' . $user->getToken();
+                $this->createNotification('New Assessment Form submitted', $user->getFullname() . ' has submitted a new Assessment Form. You can check its content <a href="/#/' . $acForm . '">here</a>.', $headline, $ac->getAdmin(), 1, 1);
+                $this->getEntityManager()->flush();
+            }
+            return new JsonResponse(['code' => 'success', 'msg' => $preRegisterInfo['ac_form_full_submit'] ? 'Your form has been submitted.' : 'Progress saved.', 'data' => ['ac_form_full_submit' => $preRegisterInfo['ac_form_full_submit'], 'ac_booking_enabled' => $bookingStatus]], Response::HTTP_OK);
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
@@ -951,10 +984,51 @@ class ACController extends MyRestController {
         }
     }
 
-    private function getStarAssessmentForm() {
+    private function getStarAssessmentForm($acFormProgress) {
         $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/star_assessment_form.json';
-        $res = json_decode(file_get_contents($dir), true);
-        return $res;
+        $emptyContent = json_decode(file_get_contents($dir), true);
+        $formContent = $emptyContent;
+
+        $dataCount = count($formContent);
+        for ($i = 0; $i < $dataCount; $i++) {
+            $components = $formContent[$i]['components'];
+            $componentsCount = count($formContent[$i]['components']);
+            for ($j = 0; $j < $componentsCount; $j++) {
+                $colsCount = count($formContent[$i]['components'][$j]);
+                for ($k = 0; $k < $colsCount; $k++) {
+                    $col = $formContent[$i]['components'][$j][$k];
+                    if ($col['content_type'] === 'input') {
+                        $name = $col['input']['name'];
+                        if (isset($acFormProgress[$name])) {
+                            $formContent[$i]['components'][$j][$k]['input']['value'] = $acFormProgress[$name];
+                        }
+                        //Input group
+                    } else if ($col['content_type'] === 'input_group') {
+                        $inputGroupName = $col['name'];
+                        $rowsCount = 0;
+                        $rows = [];
+                        if (isset($acFormProgress[$inputGroupName])) {
+                            $rowsCount = $acFormProgress[$inputGroupName];
+                            $models = $col['model'];
+                            for ($l = 1; $l <= $rowsCount; $l++) {
+                                $newRow = [];
+                                foreach ($models as $model) {
+                                    $newName = $model['input']['name'] .= " $l";
+                                    $model['input']['name'] = $newName;
+                                    if (isset($acFormProgress[$newName])) {
+                                        $model['input']['value'] = $acFormProgress[$newName];
+                                    }
+                                    $newRow[] = $model;
+                                }
+                                $rows[] = $newRow;
+                            }
+                        }
+                        $formContent[$i]['components'][$j][$k]['rows'] = $rows;
+                    }
+                }
+            }
+        }
+        return [$emptyContent, $formContent];
     }
 
 }

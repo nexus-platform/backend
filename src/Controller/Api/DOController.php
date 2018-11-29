@@ -37,7 +37,7 @@ class DOController extends MyRestController {
     public function getUniversityAction(Request $request) {
         try {
             $token = $request->get('university_token', null);
-            //$entityManager = $this->getDoctrine()->getManager();
+
             $item = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $token]);
 
             if ($item) {
@@ -129,7 +129,7 @@ class DOController extends MyRestController {
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
             if ($payload) {
-                //$entityManager = $this->getDoctrine()->getManager();
+
                 $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univ = $user->getUniversity();
                 $univForms = $univ->getUniv_dsa_form();
@@ -174,7 +174,7 @@ class DOController extends MyRestController {
             $code = 'error';
 
             if ($payload) {
-                //$entityManager = $this->getDoctrine()->getManager();
+
                 $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univSlug = $request->get('univ_slug');
                 $univFromSlug = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $univSlug]);
@@ -309,7 +309,7 @@ class DOController extends MyRestController {
             $data = null;
 
             if ($payload) {
-                //$entityManager = $this->getDoctrine()->getManager();
+
                 $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $filledForm = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->findOneBy(['id' => $formId, 'user' => $user]);
                 if (!$filledForm) {
@@ -369,7 +369,7 @@ class DOController extends MyRestController {
             if ($data || $signaturesInfo) {
                 $payload = $this->decodeJWT($jwt);
                 if ($payload) {
-                    //$entityManager = $this->getDoctrine()->getManager();
+
                     $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                     $univFromSlug = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $request->get('univ_slug')]);
                     $univFromUser = $user->getUniversity();
@@ -447,7 +447,7 @@ class DOController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                //$entityManager = $this->getDoctrine()->getManager();
+
                 $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univ = $user->getUniversity();
                 $filledForms = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->findBy(['user' => $user], ['created_at' => 'desc']);
@@ -500,7 +500,7 @@ class DOController extends MyRestController {
             if ($payload) {
                 $file = $request->get('file');
                 if ($file && $this->validatePNGImage($file)) {
-                    //$entityManager = $this->getDoctrine()->getManager();
+
                     $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                     $user->setSignature($file);
                     $this->getDoctrine()->getManager()->persist($user);
@@ -515,7 +515,7 @@ class DOController extends MyRestController {
             } else {
                 $randomCode = $request->get('random_code');
                 if ($randomCode) {
-                    //$entityManager = $this->getDoctrine()->getManager();
+
                     $qrCode = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
                     if ($qrCode) {
                         $file = $request->get('file');
@@ -557,12 +557,12 @@ class DOController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                //$entityManager = $this->getDoctrine()->getManager();
+
                 $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
-                $randomCode = StaticMembers::random_str(16);
+                $randomCode = StaticMembers::random_str(5);
                 $qrEntity = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
                 while ($qrEntity) {
-                    $randomCode = StaticMembers::random_str(16);
+                    $randomCode = StaticMembers::random_str(5);
                     $qrEntity = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
                 }
                 $qrEntity = new QrCode2();
@@ -579,7 +579,7 @@ class DOController extends MyRestController {
                 $qrCode = new QRCode($options);
                 $data = ['qr_code' => 'data:image/svg+xml;base64,' . base64_encode($qrCode->render($randomCode)), 'random_code' => $randomCode];
                 $code = 'success';
-                $msg = 'Signature has been uploaded';
+                $msg = 'QR code generated';
             } else {
                 $code = 'error';
                 $msg = 'Invalid parameter supplied. You may need to renew your session';
@@ -605,7 +605,7 @@ class DOController extends MyRestController {
             if ($payload) {
                 $randomCode = $request->get('random_code');
                 if ($randomCode) {
-                    //$entityManager = $this->getDoctrine()->getManager();
+
                     $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                     $qrEntity = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode, 'user' => $user]);
                     if ($qrEntity && $qrEntity->getContent()) {
@@ -664,7 +664,7 @@ class DOController extends MyRestController {
             $payload = $this->decodeJWT($jwt);
 
             if ($payload) {
-                //$entityManager = $this->getDoctrine()->getManager();
+
                 $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                 $univ = $user->getUniversity();
                 $students = $this->getDoctrine()->getManager()->getRepository(User::class)->findBy(['university' => $univ]);
@@ -745,7 +745,7 @@ class DOController extends MyRestController {
             if ($payload) {
                 $formId = $request->get('form_id');
                 if ($formId) {
-                    //$entityManager = $this->getDoctrine()->getManager();
+
                     $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                     $filledForm = $this->getDoctrine()->getManager()->getRepository(DsaFormFilled::class)->find($formId);
                     if ($filledForm) {
@@ -936,7 +936,7 @@ class DOController extends MyRestController {
     public function setValidateRandomCodeAction(Request $request) {
         try {
             $randomCode = $request->get('random_code');
-            //$entityManager = $this->getDoctrine()->getManager();
+
             $qrCode = $this->getDoctrine()->getManager()->getRepository(QrCode2::class)->findOneBy(['random_code' => $randomCode]);
             if ($qrCode) {
                 $data = $qrCode->getRandom_code();
@@ -970,7 +970,7 @@ class DOController extends MyRestController {
                 $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
                 $payload = $this->decodeJWT($jwt);
                 if ($payload) {
-                    //$entityManager = $this->getDoctrine()->getManager();
+
                     $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                     $univFromSlug = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $univSlug]);
                     $univFromUser = $user->getUniversity();
@@ -1070,7 +1070,7 @@ class DOController extends MyRestController {
         }
         return new JsonResponse(['code' => 'success', 'msg' => 'Access granted', 'data' => $data], Response::HTTP_OK);
     }
-    
+
     /**
      * Retrieve user's signature.
      * @FOSRest\Get(path="/api/get-previous-signature")
