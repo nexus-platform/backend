@@ -369,7 +369,6 @@ class DOController extends MyRestController {
             if ($data || $signaturesInfo) {
                 $payload = $this->decodeJWT($jwt);
                 if ($payload) {
-
                     $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($payload->user_id);
                     $univFromSlug = $this->getDoctrine()->getManager()->getRepository(University::class)->findOneBy(['token' => $request->get('univ_slug')]);
                     $univFromUser = $user->getUniversity();
@@ -399,7 +398,7 @@ class DOController extends MyRestController {
                             $code = 'success';
 
                             if ($data['full_submit']) {
-                                $disabOfficers = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
+                                $disabOfficers = StaticMembers::executeRawSQL($this->getDoctrine()->getManager(), "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 $headline = date('Y/m/d H:i:s', $now);
                                 $route = 'dsa/' . $univFromUser->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
                                 $myFormsRoute = 'dsa/' . $univFromUser->getToken() . '/my-dsa-forms/index';
@@ -1010,7 +1009,7 @@ class DOController extends MyRestController {
 
                             if ($user->isStudent()) {
                                 $this->createNotification('You have submitted a new comment', 'You commented <b>' . $fieldName . '</b> input field from <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
-                                $disabOfficers = StaticMembers::executeRawSQL($entityManager, "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
+                                $disabOfficers = StaticMembers::executeRawSQL($this->getDoctrine()->getManager(), "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $this->getDoctrine()->getManager()->getRepository(User::class)->find($do['id']);
                                     $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);

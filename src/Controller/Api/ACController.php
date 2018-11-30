@@ -86,7 +86,7 @@ class ACController extends MyRestController {
                 'slug' => $request->get('slug'),
                 'invitation_token' => $request->get('invitation_token'),
             ];
-            
+
             $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug']]);
             if (!$ac) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => null], Response::HTTP_OK);
@@ -152,8 +152,6 @@ class ACController extends MyRestController {
                 $userRole = $userRole ? $userRole : 'student';
             }
 
-            $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
-
             $data = [
                 'id' => $ac->getId(),
                 'registered' => $registered,
@@ -163,9 +161,13 @@ class ACController extends MyRestController {
                 'user_data' => $userData,
                 'slug' => $ac->getUrl(),
                 'name' => $ac->getName(),
-                'star_assessment_form' => $starAssessmentForm[0],
-                'star_assessment_form_filled' => $starAssessmentForm[1],
             ];
+
+            if ($user && $user->isStudent()) {
+                $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
+                $data['star_assessment_form'] = $starAssessmentForm[0];
+                $data['star_assessment_form_filled'] = $starAssessmentForm[1];
+            }
 
             return new JsonResponse(['code' => 'success', 'msg' => 'AC loaded', 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
@@ -192,12 +194,12 @@ class ACController extends MyRestController {
             if (!$slug || !$formData || (!$dsaLetter && $formData['full_submit'] && !isset($preRegisterInfo['dsa_letter']))) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Missing parameters', 'data' => null], Response::HTTP_OK);
             }
-            
+
             $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
             if (!$user->isStudent() || !$user->hasRegisteredWith($ac)) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user.', 'data' => null], Response::HTTP_OK);
             }
-            
+
             if ($dsaLetter) {
                 $dsaLetterFilename = $user->getId() . '.' . $dsaLetter->getClientOriginalExtension();
                 $dsaLetter->move($this->getDSALettersDir(), $dsaLetterFilename);
@@ -214,7 +216,7 @@ class ACController extends MyRestController {
             $user->setPre_register($preRegisterInfo);
             $this->getEntityManager()->persist($user);
             $this->getEntityManager()->flush();
-            
+
             if ($preRegisterInfo['ac_form_full_submit']) {
                 $headline = date('Y/m/d H:i:s', time());
                 $myAcForm = 'my-ac-form';
@@ -984,51 +986,86 @@ class ACController extends MyRestController {
         }
     }
 
-    private function getStarAssessmentForm($acFormProgress) {
-        $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/star_assessment_form.json';
-        $emptyContent = json_decode(file_get_contents($dir), true);
-        $formContent = $emptyContent;
+    /**
+     * Retrieves the list of submitted forms from the AC.
+     * @FOSRest\Get(path="/api/get-ac-submitted-form")
+     */
+    public function getACSubmittedForm(Request $request) {
+        $token = $request->get('token');
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
+        $preRegisterInfo = $user->getPre_register();
+        $acFormProgress = $preRegisterInfo['ac_form'];
+        $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
+        $data = $starAssessmentForm[1];
+        return new JsonResponse(['code' => 'success', 'msg' => 'AC form loaded', 'data' => $data], Response::HTTP_OK);
+    }
 
-        $dataCount = count($formContent);
-        for ($i = 0; $i < $dataCount; $i++) {
-            $components = $formContent[$i]['components'];
-            $componentsCount = count($formContent[$i]['components']);
-            for ($j = 0; $j < $componentsCount; $j++) {
-                $colsCount = count($formContent[$i]['components'][$j]);
-                for ($k = 0; $k < $colsCount; $k++) {
-                    $col = $formContent[$i]['components'][$j][$k];
-                    if ($col['content_type'] === 'input') {
-                        $name = $col['input']['name'];
-                        if (isset($acFormProgress[$name])) {
-                            $formContent[$i]['components'][$j][$k]['input']['value'] = $acFormProgress[$name];
-                        }
-                        //Input group
-                    } else if ($col['content_type'] === 'input_group') {
-                        $inputGroupName = $col['name'];
-                        $rowsCount = 0;
-                        $rows = [];
-                        if (isset($acFormProgress[$inputGroupName])) {
-                            $rowsCount = $acFormProgress[$inputGroupName];
-                            $models = $col['model'];
-                            for ($l = 1; $l <= $rowsCount; $l++) {
-                                $newRow = [];
-                                foreach ($models as $model) {
-                                    $newName = $model['input']['name'] .= " $l";
-                                    $model['input']['name'] = $newName;
-                                    if (isset($acFormProgress[$newName])) {
-                                        $model['input']['value'] = $acFormProgress[$newName];
-                                    }
-                                    $newRow[] = $model;
-                                }
-                                $rows[] = $newRow;
-                            }
-                        }
-                        $formContent[$i]['components'][$j][$k]['rows'] = $rows;
+    /**
+     * Retrieves the list of submitted forms from the AC.
+     * @FOSRest\Get(path="/api/get-ac-forms")
+     */
+    public function getACForms(Request $request) {
+        try {
+            $userInfo = $this->getRequestUser($request);
+            $slug = $request->get('slug');
+            if (!$userInfo['code'] === 'success' || !$slug) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+
+            $user = $userInfo['user'];
+            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
+            if (!$ac) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
+            }
+            
+            if ($ac->getAdmin() !== $user && (!$user->isStudent() || !$user->hasRegisteredWith($ac))) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Access denied', 'data' => []], Response::HTTP_OK);
+            }
+            
+            if ($ac->getAdmin() === $user) {
+                $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac]);
+            } else {
+                $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac, 'user' => $user]);
+            }
+            
+            $data = [];
+
+            foreach ($acUsers as $acUser) {
+                $userAux = $acUser->getUser();
+                if ($userAux->isStudent()) {
+                    $preRegisterInfo = $userAux->getPre_register();
+                    if ($preRegisterInfo['ac_form_full_submit']) {
+                        $univ = $userAux->getUniversity();
+                        $data[] = [
+                            'student_name' => $userAux->getFullName(),
+                            'univ_name' => $univ->getName(),
+                            'status_desc' => $preRegisterInfo['ac_booking_enabled'] ? 'Approved' : 'Pending',
+                            'route' => "/assessment-centre/$slug/ac-forms/" . $userAux->getToken(),
+                            'token' => $userAux->getToken(),
+                        ];
                     }
                 }
             }
+
+            return new JsonResponse(['code' => 'success', 'msg' => 'Forms loaded', 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
-        return [$emptyContent, $formContent];
+    }
+    
+    /**
+     * Approves a form
+     * @FOSRest\Post(path="/api/ac-approve-form")
+     */
+    public function acApproveFormAction(Request $request) {
+        $token = $request->get('form_id');
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
+        $preRegisterInfo = $user->getPre_register();
+        $preRegisterInfo['ac_booking_enabled'] = true;
+        $user->setPre_register($preRegisterInfo);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+        return new JsonResponse(['code' => 'success', 'msg' => 'The form has been approved', 'data' => true], Response::HTTP_OK);
     }
 
 }

@@ -220,5 +220,52 @@ class MyRestController extends FOSRestController {
                 break;
         }
     }
+    
+    protected function getStarAssessmentForm($acFormProgress) {
+        $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/star_assessment_form.json';
+        $emptyContent = json_decode(file_get_contents($dir), true);
+        $formContent = $emptyContent;
+
+        $dataCount = count($formContent);
+        for ($i = 0; $i < $dataCount; $i++) {
+            $components = $formContent[$i]['components'];
+            $componentsCount = count($formContent[$i]['components']);
+            for ($j = 0; $j < $componentsCount; $j++) {
+                $colsCount = count($formContent[$i]['components'][$j]);
+                for ($k = 0; $k < $colsCount; $k++) {
+                    $col = $formContent[$i]['components'][$j][$k];
+                    if ($col['content_type'] === 'input') {
+                        $name = $col['input']['name'];
+                        if (isset($acFormProgress[$name])) {
+                            $formContent[$i]['components'][$j][$k]['input']['value'] = $acFormProgress[$name];
+                        }
+                        //Input group
+                    } else if ($col['content_type'] === 'input_group') {
+                        $inputGroupName = $col['name'];
+                        $rowsCount = 0;
+                        $rows = [];
+                        if (isset($acFormProgress[$inputGroupName])) {
+                            $rowsCount = $acFormProgress[$inputGroupName];
+                            $models = $col['model'];
+                            for ($l = 1; $l <= $rowsCount; $l++) {
+                                $newRow = [];
+                                foreach ($models as $model) {
+                                    $newName = $model['input']['name'] .= " $l";
+                                    $model['input']['name'] = $newName;
+                                    if (isset($acFormProgress[$newName])) {
+                                        $model['input']['value'] = $acFormProgress[$newName];
+                                    }
+                                    $newRow[] = $model;
+                                }
+                                $rows[] = $newRow;
+                            }
+                        }
+                        $formContent[$i]['components'][$j][$k]['rows'] = $rows;
+                    }
+                }
+            }
+        }
+        return [$emptyContent, $formContent];
+    }
 
 }

@@ -336,7 +336,7 @@ class AuthController extends MyRestController {
         if (!$jwt) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Your data could not be encoded.', 'data' => null], Response::HTTP_OK);
         }
-        
+
         $univ = $params['target'] === 'dsa' ? $target : $user->getUniversity();
         $ac = $params['target'] === 'ac' ? $target : $user->getAC();
         $registrations = [];
@@ -356,15 +356,15 @@ class AuthController extends MyRestController {
                 'name' => $ac->getName(),
             ];
         }
-        
+
         $data = [
             'is_guest' => false,
             'email' => $user->getEmail(),
             'jwt' => $jwt,
             'roles' => $user->getRoles(),
-            'acs' => $user->isDO() ? $user->getAssessmentCentres('slug') : null,
             'is_univ_manager' => $params['target'] === 'dsa' ? ($target ? $target->getManager() === $user : false) : false,
             'fullname' => $user->getFullname(),
+            'token' => $user->getToken(),
             'registrations' => $registrations,
             'institute' => [
                 'type' => $params['target'],
@@ -372,6 +372,48 @@ class AuthController extends MyRestController {
                 'name' => $target->getName(),
             ],
         ];
+
+        if ($params['target'] === 'ac') {
+            $userRole = $user->getRoles()[0];
+            $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
+            $isAdmin = $admin->getUser() === $user;
+            $registered = $user->hasRegisteredWith($ac);
+            $userData = [
+                'name' => $user->getName(),
+                'last_name' => $user->getLastname(),
+                'email' => $user->getEmail(),
+                'postcode' => $user->getPostcode(),
+                'address' => $user->getAddress(),
+                'password' => 'password',
+                'password_confirm' => 'password',
+            ];
+            if ($user->isStudent()) {
+                $preRegisterInfo = $user->getPre_register();
+                $acFormProgress = isset($preRegisterInfo['ac_form']) ? $preRegisterInfo['ac_form'] : null;
+                $userData['ac_form_full_submit'] = isset($preRegisterInfo['ac_form_full_submit']) ? $preRegisterInfo['ac_form_full_submit'] : false;
+                $userData['ac_booking_enabled'] = isset($preRegisterInfo['ac_booking_enabled']) ? $preRegisterInfo['ac_booking_enabled'] : false;
+                $userData['ac_form'] = $acFormProgress;
+                $userData['dsa_letter'] = isset($preRegisterInfo['dsa_letter']) ? $preRegisterInfo['dsa_letter'] : null;
+            }
+
+            $acInfo = [
+                'id' => $ac->getId(),
+                'registered' => $registered,
+                'is_admin' => $isAdmin,
+                'role' => $userRole,
+                'admin' => $admin ? $admin->getUser()->__toString() : null,
+                'user_data' => $userData,
+                'slug' => $ac->getUrl(),
+                'name' => $ac->getName(),
+            ];
+
+            if ($user->isStudent()) {
+                $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
+                $acInfo['star_assessment_form'] = $starAssessmentForm[0];
+                $acInfo['star_assessment_form_filled'] = $starAssessmentForm[1];
+            }
+            $data['ac_info'] = $acInfo;
+        }
 
         return new JsonResponse(['code' => 'success', 'msg' => 'Credentials verified', 'data' => $data], Response::HTTP_OK);
     }
