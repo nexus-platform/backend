@@ -58,6 +58,11 @@ class User implements UserInterface, Serializable {
     private $password;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $telephone;
+
+    /**
      * @ORM\Column(type="integer", nullable=false, options={"default" : 1})
      */
     private $status;
@@ -116,6 +121,14 @@ class User implements UserInterface, Serializable {
      * */
     private $student_appointments;
 
+    function getTelephone() {
+        return $this->telephone;
+    }
+
+    function setTelephone($telephone) {
+        $this->telephone = $telephone;
+    }
+
     function getProvider_appointments() {
         return $this->provider_appointments;
     }
@@ -166,7 +179,7 @@ class User implements UserInterface, Serializable {
         }
         return false;
     }
-    
+
     function getAC() {
         $acUsers = $this->getAssessment_center_users();
         foreach ($acUsers as $acUser) {
@@ -434,7 +447,7 @@ class User implements UserInterface, Serializable {
     public function isNA() {
         return in_array('na', $this->getRoles());
     }
-    
+
     public function isAC() {
         return in_array('ac', $this->getRoles());
     }
@@ -442,12 +455,12 @@ class User implements UserInterface, Serializable {
     public function getFullname() {
         return $this->name . ' ' . $this->lastname;
     }
-    
+
     public function isEnabledInAC(ObjectManager $entityManager, AssessmentCenter $ac) {
         $acUser = $entityManager->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'user' => $this]);
         return $acUser ? $acUser->getStatus() : 0;
     }
-    
+
     public function getEaRole() {
         $res = 4;
         if ($this->isStudent()) {

@@ -51,7 +51,7 @@ class NotificationsController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -119,7 +119,7 @@ class NotificationsController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 

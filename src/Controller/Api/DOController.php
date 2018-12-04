@@ -55,7 +55,7 @@ class DOController extends MyRestController {
             }
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
-            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -80,7 +80,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -157,7 +157,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -293,7 +293,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -352,7 +352,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -432,7 +432,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -474,7 +474,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -541,7 +541,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -587,7 +587,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -629,7 +629,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -698,7 +698,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -873,7 +873,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -884,7 +884,7 @@ class DOController extends MyRestController {
     public function setDsaFormsParamsAction(Request $request) {
         $user = $this->getRequestUser($request);
         if ($user['code'] !== 'success') {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => []], Response::HTTP_OK);
         }
 
         $user = $user['user'];
@@ -892,7 +892,7 @@ class DOController extends MyRestController {
         $univ = $user->getUniversity();
 
         if (!$user->isDO() || !$univ) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters.', 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters.', 'data' => []], Response::HTTP_OK);
         }
 
         $slug = strtolower(trim($params['slug']));
@@ -903,12 +903,12 @@ class DOController extends MyRestController {
         for ($i = 0; $i < $slugLength; $i++) {
             $charAscii = ord($slugChars[$i]);
             if (!($charAscii === 45 || ($charAscii >= 48 && $charAscii <= 57) || ($charAscii >= 97 && $charAscii <= 122))) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Institute ID cannot contain whitespaces or special characters.', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Institute ID cannot contain whitespaces or special characters.', 'data' => []], Response::HTTP_OK);
             }
         }
 
         if (!$this->getEntityManager()->getRepository(University::class)->isUnique($univ->getId(), 'token', $slug)) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'That identifier has been assigned to another institute.', 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'That identifier has been assigned to another institute.', 'data' => []], Response::HTTP_OK);
         }
 
         $oldToken = $univ->getToken();
@@ -949,7 +949,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -1042,7 +1042,7 @@ class DOController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -1056,7 +1056,7 @@ class DOController extends MyRestController {
         ];
         $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
         if (!$univ) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
         }
         $data['dsaName'] = $univ->getName();
         $userData = $this->getRequestUser($request);
@@ -1078,7 +1078,7 @@ class DOController extends MyRestController {
         $user = $this->getRequestUser($request);
 
         if ($user['code'] !== 'success') {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => []], Response::HTTP_OK);
         }
 
         $user = $user['user'];

@@ -71,20 +71,23 @@ class StaticMembers {
     }
 
     public static function sendMail(AppSettings $appSettings, $subject, $body, $recipients) {
-        $transport = (new Swift_SmtpTransport())
-                ->setHost($appSettings->getMailHost())
-                ->setPort($appSettings->getMailPort())
-                ->setUsername($appSettings->getMailUsername())
-                //->setPassword(self::decryptString($appSettings->getMailPassword()))
-                ->setPassword($appSettings->getMailPassword())
-                //->setAuthMode('login')
-                ->setEncryption($appSettings->getMailEncryption());
-        $mailer = new Swift_Mailer($transport);
-        $message = (new Swift_Message($subject))
-                ->setFrom([$appSettings->getMailUsername() => 'Nexus Platform'])
-                ->setTo($recipients)
-                ->setBody($body, 'text/html');
-        return $mailer->send($message);
+        try {
+            $transport = (new Swift_SmtpTransport())
+                    ->setHost($appSettings->getMailHost())
+                    ->setPort($appSettings->getMailPort())
+                    ->setUsername($appSettings->getMailUsername())
+                    //->setPassword(self::decryptString($appSettings->getMailPassword()))
+                    ->setPassword($appSettings->getMailPassword())
+                    ->setEncryption($appSettings->getMailEncryption());
+            $mailer = new Swift_Mailer($transport);
+            $message = (new Swift_Message($subject))
+                    ->setFrom([$appSettings->getMailUsername() => 'Nexus Platform'])
+                    ->setTo($recipients)
+                    ->setBody($body, 'text/html');
+            return $mailer->send($message);
+        } catch (Exception $exc) {
+            return false;
+        }
     }
 
     public static function validateChecksums() {
@@ -138,12 +141,12 @@ class StaticMembers {
             $eaUser->setStatus($acUser->getStatus());
             $entityManager->persist($eaUser);
             $entityManager->flush();
-            
+
             $eaUserSettings = new EaUserSettings();
             $eaUserSettings->setIdUsers($user->getId());
             $eaUserSettings->setIdAssessmentCenter($ac->getId());
             $entityManager->persist($eaUserSettings);
-            
+
             $entityManager->flush();
         }
     }

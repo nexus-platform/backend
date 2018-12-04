@@ -44,7 +44,7 @@ class AuthController extends MyRestController {
 
         $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['email' => $params['email']]);
         if (!$user) {
-            return new JsonResponse(['code' => 'warning', 'msg' => 'The email address you entered was not found on our server.'], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'warning', 'msg' => 'The email address you entered was not found on our server.', 'data' => []], Response::HTTP_OK);
         }
 
         $user->setToken(sha1(StaticMembers::random_str()));
@@ -66,7 +66,7 @@ class AuthController extends MyRestController {
             $msg = 'The email server is not responding. Please, try again later.';
         }
 
-        return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
+        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
     }
 
     /**
@@ -166,7 +166,7 @@ class AuthController extends MyRestController {
             }
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
-            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -239,7 +239,7 @@ class AuthController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -250,7 +250,7 @@ class AuthController extends MyRestController {
     public function changePassword(Request $request) {
         $user = $this->getRequestUser($request);
         if ($user['code'] !== 'success') {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => []], Response::HTTP_OK);
         }
         $user = $user['user'];
         $params = json_decode($request->getContent(), true);
@@ -276,7 +276,7 @@ class AuthController extends MyRestController {
     public function cancelRegistration(Request $request) {
         $user = $this->getRequestUser($request);
         if ($user['code'] !== 'success') {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => []], Response::HTTP_OK);
         }
         $user = $user['user'];
         $params = json_decode($request->getContent(), true);
@@ -285,13 +285,13 @@ class AuthController extends MyRestController {
             case 'dsa':
                 $univ = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
                 if (!$univ || $univ !== $user->getUniversity()) {
-                    return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+                    return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
                 }
                 $user->setUniversity(null);
                 $this->getEntityManager()->flush();
-                return new JsonResponse(['code' => 'success', 'msg' => 'You are no longer registered with ' . $univ->getName(), 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'success', 'msg' => 'You are no longer registered with ' . $univ->getName(), 'data' => []], Response::HTTP_OK);
             default:
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -306,19 +306,42 @@ class AuthController extends MyRestController {
         if ($params['target'] === 'dsa') {
             $target = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
             if (!$target) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
             $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass, 'university' => $target]);
+            if (!$user) {
+                return new JsonResponse(['code' => 'error', 'msg' => "Invalid username or password.", 'data' => []], Response::HTTP_OK);
+            }
+            else if ($user->getStatus() === 0) {
+                return new JsonResponse(['code' => 'error', 'msg' => "Your user account is inactive.", 'data' => []], Response::HTTP_OK);
+            }
         } else if ($params['target'] === 'ac') {
             $target = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug']]);
             if (!$target) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
             $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass]);
-        }
-
-        if (!$user || $user->getStatus() === 0) {
-            return new JsonResponse(['code' => 'error', 'msg' => !$user ? "Invalid username or password." : "Your user account is inactive.", 'data' => null], Response::HTTP_OK);
+            if (!$user) {
+                return new JsonResponse(['code' => 'error', 'msg' => "Invalid username or password.", 'data' => []], Response::HTTP_OK);
+            }
+            else if ($user->getStatus() === 0) {
+                return new JsonResponse(['code' => 'error', 'msg' => "Your user account is inactive.", 'data' => []], Response::HTTP_OK);
+            }
+            else if (!$user->hasRegisteredWith($target)) {
+                return new JsonResponse(['code' => 'error', 'msg' => "You are not associated with this Centre.", 'data' => []], Response::HTTP_OK);
+            }
+        } else if ($params['target'] === 'public') {
+            $target = null;
+            $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass]);
+            if (!$user) {
+                return new JsonResponse(['code' => 'error', 'msg' => "Invalid username or password.", 'data' => []], Response::HTTP_OK);
+            }
+            else if ($user->getStatus() === 0) {
+                return new JsonResponse(['code' => 'error', 'msg' => "Your user account is inactive.", 'data' => []], Response::HTTP_OK);
+            }
+            else if ($user->isStudent()) {
+                return new JsonResponse(['code' => 'warning', 'msg' => "You are not allowed to login from here. Use your Institute's URL.", 'data' => []], Response::HTTP_OK);
+            }
         }
 
         $now = time();
@@ -334,27 +357,7 @@ class AuthController extends MyRestController {
         $jwt = $this->encodeJWT($payload);
 
         if (!$jwt) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Your data could not be encoded.', 'data' => null], Response::HTTP_OK);
-        }
-
-        $univ = $params['target'] === 'dsa' ? $target : $user->getUniversity();
-        $ac = $params['target'] === 'ac' ? $target : $user->getAC();
-        $registrations = [];
-        if ($univ) {
-            $registrations['dsa'] = [
-                'type' => 'University DSA Office',
-                'component' => 'dsa',
-                'slug' => $univ->getToken(),
-                'name' => $target->getName(),
-            ];
-        }
-        if ($ac) {
-            $registrations['ac'] = [
-                'type' => 'Assessment Centre',
-                'component' => 'assessment-centre',
-                'slug' => $ac->getUrl(),
-                'name' => $ac->getName(),
-            ];
+            return new JsonResponse(['code' => 'error', 'msg' => 'Your data could not be encoded.', 'data' => []], Response::HTTP_OK);
         }
 
         $data = [
@@ -365,19 +368,19 @@ class AuthController extends MyRestController {
             'is_univ_manager' => $params['target'] === 'dsa' ? ($target ? $target->getManager() === $user : false) : false,
             'fullname' => $user->getFullname(),
             'token' => $user->getToken(),
-            'registrations' => $registrations,
+            'registrations' => $this->getUserRegistrations($user),
             'institute' => [
                 'type' => $params['target'],
-                'slug' => $params['target'] === 'dsa' ? $target->getToken() : $target->getUrl(),
-                'name' => $target->getName(),
+                'slug' => $target ? ($params['target'] === 'dsa' ? $target->getToken() : $target->getUrl()) : '',
+                'name' => $target ? $target->getName() : 'Nexus',
             ],
         ];
 
         if ($params['target'] === 'ac') {
             $userRole = $user->getRoles()[0];
-            $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
+            $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $target, 'is_admin' => 1]);
             $isAdmin = $admin->getUser() === $user;
-            $registered = $user->hasRegisteredWith($ac);
+            $registered = $user->hasRegisteredWith($target);
             $userData = [
                 'name' => $user->getName(),
                 'last_name' => $user->getLastname(),
@@ -397,14 +400,14 @@ class AuthController extends MyRestController {
             }
 
             $acInfo = [
-                'id' => $ac->getId(),
+                'id' => $target->getId(),
                 'registered' => $registered,
                 'is_admin' => $isAdmin,
                 'role' => $userRole,
                 'admin' => $admin ? $admin->getUser()->__toString() : null,
                 'user_data' => $userData,
-                'slug' => $ac->getUrl(),
-                'name' => $ac->getName(),
+                'slug' => $target->getUrl(),
+                'name' => $target->getName(),
             ];
 
             if ($user->isStudent()) {
@@ -416,6 +419,31 @@ class AuthController extends MyRestController {
         }
 
         return new JsonResponse(['code' => 'success', 'msg' => 'Credentials verified', 'data' => $data], Response::HTTP_OK);
+    }
+
+    private function getUserRegistrations(User $user) {
+        $registrations = [];
+        $univ = $user->getUniversity();
+        if ($univ) {
+            $registrations[] = [
+                'type' => 'University DSA Office',
+                'component' => 'dsa',
+                'slug' => $univ->getToken(),
+                'name' => $univ->getName(),
+            ];
+        }
+
+        $acUsers = $user->getAssessment_center_users();
+        foreach ($acUsers as $acUser) {
+            $ac = $acUser->getAc();
+            $registrations[] = [
+                'type' => 'Assessment Centre',
+                'component' => 'assessment-centre',
+                'slug' => $ac->getUrl(),
+                'name' => $ac->getName(),
+            ];
+        }
+        return $registrations;
     }
 
     /**
@@ -449,6 +477,7 @@ class AuthController extends MyRestController {
         $user->setAddress($params['address']);
         $user->setCreatedAt(time());
         $user->setEmail($params['email']);
+        $user->setTelephone($params['telephone']);
         $user->setLastname($params['last_name']);
         $user->setName($params['name']);
         $user->setPostcode($params['postcode']);
@@ -492,8 +521,9 @@ class AuthController extends MyRestController {
             $code = 'error';
             $msg = 'The email server is not responding. Please, try again later.';
             $this->getEntityManager()->remove($user);
+            $this->getEntityManager()->flush();
         }
-        return new JsonResponse(['code' => $code, 'msg' => $msg], Response::HTTP_OK);
+        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
     }
 
     /**
@@ -505,7 +535,7 @@ class AuthController extends MyRestController {
         $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token'], 'status' => 0]);
 
         if (!$user) {
-            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token'], 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token'], 'data' => []], Response::HTTP_OK);
         }
 
         $preRegister = $user->getPre_register();
@@ -515,7 +545,7 @@ class AuthController extends MyRestController {
         } else if ($preRegister['target'] === 'ac') {
             $target = $this->getEntityManager()->getRepository(AssessmentCenter::class)->find($preRegister['institute_id']);
             if (!$target) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'This institution no longer exists', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'This institution no longer exists', 'data' => []], Response::HTTP_OK);
             }
             if ($user->isStudent()) {
                 $preRegister['dsa_letter_full_submit'] = false;
@@ -555,7 +585,8 @@ class AuthController extends MyRestController {
             'acs' => $user->getAssessmentCentres('slug'),
             'is_univ_manager' => ($preRegister['target'] === 'dsa' ? $target->getManager() === $user : false),
             'fullname' => $user->getFullname(),
-            'redirect' => $preRegister['redirect_url'],
+            'registrations' => $this->getUserRegistrations($user),
+            'redirect' => parse_url($preRegister['redirect_url'], PHP_URL_FRAGMENT),
         ];
         $this->getEntityManager()->flush();
         return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);

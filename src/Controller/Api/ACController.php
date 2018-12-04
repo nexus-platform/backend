@@ -65,7 +65,7 @@ class ACController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -89,7 +89,7 @@ class ACController extends MyRestController {
 
             $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug']]);
             if (!$ac) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => []], Response::HTTP_OK);
             }
             $userRole = null;
             $invitation = null;
@@ -99,13 +99,13 @@ class ACController extends MyRestController {
                 if ($ac && $invitation && $ac === $invitation->getAc()) {
                     $userRole = $invitation->getRole();
                 } else {
-                    return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => null], Response::HTTP_OK);
+                    return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => []], Response::HTTP_OK);
                 }
             }
 
             $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
             if (!$admin) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'This Centre cannot be accessed because there is no Manager associated to it.', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'This Centre cannot be accessed because there is no Manager associated to it.', 'data' => []], Response::HTTP_OK);
             }
 
             $registered = false;
@@ -113,10 +113,10 @@ class ACController extends MyRestController {
 
             if ($user) {
                 if ($user->isDO()) {
-                    return new JsonResponse(['code' => 'error', 'msg' => 'Access denied.', 'data' => null], Response::HTTP_OK);
+                    return new JsonResponse(['code' => 'error', 'msg' => 'Access denied.', 'data' => []], Response::HTTP_OK);
                 }
                 if ($user->hasRegisteredWithAnyAC() && !$user->hasRegisteredWith($ac)) {
-                    return new JsonResponse(['code' => 'error', 'msg' => 'You need to cancel your registration with your current Centre before accessing another one.', 'data' => null], Response::HTTP_OK);
+                    return new JsonResponse(['code' => 'error', 'msg' => 'You need to cancel your registration with your current Centre before accessing another one.', 'data' => []], Response::HTTP_OK);
                 }
                 $userRole = $user->getRoles()[0];
                 $isAdmin = $admin->getUser() === $user;
@@ -171,7 +171,7 @@ class ACController extends MyRestController {
 
             return new JsonResponse(['code' => 'success', 'msg' => 'AC loaded', 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
-            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -183,7 +183,7 @@ class ACController extends MyRestController {
         try {
             $user = $this->getRequestUser($request);
             if ($user['code'] !== 'success') {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user', 'data' => []], Response::HTTP_OK);
             }
 
             $user = $user['user'];
@@ -192,12 +192,12 @@ class ACController extends MyRestController {
             $slug = $request->get('slug');
             $formData = json_decode($request->get('data'), true);
             if (!$slug || !$formData || (!$dsaLetter && $formData['full_submit'] && !isset($preRegisterInfo['dsa_letter']))) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Missing parameters', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Missing parameters', 'data' => []], Response::HTTP_OK);
             }
 
             $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
             if (!$user->isStudent() || !$user->hasRegisteredWith($ac)) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user.', 'data' => null], Response::HTTP_OK);
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user.', 'data' => []], Response::HTTP_OK);
             }
 
             if ($dsaLetter) {
@@ -229,7 +229,7 @@ class ACController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -296,7 +296,7 @@ class ACController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -335,7 +335,7 @@ class ACController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -398,7 +398,7 @@ class ACController extends MyRestController {
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -490,7 +490,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => 'error', 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -537,7 +537,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -596,7 +596,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -648,7 +648,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -742,7 +742,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -836,7 +836,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -920,7 +920,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -955,7 +955,7 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             $msg = $exc->getMessage();
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -975,14 +975,14 @@ class ACController extends MyRestController {
                     $this->createNotification('Appointment cancelled', 'The appointment scheduled with you by' . $currentUser->getFullname() . ' from ' . $bookingEntity->getService()->getAc()->getName() . ' between ' . $bookingEntity->getStart_datetime()->format('Y-m-d H:i') . ' and ' . $bookingEntity->getEnd_datetime()->format('Y-m-d H:i') . ' has been cancelled by the student.', $headline, $bookingEntity->getProvider(), 1, 1);
                     $this->createNotification('Appointment cancelled', 'You have cancelled your appointment with ' . $bookingEntity->getProvider()->getFullname() . ', scheduled between ' . $bookingEntity->getStart_datetime()->format('Y-m-d H:i') . ' and ' . $bookingEntity->getEnd_datetime()->format('Y-m-d H:i'), $headline, $currentUser, 1, 2);
                     $this->getEntityManager()->flush();
-                    return new JsonResponse(['code' => 'success', 'msg' => 'The appointment has been cancelled.', 'data' => null], Response::HTTP_OK);
+                    return new JsonResponse(['code' => 'success', 'msg' => 'The appointment has been cancelled.', 'data' => []], Response::HTTP_OK);
                 } else if ($currentUser->isNA() && $bookingEntity->getProvider() === $currentUser) {
                     
                 }
             }
-            return new JsonResponse(['code' => $userInfo['code'], 'msg' => $userInfo['msg'], 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => $userInfo['code'], 'msg' => $userInfo['msg'], 'data' => []], Response::HTTP_OK);
         } catch (Exception $exc) {
-            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => null], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
     }
 
@@ -1017,17 +1017,17 @@ class ACController extends MyRestController {
             if (!$ac) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
             }
-            
+
             if ($ac->getAdmin() !== $user && (!$user->isStudent() || !$user->hasRegisteredWith($ac))) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Access denied', 'data' => []], Response::HTTP_OK);
             }
-            
+
             if ($ac->getAdmin() === $user) {
                 $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac]);
             } else {
                 $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac, 'user' => $user]);
             }
-            
+
             $data = [];
 
             foreach ($acUsers as $acUser) {
@@ -1052,20 +1052,43 @@ class ACController extends MyRestController {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
     }
-    
+
     /**
      * Approves a form
      * @FOSRest\Post(path="/api/ac-approve-form")
      */
     public function acApproveFormAction(Request $request) {
-        $token = $request->get('form_id');
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
-        $preRegisterInfo = $user->getPre_register();
-        $preRegisterInfo['ac_booking_enabled'] = true;
-        $user->setPre_register($preRegisterInfo);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
-        return new JsonResponse(['code' => 'success', 'msg' => 'The form has been approved', 'data' => true], Response::HTTP_OK);
+        try {
+            $userInfo = $this->getRequestUser($request);
+            $slug = $request->get('slug');
+            $token = $request->get('form_id');
+            
+            if (!$userInfo['code'] === 'success' || !$slug) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+
+            $user = $userInfo['user'];
+            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
+            if (!$ac) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
+            }
+            
+            $userAux = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
+
+            if ($ac->getAdmin() !== $user || !$userAux->isStudent() || !$userAux->hasRegisteredWith($ac)) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Access denied', 'data' => []], Response::HTTP_OK);
+            }
+
+            $data = [];
+            $preRegisterInfo = $userAux->getPre_register();
+            $preRegisterInfo['ac_booking_enabled'] = true;
+            $userAux->setPre_register($preRegisterInfo);
+            $this->getEntityManager()->persist($userAux);
+            $this->getEntityManager()->flush();
+            return new JsonResponse(['code' => 'success', 'msg' => 'The form has been approved', 'data' => true], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
+        }
     }
 
 }
