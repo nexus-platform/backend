@@ -4,6 +4,7 @@ namespace App\Utils;
 
 use App\Entity\AppSettings;
 use App\Entity\AssessmentCenterUser;
+use App\Entity\Debug;
 use App\Entity\EA\EaUsers;
 use App\Entity\EA\EaUserSettings;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -124,30 +125,48 @@ class StaticMembers {
     public static function syncEaUser(ObjectManager $entityManager, AssessmentCenterUser $acUser, $mode = 1) {
         $user = $acUser->getUser();
         $ac = $acUser->getAc();
-        $eaUser = $entityManager->getRepository(EaUsers::class)->findOneBy(['id' => $user->getId(), 'id_assessment_center' => $ac->getId()]);
+        $userId = $user->getId();
+        $acId = $ac->getId();
+        $eaUser = $entityManager->getRepository(EaUsers::class)->findOneBy(['id' => $userId, 'id_assessment_center' => $acId]);
         if ($eaUser) {
             $entityManager->remove($eaUser);
+            $entityManager->flush();
         }
-        $entityManager->flush();
+
         if ($mode === 1) {
-            $eaUser = new EaUsers();
-            $eaUser->setId($user->getId());
-            $eaUser->setId_assessment_center($ac->getId());
-            $eaUser->setId_roles($user->getEaRole());
-            $eaUser->setAddress($user->getAddress());
-            $eaUser->setFirstName($user->getName());
-            $eaUser->setLastName($user->getLastname());
-            $eaUser->setEmail($user->getEmail());
-            $eaUser->setStatus($acUser->getStatus());
-            $entityManager->persist($eaUser);
-            $entityManager->flush();
+            $status = $acUser->getStatus();
+            $role = $user->getEaRole();
+            $email = $user->getEmail();
+            $statement = $entityManager->getConnection()->prepare("insert into `ea_users` (`id`, `id_assessment_center`, `status`, `email`, `id_roles`) values ($userId, $acId, $status, '$email', $role)");
+            $statement->execute();
+            $statement = $entityManager->getConnection()->prepare("insert into `ea_user_settings` (`id_users`, `id_assessment_center`) values ($userId, $acId)");
+            $statement->execute();
+            /* $eaUser = new EaUsers();
+              $eaUser->setId($userId);
+              $eaUser->setId_assessment_center($acId);
+              $eaUser->setId_roles($user->getEaRole());
+              $eaUser->setAddress($user->getAddress());
+              $eaUser->setFirstName($user->getName());
+              $eaUser->setLastName($user->getLastname());
+              $eaUser->setEmail($user->getEmail());
+              $eaUser->setStatus($acUser->getStatus());
+              $entityManager->persist($eaUser);
+              $entityManager->flush();
 
-            $eaUserSettings = new EaUserSettings();
-            $eaUserSettings->setIdUsers($user->getId());
-            $eaUserSettings->setIdAssessmentCenter($ac->getId());
-            $entityManager->persist($eaUserSettings);
-
-            $entityManager->flush();
+              $eaUser = $entityManager->getRepository(EaUsers::class)->findOneBy(['id' => $userId, 'id_assessment_center' => $acId]);
+              if ($eaUser) {
+              $eaUserSettings = new EaUserSettings();
+              $eaUserSettings->setIdUsers($userId);
+              $eaUserSettings->setIdAssessmentCenter($acId);
+              $entityManager->persist($eaUserSettings);
+              $entityManager->flush();
+              }
+              else {
+              $debug = new Debug();
+              $debug->setText("User $userId, AC $acId");
+              $entityManager->persist($debug);
+              $entityManager->flush();
+              } */
         }
     }
 

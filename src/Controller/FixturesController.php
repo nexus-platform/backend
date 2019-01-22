@@ -41,6 +41,8 @@ class FixturesController extends Controller {
         $statement->execute();
         $statement = $entityManager->getConnection()->prepare('delete from `assessment_center`');
         $statement->execute();
+        $statement = $entityManager->getConnection()->prepare('delete from `debug`');
+        $statement->execute();
 
         $originDir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data';
 
@@ -52,7 +54,6 @@ class FixturesController extends Controller {
                 '<i>Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />'
         ;
         $acUsers = $entityManager->getRepository(AssessmentCenterUser::class)->findAll();
-        StaticMembers::executeRawSQL($entityManager, 'delete from `ea_users`', false);
         foreach ($acUsers as $acUser) {
             StaticMembers::syncEaUser($entityManager, $acUser);
         }
@@ -96,6 +97,7 @@ class FixturesController extends Controller {
             $user->setCreatedAt(time());
             $user->setEmail("do$usersCount@nexus.uk");
             $user->setName("DO $usersCount");
+            $user->setTelephone('+001');
             $user->setLastname('Doe');
             $user->setPassword($pass);
             $user->setRoles(["do"]);
@@ -104,7 +106,7 @@ class FixturesController extends Controller {
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
         }
-        
+
         $usersCount = 0;
         $res .= ', ' . ($usersNeeded - $usersCount) . ' Students';
         while ($usersCount < $usersNeeded) {
@@ -113,6 +115,7 @@ class FixturesController extends Controller {
             $user->setCreatedAt(time());
             $user->setEmail("student$usersCount@nexus.uk");
             $user->setName("Student $usersCount");
+            $user->setTelephone('+002');
             $user->setLastname('Lennon');
             $user->setPassword($pass);
             $user->setRoles(["student"]);
@@ -120,7 +123,6 @@ class FixturesController extends Controller {
             $user->setUniversity($universities[$usersCount]);
             $user->setToken(sha1(StaticMembers::random_str(32)));
             $entityManager->persist($user);
-            
         }
         $usersCount = 0;
         $res .= ', ' . ($usersNeeded - $usersCount) . ' AC Managers';
@@ -130,6 +132,7 @@ class FixturesController extends Controller {
             $user->setCreatedAt(time());
             $user->setEmail("ac$usersCount@nexus.uk");
             $user->setName("AC $usersCount");
+            $user->setTelephone('+003');
             $user->setLastname('Sparrow');
             $user->setPassword($pass);
             $user->setRoles(["ac"]);
@@ -146,6 +149,7 @@ class FixturesController extends Controller {
             $user->setCreatedAt(time());
             $user->setEmail("na$usersCount@nexus.uk");
             $user->setName("NA $usersCount");
+            $user->setTelephone('+004');
             $user->setLastname('McCartney');
             $user->setPassword($pass);
             $user->setRoles(["na"]);
@@ -160,6 +164,7 @@ class FixturesController extends Controller {
         $user->setCreatedAt(time());
         $user->setEmail('admin@nexus.uk');
         $user->setName("John");
+        $user->setTelephone('+005');
         $user->setLastname('Snow');
         $user->setPassword($pass);
         $user->setRoles(["admin"]);
@@ -195,7 +200,6 @@ class FixturesController extends Controller {
                 $univForm->setDsa_form_slug($form->getCode());
                 $entityManager->persist($univForm);
             }
-            
         }
         return $count;
     }
@@ -242,11 +246,11 @@ class FixturesController extends Controller {
                         $acu->setUser($user);
                         $entityManager->persist($acu);
                     }
-                }   
+                }
             }
         }
         $entityManager->flush();
-        
+
         StaticMembers::executeRawSQL($entityManager, 'insert into `ea_settings` (`id_assessment_center`, `name`, `value`) select distinct `ac_id`, "company_working_plan" as `name`, \'{"sunday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"monday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"tuesday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"wednesday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"thursday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"friday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"saturday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]}}\' as `value` from `assessment_center_user` where `is_admin` = 1', false);
         StaticMembers::executeRawSQL($entityManager, 'insert into `ea_settings` (`id_assessment_center`, `name`, `value`) select distinct `ac_id`, "book_advance_timeout" as `name`, "30" as `value` from `assessment_center_user` where `is_admin` = 1', false);
         StaticMembers::executeRawSQL($entityManager, 'insert into `ea_settings` (`id_assessment_center`, `name`, `value`) select distinct `ac_id`, "company_name" as `name`, (select `name` from `assessment_center` where `id` = `acu`.`ac_id`) as `value` from `assessment_center_user` `acu` where `is_admin` = 1', false);
@@ -263,7 +267,7 @@ class FixturesController extends Controller {
         StaticMembers::executeRawSQL($entityManager, 'insert into `ea_settings` (`id_assessment_center`, `name`, `value`) select distinct `ac_id`, "terms_and_conditions_content" as `name`, "Terms and conditions content." as `value` from `assessment_center_user` where `is_admin` = 1', false);
         StaticMembers::executeRawSQL($entityManager, 'insert into `ea_settings` (`id_assessment_center`, `name`, `value`) select distinct `ac_id`, "display_privacy_policy" as `name`, "0" as `value` from `assessment_center_user` where `is_admin` = 1', false);
         StaticMembers::executeRawSQL($entityManager, 'insert into `ea_settings` (`id_assessment_center`, `name`, `value`) select distinct `ac_id`, "privacy_policy_content" as `name`, "Privacy policy content." as `value` from `assessment_center_user` where `is_admin` = 1', false);
-        
+
         return $count;
     }
 
@@ -395,19 +399,6 @@ class FixturesController extends Controller {
                     }
 
                     $count++;
-
-                    /* $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $results['email']]);
-                      if ($results['email'] != '' && !$user) {
-                      $user = new User();
-                      $user->setCreatedAt(time());
-                      $user->setEmail($results['email']);
-                      $user->setName(trim(explode(':', $results['person'])[1]));
-                      $user->setPassword(sha1('Pass123*'));
-                      $user->setRoles(["do"]);
-                      $user->setStatus(1);
-                      $user->setToken(sha1(StaticMembers::random_str(32)));
-                      $entityManager->persist($user);
-                      } */
                 }
             }
             closedir($dh);

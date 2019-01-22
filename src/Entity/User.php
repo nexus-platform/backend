@@ -462,15 +462,14 @@ class User implements UserInterface, Serializable {
     }
 
     public function getEaRole() {
-        $res = 4;
         if ($this->isStudent()) {
-            $res = 3;
+            return 3;
         } elseif ($this->isNA()) {
-            $res = 2;
+            return 2;
         } elseif ($this->isAC()) {
-            $res = 1;
+            return 1;
         }
-        return $res;
+        return 4;
     }
 
 }
