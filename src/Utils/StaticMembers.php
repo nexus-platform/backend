@@ -135,10 +135,14 @@ class StaticMembers {
 
         if ($mode === 1) {
             $status = $acUser->getStatus();
-            $role = $user->getEaRole();
+            $eaRole = $user->getEaRole();
             $email = $user->getEmail();
-            $statement = $entityManager->getConnection()->prepare("insert into `ea_users` (`id`, `id_assessment_center`, `status`, `email`, `id_roles`) values ($userId, $acId, $status, '$email', $role)");
+            $firstName = $user->getName();
+            $lastName = $user->getName();
+            
+            $statement = $entityManager->getConnection()->prepare("insert into `ea_users` (`id`, `id_assessment_center`, `status`, `email`, `first_name`, `last_name`, `id_roles`) values ($userId, $acId, $status, '$email', '$firstName', '$lastName', $eaRole)");
             $statement->execute();
+            
             $statement = $entityManager->getConnection()->prepare("insert into `ea_user_settings` (`id_users`, `id_assessment_center`) values ($userId, $acId)");
             $statement->execute();
             /* $eaUser = new EaUsers();
