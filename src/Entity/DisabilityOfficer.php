@@ -66,18 +66,6 @@ class DisabilityOfficer {
      */
     private $forms;
 
-    /**
-     * @var DsaSlim[]|ArrayCollection
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="App\Entity\DsaSlim",
-     *     mappedBy="center",
-     *     orphanRemoval=true,
-     *     cascade={"persist"}
-     * )
-     */
-    private $dsa_slims;
-
     public function __construct() {
         $forms = new ArrayCollection();
     }
@@ -209,24 +197,4 @@ class DisabilityOfficer {
     public function getForms() {
         return $this->forms;
     }
-
-    /**
-     * @return DsaSlim[]|ArrayCollection
-     */
-    public function getDsaSlims() {
-        return $this->dsa_slims;
-    }
-
-    public function addDsaSlim(DsaSlim $form): void {
-        $form->setCenter($this);
-        if (!$this->dsa_slims->contains($form)) {
-            $this->dsa_slims->add($form);
-        }
-    }
-
-    public function removeDsaSlim(DsaSlim $form): void {
-        $form->setCenter(null);
-        $this->dsa_slims->removeElement($form);
-    }
-
 }

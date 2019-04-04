@@ -3,7 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Country;
-use App\Entity\EaAppointment;
+use App\Entity\EA\EaAppointments;
 use App\Entity\University;
 use App\Entity\User;
 use Exception;
@@ -67,7 +67,7 @@ class ApiController extends MyRestController {
                 $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
 
                 if ($user) {
-                    $appointments = $this->getEntityManager()->getRepository(EaAppointment::class)->findBy($user->isStudent() ? ['student' => $user] : ['provider' => $user, 'is_unavailable' => false]);
+                    $appointments = $this->getEntityManager()->getRepository(EaAppointments::class)->findBy($user->isStudent() ? ['student' => $user] : ['provider' => $user, 'is_unavailable' => false]);
                     $data = [];
                     foreach ($appointments as $appointment) {
                         $student = $appointment->getStudent();
@@ -101,7 +101,7 @@ class ApiController extends MyRestController {
             if ($userInfo['code'] === 'success') {
                 $currentUser = $userInfo['user'];
                 $bookingId = $request->get('id');
-                $bookingEntity = $this->getEntityManager()->getRepository(EaAppointment::class)->find($bookingId);
+                $bookingEntity = $this->getEntityManager()->getRepository(EaAppointments::class)->find($bookingId);
                 if ($currentUser->isStudent() && $bookingEntity->getStudent() === $currentUser) {
                     $headline = date('Y/m/d H:i:s', time());
                     $this->getEntityManager()->remove($bookingEntity);

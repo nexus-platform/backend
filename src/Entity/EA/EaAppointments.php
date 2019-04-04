@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * EaAppointments
  *
  * @ORM\Table(name="ea_appointments", indexes={@ORM\Index(name="id_users_customer", columns={"id_users_customer"}), @ORM\Index(name="id_services", columns={"id_services"}), @ORM\Index(name="id_users_provider", columns={"id_users_provider"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\EA\EaAppointmentsRepository")
  */
 class EaAppointments
 {

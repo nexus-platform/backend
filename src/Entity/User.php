@@ -112,12 +112,12 @@ class User implements UserInterface, Serializable {
     private $assessment_center_services_assessors;
 
     /**
-     * @ORM\OneToMany(targetEntity="EaAppointment", mappedBy="provider")
+     * @ORM\OneToMany(targetEntity="App\Entity\EA\EaAppointments", mappedBy="provider")
      * */
     private $provider_appointments;
 
     /**
-     * @ORM\OneToMany(targetEntity="EaAppointment", mappedBy="student")
+     * @ORM\OneToMany(targetEntity="App\Entity\EA\EaAppointments", mappedBy="student")
      * */
     private $student_appointments;
 

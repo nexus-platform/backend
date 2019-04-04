@@ -87,7 +87,7 @@ class ACController extends MyRestController {
                 'invitation_token' => $request->get('invitation_token'),
             ];
 
-            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug']]);
+            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug'], 'eaEntityType' => 1]);
             if (!$ac) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Your request includes some incorrect parameters.<br/>Please, verify your information and try again.', 'data' => []], Response::HTTP_OK);
             }
@@ -991,13 +991,26 @@ class ACController extends MyRestController {
      * @FOSRest\Get(path="/api/get-ac-submitted-form")
      */
     public function getACSubmittedForm(Request $request) {
-        $token = $request->get('token');
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
-        $preRegisterInfo = $user->getPre_register();
-        $acFormProgress = $preRegisterInfo['ac_form'];
-        $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
-        $data = $starAssessmentForm[1];
-        return new JsonResponse(['code' => 'success', 'msg' => 'AC form loaded', 'data' => $data], Response::HTTP_OK);
+        try {
+            $userInfo = $this->getRequestUser($request);
+            $user = $userInfo['user'];
+            if ($userInfo['code'] !== 'success') {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+            $ac = $user->getAC();
+            $token = $request->get('token');
+            if (!$ac || !($ac->getAdmin() === $user || (($user->isNA() || ($user->isStudent() && $user->getToken() === $token)) && $user->hasRegisteredWith($ac)) ) ) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
+            }
+            $userAux = $user->isStudent() ? $user : $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
+            $preRegisterInfo = $userAux->getPre_register();
+            $acFormProgress = $preRegisterInfo['ac_form'];
+            $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
+            $data = $starAssessmentForm[1];
+            return new JsonResponse(['code' => 'success', 'msg' => 'AC form loaded', 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
+        }
     }
 
     /**
@@ -1007,26 +1020,18 @@ class ACController extends MyRestController {
     public function getACForms(Request $request) {
         try {
             $userInfo = $this->getRequestUser($request);
-            $slug = $request->get('slug');
-            if (!$userInfo['code'] === 'success' || !$slug) {
+            $user = $userInfo['user'];
+            if ($userInfo['code'] !== 'success' || !$user->isAC()) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
-
-            $user = $userInfo['user'];
-            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
-            if (!$ac) {
+            $ac = $user->getAC();
+            if (!$ac || $ac->getAdmin() !== $user) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
             }
 
-            if ($ac->getAdmin() !== $user && (!$user->isStudent() || !$user->hasRegisteredWith($ac))) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Access denied', 'data' => []], Response::HTTP_OK);
-            }
+            $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac]);
 
-            if ($ac->getAdmin() === $user) {
-                $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac]);
-            } else {
-                $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac, 'user' => $user]);
-            }
+            //$acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac, 'user' => $user]);
 
             $data = [];
 
@@ -1034,13 +1039,14 @@ class ACController extends MyRestController {
                 $userAux = $acUser->getUser();
                 if ($userAux->isStudent()) {
                     $preRegisterInfo = $userAux->getPre_register();
-                    if ($preRegisterInfo['ac_form_full_submit']) {
+                    if (isset($preRegisterInfo['ac_form_full_submit']) && $preRegisterInfo['ac_form_full_submit']) {
                         $univ = $userAux->getUniversity();
                         $data[] = [
                             'student_name' => $userAux->getFullName(),
                             'univ_name' => $univ->getName(),
+                            'status' => $preRegisterInfo['ac_booking_enabled'],
                             'status_desc' => $preRegisterInfo['ac_booking_enabled'] ? 'Approved' : 'Pending',
-                            'route' => "/assessment-centre/$slug/ac-forms/" . $userAux->getToken(),
+                            'route' => "/assessment-centre/submitted-forms/" . $userAux->getToken(),
                             'token' => $userAux->getToken(),
                         ];
                     }
@@ -1060,32 +1066,63 @@ class ACController extends MyRestController {
     public function acApproveFormAction(Request $request) {
         try {
             $userInfo = $this->getRequestUser($request);
-            $slug = $request->get('slug');
             $token = $request->get('form_id');
-            
-            if (!$userInfo['code'] === 'success' || !$slug) {
+            $user = $userInfo['user'];
+            if ($userInfo['code'] !== 'success' || !$user->isAC() || !$token) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
 
-            $user = $userInfo['user'];
-            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
-            if (!$ac) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
-            }
-            
+            $ac = $user->getAC();
             $userAux = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
 
-            if ($ac->getAdmin() !== $user || !$userAux->isStudent() || !$userAux->hasRegisteredWith($ac)) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Access denied', 'data' => []], Response::HTTP_OK);
+            if (!$ac || $ac->getAdmin() !== $user || !$userAux->isStudent() || !$userAux->hasRegisteredWith($ac)) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
 
-            $data = [];
             $preRegisterInfo = $userAux->getPre_register();
             $preRegisterInfo['ac_booking_enabled'] = true;
             $userAux->setPre_register($preRegisterInfo);
             $this->getEntityManager()->persist($userAux);
             $this->getEntityManager()->flush();
             return new JsonResponse(['code' => 'success', 'msg' => 'The form has been approved', 'data' => true], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
+        }
+    }
+
+    /**
+     * Retrieves the list of students for an AC
+     * @FOSRest\Get(path="/api/get-ac-students")
+     */
+    public function getACStudents(Request $request) {
+        try {
+            $userInfo = $this->getRequestUser($request);
+            $user = $userInfo['user'];
+            $slug = $request->get('slug');
+            if ($userInfo['code'] !== 'success' || !$user->isNA() || !$slug) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+
+            $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
+
+            if (!$ac || !$user->hasRegisteredWith($ac)) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+
+            $acUsers = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findBy(['ac' => $ac]);
+            $data = [];
+            foreach ($acUsers as $acUser) {
+                $userAux = $acUser->getUser();
+                if ($userAux->isStudent()) {
+                    $data[] = [
+                        'token' => $userAux->getToken(),
+                        'name' => $userAux->getFullname(),
+                        'email' => $userAux->getEmail(),
+                    ];
+                }
+            }
+
+            return new JsonResponse(['code' => 'success', 'msg' => 'Students loaded', 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }

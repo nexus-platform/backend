@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\EA;
 
-use App\Entity\EaAppointment;
+use App\Entity\EA\EaAppointments;
 use App\Entity\User;
 use App\Utils\StaticMembers;
 use DateTime;
@@ -10,10 +10,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class EaAppointmentRepository extends ServiceEntityRepository {
+class EaAppointmentsRepository extends ServiceEntityRepository {
 
     public function __construct(RegistryInterface $registry) {
-        parent::__construct($registry, EaAppointment::class);
+        parent::__construct($registry, EaAppointments::class);
     }
 
     public function getAppointmentsByAssessorAndDate($assessor, $date) {

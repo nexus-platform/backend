@@ -172,35 +172,29 @@ class MyRestController extends FOSRestController {
      */
     public function getFileAction(Request $request) {
         try {
-            $file = $request->get('file');
+            $fileId = $request->get('file');
             $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
             $payload = $this->decodeJWT($jwt);
-            $data = null;
-
-            if ($payload) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $filledForm = $entityManager->getRepository(DsaFormFilled::class)->find($file);
-                if ($filledForm) {
-                    $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-                    $filledUser = $filledForm->getUser();
-                    $userId = null;
-                    if ($filledUser === $user) {
-                        $userId = $user->getId();
-                    } else if ($filledUser->getUniversity() === $user->getUniversity()) {
-                        $userId = $filledUser->getId();
-                    }
-                    $filename = $filledForm->getFilename();
-                    $file = new File($this->getDSAFilledFormsDir() . $filename);
-                    return $this->file($file);
-                } else {
-                    $code = 'error';
-                    $msg = 'File not found';
-                }
-            } else {
-                $code = 'error';
-                $msg = 'Invalid request';
+            if (!$payload) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid request', 'data' => null], Response::HTTP_OK);
             }
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+            
+            $entityManager = $this->getDoctrine()->getManager();
+            $filledForm = $entityManager->getRepository(DsaFormFilled::class)->find($fileId);
+            if (!$filledForm) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'File not found', 'data' => null], Response::HTTP_OK);
+            }
+            
+            $user = $entityManager->getRepository(User::class)->find($payload->user_id);
+            $formFiller = $filledForm->getUser();
+            
+            if (!($formFiller === $user || ($formFiller->getUniversity() === $user->getUniversity() && $user->isDO()))) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Access denied', 'data' => null], Response::HTTP_OK);
+            }
+            
+            $filename = $filledForm->getFilename();
+            $file = new File($this->getDSAFilledFormsDir() . $filename);
+            return $this->file($file, $filename);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
@@ -220,7 +214,7 @@ class MyRestController extends FOSRestController {
                 break;
         }
     }
-    
+
     protected function getStarAssessmentForm($acFormProgress) {
         $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/star_assessment_form.json';
         $emptyContent = json_decode(file_get_contents($dir), true);

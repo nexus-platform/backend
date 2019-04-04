@@ -99,7 +99,7 @@ class NotificationsController extends MyRestController {
 
     /**
      * Deletes user notifications.
-     * @FOSRest\Post(path="/api/get-notifications")
+     * @FOSRest\Get(path="/api/get-notifications")
      */
     public function getNotificationsAction(Request $request) {
         try {

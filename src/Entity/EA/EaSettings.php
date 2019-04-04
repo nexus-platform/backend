@@ -40,7 +40,7 @@ class EaSettings
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\AssessmentCenter")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_assessment_center", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="id_assessment_center", referencedColumnName="id", onDelete="CASCADE")
      * })
      */
     private $idAssessmentCenter;

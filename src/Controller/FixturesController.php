@@ -7,7 +7,7 @@ use App\Entity\AssessmentCenterUser;
 use App\Entity\Country;
 use App\Entity\DisabilityOfficer;
 use App\Entity\DsaForm;
-use App\Entity\NMH;
+use App\Entity\EaEntityType;
 use App\Entity\University;
 use App\Entity\UniversityDsaForm;
 use App\Entity\User;
@@ -51,7 +51,8 @@ class FixturesController extends Controller {
                 '<i>Users:</i> <b>' . $this->loadUsers($entityManager) . '</b><br />' .
                 '<i>Universities managed by DO:</i> <b>' . $this->loadUniversitiesForms($entityManager) . '</b><br />' .
                 '<i>Assessment Centers:</i> <b>' . $this->loadACs($entityManager, "$originDir/disability-officer/") . '</b><br />' .
-                '<i>Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />'
+                '<i>Active Assessment Centers:</i> <b>' . $this->activateACs($entityManager) . '</b><br />' .
+                '<i>NMHs:</i> <b>' . $this->loadNMH($entityManager) . '</b><br />'
         ;
         $acUsers = $entityManager->getRepository(AssessmentCenterUser::class)->findAll();
         foreach ($acUsers as $acUser) {
@@ -283,13 +284,21 @@ class FixturesController extends Controller {
                     $results = json_decode($contents, true);
                     $entity = $entityManager->getRepository(AssessmentCenter::class)->findOneBy(['name' => $results['name']]);
                     if (!$entity) {
+                        $eaEntityType = $entityManager->getRepository(EaEntityType::class)->find(1);
                         $ac = new AssessmentCenter();
+                        $ac->setEaEntityType($eaEntityType);
                         $ac->setName($results['name']);
                         $ac->setContactName(trim(explode(':', $results['person'])[1]));
                         $ac->setTelephone(trim(explode(':', $results['phone'])[1]));
                         $ac->setAddress($results['address']);
                         $ac->setEmail($results['email']);
                         $ac->setUrl($this->alphabeticString($results['name']));
+                        $ac->setAutomatic_booking(0);
+
+                        $ac->setNmh_distance_learner(false);
+                        $ac->setNmh_evening_appointments(false);
+                        $ac->setNmh_weekend_appointments(false);
+                        $ac->setNmh_regions_supplied([""]);
                         $entityManager->persist($ac);
                         $count++;
                     }
@@ -325,13 +334,14 @@ class FixturesController extends Controller {
 
     private function loadNMH(ObjectManager $entityManager) {
         $dir = $this->container->getParameter('kernel.project_dir') . '/src/DataFixtures/data/nmh/';
-        $statement = $entityManager->getConnection()->prepare('DELETE FROM `nmh`');
-        $statement->execute();
+        $count = 0;
 
         if ($dh = opendir($dir)) {
             while (($file = readdir($dh)) !== false) {
                 if ($file != '..' && $file != '.') {
-                    $nmh = new NMH();
+                    $eaEntityType = $entityManager->getRepository(EaEntityType::class)->find(2);
+                    $nmh = new AssessmentCenter();
+                    $nmh->setEaEntityType($eaEntityType);
 
                     $contents = file_get_contents($dir . $file);
                     $contents = html_entity_decode(utf8_encode($contents));
@@ -342,31 +352,34 @@ class FixturesController extends Controller {
                     $nmh->setEmail($results['email']);
                     $nmh->setTelephone($results['phone']);
                     $nmh->setAddress($results['address']);
-                    $nmh->setCompanyRegisteredSince($results['company_registred_since']);
-                    $nmh->setCompanyRegNumber($results['company_registred_number']);
-                    $nmh->setType($results['nmh_provider']);
-                    $nmh->setBands($results['band_supported']);
-                    $nmh->setDistanceLearner($results['distance_learner'] === "Yes" ? true : false);
-                    $nmh->setStandardBusinessHours($results['standard_business_hours']);
-                    $nmh->setEveningAppointments($results['evening_appointments'] === "Yes" ? true : false);
-                    $nmh->setWeekendAppointments($results['weekend_appointments'] === "Yes" ? true : false);
+                    $nmh->setAutomatic_booking(0);
+                    $nmh->setNmh_company_registered_since($results['company_registred_since']);
+                    $nmh->setNmh_company_reg_number($results['company_registred_number']);
+                    $nmh->setNmh_type($results['nmh_provider']);
+                    $nmh->setNmh_bands($results['band_supported']);
+                    $nmh->setNmh_distance_learner($results['distance_learner'] === "Yes" ? true : false);
+                    $nmh->setNmh_standard_business_hours($results['standard_business_hours']);
+                    $nmh->setNmh_evening_appointments($results['evening_appointments'] === "Yes" ? true : false);
+                    $nmh->setNmh_weekend_appointments($results['weekend_appointments'] === "Yes" ? true : false);
                     //regions_supplied
                     $rs = array();
                     foreach ($results['regions_supplied'] as $value) {
                         $rs[] = $value;
                     }
-                    $nmh->setRegionsSupplied($rs);
+                    $nmh->setNmh_regions_supplied($rs);
                     //institutions_serviced
                     $is = array();
                     foreach ($results['institutions_serviced'] as $value) {
                         $is[] = $value;
                     }
-                    $nmh->setInstitutionsSurvised($is);
+                    $nmh->setNmh_institutions_survised($is);
                     $entityManager->persist($nmh);
+                    $count ++;
                 }
             }
             closedir($dh);
         }
+        return $count;
     }
 
     private function loadDOfficer(ObjectManager $entityManager, $dir) {

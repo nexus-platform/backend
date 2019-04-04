@@ -302,6 +302,7 @@ class AuthController extends MyRestController {
     public function login(Request $request) {
         $params = json_decode($request->getContent(), true);
         $pass = sha1($params['password']);
+        $frontendHomeUrl = '/';
 
         if ($params['target'] === 'dsa') {
             $target = $this->getEntityManager()->getRepository(University::class)->findOneBy(['token' => $params['slug']]);
@@ -311,10 +312,12 @@ class AuthController extends MyRestController {
             $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass, 'university' => $target]);
             if (!$user) {
                 return new JsonResponse(['code' => 'error', 'msg' => "Invalid username or password.", 'data' => []], Response::HTTP_OK);
-            }
-            else if ($user->getStatus() === 0) {
+            } else if (!$user->isStudent()) {
+                return new JsonResponse(['code' => 'warning', 'msg' => "You are not allowed to login from here. Use the general login URL.", 'data' => []], Response::HTTP_OK);
+            } else if ($user->getStatus() === 0) {
                 return new JsonResponse(['code' => 'error', 'msg' => "Your user account is inactive.", 'data' => []], Response::HTTP_OK);
             }
+            $frontendHomeUrl = '/dsa/' . $params['slug'];
         } else if ($params['target'] === 'ac') {
             $target = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $params['slug']]);
             if (!$target) {
@@ -323,24 +326,31 @@ class AuthController extends MyRestController {
             $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass]);
             if (!$user) {
                 return new JsonResponse(['code' => 'error', 'msg' => "Invalid username or password.", 'data' => []], Response::HTTP_OK);
-            }
-            else if ($user->getStatus() === 0) {
+            } else if (!$user->isStudent()) {
+                return new JsonResponse(['code' => 'warning', 'msg' => "You are not allowed to login from here. Use the general login URL.", 'data' => []], Response::HTTP_OK);
+            } else if ($user->getStatus() === 0) {
                 return new JsonResponse(['code' => 'error', 'msg' => "Your user account is inactive.", 'data' => []], Response::HTTP_OK);
-            }
-            else if (!$user->hasRegisteredWith($target)) {
+            } else if (!$user->hasRegisteredWith($target)) {
                 return new JsonResponse(['code' => 'error', 'msg' => "You are not associated with this Centre.", 'data' => []], Response::HTTP_OK);
             }
+            $frontendHomeUrl = '/assessment-centre/index';
         } else if ($params['target'] === 'public') {
             $target = null;
             $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $params['email'], 'password' => $pass]);
             if (!$user) {
                 return new JsonResponse(['code' => 'error', 'msg' => "Invalid username or password.", 'data' => []], Response::HTTP_OK);
-            }
-            else if ($user->getStatus() === 0) {
+            } else if ($user->getStatus() === 0) {
                 return new JsonResponse(['code' => 'error', 'msg' => "Your user account is inactive.", 'data' => []], Response::HTTP_OK);
-            }
-            else if ($user->isStudent()) {
+            } else if ($user->isStudent()) {
                 return new JsonResponse(['code' => 'warning', 'msg' => "You are not allowed to login from here. Use your Institute's URL.", 'data' => []], Response::HTTP_OK);
+            } else if ($user->isDO()) {
+                $params['target'] = 'dsa';
+                $target = $user->getUniversity();
+                $frontendHomeUrl = '/' . $params['target'] . '/' . $target->getToken();
+            } else if ($user->isAC()) {
+                $params['target'] = 'assessment-centre';
+                $target = $user->getAC();
+                $frontendHomeUrl = '/' . $params['target'];
             }
         }
 
@@ -362,10 +372,11 @@ class AuthController extends MyRestController {
 
         $data = [
             'is_guest' => false,
+            'frontend_home_url' => $frontendHomeUrl,
             'email' => $user->getEmail(),
             'jwt' => $jwt,
             'roles' => $user->getRoles(),
-            'is_univ_manager' => $params['target'] === 'dsa' ? ($target ? $target->getManager() === $user : false) : false,
+            'is_univ_manager' => $user->isDO() ? $target->getManager() === $user : false,
             'fullname' => $user->getFullname(),
             'token' => $user->getToken(),
             'registrations' => $this->getUserRegistrations($user),
@@ -416,7 +427,46 @@ class AuthController extends MyRestController {
                 $acInfo['star_assessment_form_filled'] = $starAssessmentForm[1];
             }
             $data['ac_info'] = $acInfo;
+        } else if ($params['target'] === 'dsa') {
+            $ac = $user->getAC();
+            $admin = $this->getEntityManager()->getRepository(AssessmentCenterUser::class)->findOneBy(['ac' => $ac, 'is_admin' => 1]);
+            $userRole = $user->getRoles()[0];
+            $userData = [
+                'name' => $user->getName(),
+                'last_name' => $user->getLastname(),
+                'email' => $user->getEmail(),
+                'postcode' => $user->getPostcode(),
+                'address' => $user->getAddress(),
+                'password' => 'password',
+                'password_confirm' => 'password',
+            ];
+
+            if ($user->isStudent()) {
+                $preRegisterInfo = $user->getPre_register();
+                $acFormProgress = isset($preRegisterInfo['ac_form']) ? $preRegisterInfo['ac_form'] : null;
+                $userData['ac_form_full_submit'] = isset($preRegisterInfo['ac_form_full_submit']) ? $preRegisterInfo['ac_form_full_submit'] : false;
+                $userData['ac_booking_enabled'] = isset($preRegisterInfo['ac_booking_enabled']) ? $preRegisterInfo['ac_booking_enabled'] : false;
+                $userData['ac_form'] = $acFormProgress;
+                $userData['dsa_letter'] = isset($preRegisterInfo['dsa_letter']) ? $preRegisterInfo['dsa_letter'] : null;
+                $acInfo = [
+                    'id' => $ac->getId(),
+                    'registered' => true,
+                    'is_admin' => false,
+                    'role' => $userRole,
+                    'admin' => $admin ? $admin->getUser()->__toString() : null,
+                    'user_data' => $userData,
+                    'slug' => $ac->getUrl(),
+                    'name' => $ac->getName(),
+                ];
+                $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
+                $acInfo['star_assessment_form'] = $starAssessmentForm[0];
+                $acInfo['star_assessment_form_filled'] = $starAssessmentForm[1];
+                $data['ac_info'] = $acInfo;
+            }
         }
+
+        $data['auth_target'] = $params['target'];
+        $data['token'] = $user->getToken();
 
         return new JsonResponse(['code' => 'success', 'msg' => 'Credentials verified', 'data' => $data], Response::HTTP_OK);
     }
@@ -425,9 +475,8 @@ class AuthController extends MyRestController {
         $registrations = [];
         $univ = $user->getUniversity();
         if ($univ) {
-            $registrations[] = [
+            $registrations['dsa'] = [
                 'type' => 'University DSA Office',
-                'component' => 'dsa',
                 'slug' => $univ->getToken(),
                 'name' => $univ->getName(),
             ];
@@ -436,9 +485,8 @@ class AuthController extends MyRestController {
         $acUsers = $user->getAssessment_center_users();
         foreach ($acUsers as $acUser) {
             $ac = $acUser->getAc();
-            $registrations[] = [
+            $registrations['ac'][] = [
                 'type' => 'Assessment Centre',
-                'component' => 'assessment-centre',
                 'slug' => $ac->getUrl(),
                 'name' => $ac->getName(),
             ];

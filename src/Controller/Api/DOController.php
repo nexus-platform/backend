@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\AppSettings;
 use App\Entity\DsaForm;
 use App\Entity\DsaFormFilled;
 use App\Entity\QrCode as QrCode2;
@@ -29,6 +28,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @Route("/")
  */
 class DOController extends MyRestController {
+    
+    private $hashTag = '#/';
 
     /**
      * Retrieves an university.
@@ -186,7 +187,6 @@ class DOController extends MyRestController {
                     $dsaForm = $univForm->getDsa_form();
                     $formsDir = $this->container->getParameter('kernel.project_dir') . '/public/dsa_forms/';
                     $formPath = $formsDir . $dsaForm->getBase();
-
                     $formId = $request->get('entity_id', null);
                     $data = $dsaForm->getContent();
 
@@ -402,10 +402,10 @@ class DOController extends MyRestController {
                                 $headline = date('Y/m/d H:i:s', $now);
                                 $route = 'dsa/' . $univFromUser->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
                                 $myFormsRoute = 'dsa/' . $univFromUser->getToken() . '/my-dsa-forms/index';
-                                $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="/#/' . $myFormsRoute . '">here</a>.', $headline, $user, 1, 2);
+                                $this->createNotification('You have submitted a new DSA Form', 'Your "' . $item->getName() . '" has been submitted. You can check its status <a href="/' . $this->hashTag . $myFormsRoute . '">here</a>.', $headline, $user, 1, 2);
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $this->getDoctrine()->getManager()->getRepository(User::class)->find($do['id']);
-                                    $this->createNotification('New DSA Form submitted by ' . $user->__toString(), 'A new "' . $item->getName() . '" has been submitted. You can review it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
+                                    $this->createNotification('New DSA Form submitted by ' . $user->__toString(), 'A new "' . $item->getName() . '" has been submitted. You can review it <a href="/' . $this->hashTag . $route . '">here</a>.', $headline, $doEntity, 1, 1);
                                 }
                                 $msg = "Your form has been submitted.";
                                 $this->getDoctrine()->getManager()->flush();
@@ -428,7 +428,7 @@ class DOController extends MyRestController {
                 $code = 'warning';
                 $msg = 'Your request did not include any data';
             }
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $filledForm->getId()], Response::HTTP_OK);
+        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => ['form_id' => $filledForm->getId(), 'full_submit' => $data['full_submit']]], Response::HTTP_OK);
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
@@ -1008,15 +1008,15 @@ class DOController extends MyRestController {
                             $route = 'dsa/' . $univFromUser->getToken() . '/dsa-forms/' . $univForm->getDsa_form_slug() . '/' . $filledForm->getId();
 
                             if ($user->isStudent()) {
-                                $this->createNotification('You have submitted a new comment', 'You commented <b>' . $fieldName . '</b> input field from <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
+                                $this->createNotification('You have submitted a new comment', 'You commented <b>' . $fieldName . '</b> input field from <b>' . $dsaForm->getName() . '</b>. You can check it <a href="/' . $this->hashTag . $route . '">here</a>.', $headline, $user, 1, 2);
                                 $disabOfficers = StaticMembers::executeRawSQL($this->getDoctrine()->getManager(), "SELECT * FROM `user` where `university_id` = " . $univFromUser->getId() . " and json_contains(roles, json_array('do')) = 1");
                                 foreach ($disabOfficers as $do) {
                                     $doEntity = $this->getDoctrine()->getManager()->getRepository(User::class)->find($do['id']);
-                                    $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $doEntity, 1, 1);
+                                    $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/' . $this->hashTag . $route . '">here</a>.', $headline, $doEntity, 1, 1);
                                 }
                             } else {
-                                $this->createNotification('You have submitted a new comment', '<b>' . $fieldName . '</b> in a form submitted by <b>' . $filledForm->getUser()->__toString() . '</b>. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $user, 1, 2);
-                                $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/#/' . $route . '">here</a>.', $headline, $filledForm->getUser(), 1, 1);
+                                $this->createNotification('You have submitted a new comment', '<b>' . $fieldName . '</b> in a form submitted by <b>' . $filledForm->getUser()->__toString() . '</b>. You can check it <a href="/' . $this->hashTag . $route . '">here</a>.', $headline, $user, 1, 2);
+                                $this->createNotification('New comment submitted by ' . $user->__toString(), '<b>' . $fieldName . '</b> input field from "' . $dsaForm->getName() . '" has been commented. You can check it <a href="/' . $this->hashTag . $route . '">here</a>.', $headline, $filledForm->getUser(), 1, 1);
                             }
                             $msg = "Your comment has been submitted.";
                             $code = 'success';
