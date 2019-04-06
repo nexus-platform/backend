@@ -207,17 +207,27 @@ class FixturesController extends Controller {
 
     private function activateACs(ObjectManager $entityManager) {
         $acs = $entityManager->getRepository(AssessmentCenter::class)->findAll();
-        $count = 0;
+        $count = -1;
         if ($acs) {
             while ($count < 3) {
                 $count++;
                 //Setting the AC manager
                 $user = $entityManager->getRepository(User::class)->findOneBy(['email' => "ac$count@nexus.uk"]);
+                $ac = $acs[$count];
                 if ($user) {
-                    $ac = $acs[$count];
                     $acu = new AssessmentCenterUser();
                     $acu->setAc($ac);
                     $acu->setIs_admin(1);
+                    $acu->setStatus(1);
+                    $acu->setUser($user);
+                    $entityManager->persist($acu);
+                }
+                //Setting the student
+                $user = $entityManager->getRepository(User::class)->findOneBy(['email' => "student$count@nexus.uk"]);
+                if ($user) {
+                    $acu = new AssessmentCenterUser();
+                    $acu->setAc($ac);
+                    $acu->setIs_admin(0);
                     $acu->setStatus(1);
                     $acu->setUser($user);
                     $entityManager->persist($acu);
@@ -228,18 +238,6 @@ class FixturesController extends Controller {
                     //Setting the NAs
                     $user = $entityManager->getRepository(User::class)->findOneBy(['email' => "na$i@nexus.uk"]);
                     if ($user) {
-                        $ac = $acs[$count];
-                        $acu = new AssessmentCenterUser();
-                        $acu->setAc($ac);
-                        $acu->setIs_admin(0);
-                        $acu->setStatus(1);
-                        $acu->setUser($user);
-                        $entityManager->persist($acu);
-                    }
-                    //Setting the students
-                    $user = $entityManager->getRepository(User::class)->findOneBy(['email' => "student$i@nexus.uk"]);
-                    if ($user) {
-                        $ac = $acs[$count];
                         $acu = new AssessmentCenterUser();
                         $acu->setAc($ac);
                         $acu->setIs_admin(0);

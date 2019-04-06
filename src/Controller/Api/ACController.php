@@ -8,8 +8,6 @@ use App\Entity\AssessmentCenterService;
 use App\Entity\AssessmentCenterServiceAssessor;
 use App\Entity\AssessmentCenterUser;
 use App\Entity\EA\EaAppointment;
-use App\Entity\EA\EaUsers;
-use App\Entity\EA\EaUserSettings;
 use App\Entity\User;
 use App\Entity\UserInvitation;
 use App\Utils\StaticMembers;
@@ -116,7 +114,7 @@ class ACController extends MyRestController {
                     return new JsonResponse(['code' => 'error', 'msg' => 'Access denied.', 'data' => []], Response::HTTP_OK);
                 }
                 if ($user->hasRegisteredWithAnyAC() && !$user->hasRegisteredWith($ac)) {
-                    return new JsonResponse(['code' => 'error', 'msg' => 'You need to cancel your registration with your current Centre before accessing another one.', 'data' => []], Response::HTTP_OK);
+                    return new JsonResponse(['code' => 'warning', 'msg' => 'You need to cancel your registration with your current Centre before accessing another one.', 'data' => []], Response::HTTP_OK);
                 }
                 $userRole = $user->getRoles()[0];
                 $isAdmin = $admin->getUser() === $user;
@@ -196,8 +194,8 @@ class ACController extends MyRestController {
             }
 
             $ac = $this->getEntityManager()->getRepository(AssessmentCenter::class)->findOneBy(['url' => $slug]);
-            if (!$user->isStudent() || !$user->hasRegisteredWith($ac)) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid user.', 'data' => []], Response::HTTP_OK);
+            if ($user->isStudent() && $user->getAC() && $user->getAC() !== $ac) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'You have already sent a registration request.', 'data' => []], Response::HTTP_OK);
             }
 
             if ($dsaLetter) {
@@ -215,13 +213,24 @@ class ACController extends MyRestController {
             $preRegisterInfo['ac_form'] = $formData;
             $user->setPre_register($preRegisterInfo);
             $this->getEntityManager()->persist($user);
+
+            if (!$user->hasRegisteredWith($ac)) {
+                $acUser = new AssessmentCenterUser();
+                $acUser->setAc($ac);
+                $acUser->setIs_admin(0);
+                $acUser->setStatus(1);
+                $acUser->setUser($user);
+                $this->getEntityManager()->persist($acUser);
+                StaticMembers::syncEaUser($this->getEntityManager(), $acUser);
+            }
+
             $this->getEntityManager()->flush();
 
             if ($preRegisterInfo['ac_form_full_submit']) {
                 $headline = date('Y/m/d H:i:s', time());
                 $myAcForm = 'my-ac-form';
                 $this->createNotification('You have submitted an Assessment Form', 'Your form has been submitted to ' . $ac->getName() . '. You can check its content <a href="/#/' . $myAcForm . '">here</a>.', $headline, $user, 1, 2);
-                $acForm = 'ac-form/' . $user->getToken();
+                $acForm = 'assessment-centre/submitted-forms/' . $user->getToken();
                 $this->createNotification('New Assessment Form submitted', $user->getFullname() . ' has submitted a new Assessment Form. You can check its content <a href="/#/' . $acForm . '">here</a>.', $headline, $ac->getAdmin(), 1, 1);
                 $this->getEntityManager()->flush();
             }
@@ -999,7 +1008,7 @@ class ACController extends MyRestController {
             }
             $ac = $user->getAC();
             $token = $request->get('token');
-            if (!$ac || !($ac->getAdmin() === $user || (($user->isNA() || ($user->isStudent() && $user->getToken() === $token)) && $user->hasRegisteredWith($ac)) ) ) {
+            if (!$ac || !($ac->getAdmin() === $user || (($user->isNA() || ($user->isStudent() && $user->getToken() === $token)) && $user->hasRegisteredWith($ac)) )) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
             }
             $userAux = $user->isStudent() ? $user : $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
@@ -1015,7 +1024,7 @@ class ACController extends MyRestController {
 
     /**
      * Retrieves the list of submitted forms from the AC.
-     * @FOSRest\Get(path="/api/get-ac-forms")
+     * @FOSRest\Get(path="/api/get-ac-submitted-forms")
      */
     public function getACForms(Request $request) {
         try {
@@ -1043,7 +1052,7 @@ class ACController extends MyRestController {
                         $univ = $userAux->getUniversity();
                         $data[] = [
                             'student_name' => $userAux->getFullName(),
-                            'univ_name' => $univ->getName(),
+                            'univ_name' => $univ ? $univ->getName() : 'Not specified',
                             'status' => $preRegisterInfo['ac_booking_enabled'],
                             'status_desc' => $preRegisterInfo['ac_booking_enabled'] ? 'Approved' : 'Pending',
                             'route' => "/assessment-centre/submitted-forms/" . $userAux->getToken(),
@@ -1083,8 +1092,13 @@ class ACController extends MyRestController {
             $preRegisterInfo['ac_booking_enabled'] = true;
             $userAux->setPre_register($preRegisterInfo);
             $this->getEntityManager()->persist($userAux);
+
+            $headline = date('Y/m/d H:i:s', time());
+            $this->createNotification('Assessment Form approved', 'You have approved the form sent by ' . $userAux->getFullname() . '.', $headline, $user, 1, 2);
+            $this->createNotification('Your Assessment Form has been approved', $user->getFullname() . ' has approved the form you sent to ' . $ac->getName() . '.', $headline, $userAux, 1, 1);
+
             $this->getEntityManager()->flush();
-            return new JsonResponse(['code' => 'success', 'msg' => 'The form has been approved', 'data' => true], Response::HTTP_OK);
+            return new JsonResponse(['code' => 'success', 'msg' => 'The form has been approved', 'data' => 1], Response::HTTP_OK);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }

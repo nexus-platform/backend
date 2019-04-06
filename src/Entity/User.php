@@ -190,7 +190,7 @@ class User implements UserInterface, Serializable {
     
     function hasRegisteredWithAnyAC() {
         $acUsers = $this->getAssessment_center_users();
-        return $acUsers ? true : false;
+        return count($acUsers) > 0 ? true : false;
     }
 
     function getAssessment_center_users() {

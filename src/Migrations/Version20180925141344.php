@@ -30,7 +30,7 @@ final class Version20180925141344 extends AbstractMigration {
             (8, 'DSA1 2018/19 - Application for Disabled Students’ Allowances', 'sfe_dsa1_form_1819_o', 'sfe_dsa1_form_1819_o.pdf', 1, '{}')");
 
         //App Settings
-        $this->addSql("INSERT INTO `app_settings` (`mail_host`, `mail_port`, `mail_username`, `mail_password`, `mail_encryption`) VALUES ('127.0.0.1', '25', 'user@server.dom', 'pass', '')");
+        $this->addSql("INSERT INTO `app_settings` (`mail_host`, `mail_port`, `mail_username`, `mail_password`, `mail_encryption`) VALUES ('127.0.0.1', '25', 'admin@nexus.uk', 'pass', '')");
 
         //Countries
         $this->addSql("INSERT INTO `country` (`id`, `name`, `alpha_two_code`) VALUES (1, 'Albania', 'AL')");

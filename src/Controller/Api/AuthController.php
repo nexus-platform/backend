@@ -441,7 +441,7 @@ class AuthController extends MyRestController {
                 'password_confirm' => 'password',
             ];
 
-            if ($user->isStudent()) {
+            if ($user->isStudent() && $user->getAC()) {
                 $preRegisterInfo = $user->getPre_register();
                 $acFormProgress = isset($preRegisterInfo['ac_form']) ? $preRegisterInfo['ac_form'] : null;
                 $userData['ac_form_full_submit'] = isset($preRegisterInfo['ac_form_full_submit']) ? $preRegisterInfo['ac_form_full_submit'] : false;
@@ -580,7 +580,7 @@ class AuthController extends MyRestController {
      */
     public function activateAccount(Request $request) {
         $params = json_decode($request->getContent(), true);
-        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token'], 'status' => 0]);
+        $user = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $params['token']/*, 'status' => 0*/]);
 
         if (!$user) {
             return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameter supplied: ' . $params['token'], 'data' => []], Response::HTTP_OK);
@@ -615,7 +615,7 @@ class AuthController extends MyRestController {
         $msg = "Your account has been activated. You'll be redirected in a few seconds...";
         $now = time();
         $homeUrl = $this->generateUrl("default_index", [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $payload = [
+        /*$payload = [
             'iss' => $homeUrl,
             'aud' => $homeUrl,
             'iat' => $now,
@@ -624,16 +624,16 @@ class AuthController extends MyRestController {
             'ip' => $request->getClientIp(),
         ];
 
-        $jwt = $this->encodeJWT($payload);
+        $jwt = $this->encodeJWT($payload);*/
         $data = [
-            'is_guest' => false,
+            /*'is_guest' => false,
             'email' => $user->getEmail(),
             'jwt' => $jwt,
             'roles' => $user->getRoles(),
             'acs' => $user->getAssessmentCentres('slug'),
             'is_univ_manager' => ($preRegister['target'] === 'dsa' ? $target->getManager() === $user : false),
             'fullname' => $user->getFullname(),
-            'registrations' => $this->getUserRegistrations($user),
+            'registrations' => $this->getUserRegistrations($user),*/
             'redirect' => parse_url($preRegister['redirect_url'], PHP_URL_FRAGMENT),
         ];
         $this->getEntityManager()->flush();
