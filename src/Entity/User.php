@@ -183,14 +183,12 @@ class User implements UserInterface, Serializable {
     function getAC() {
         $acUsers = $this->getAssessment_center_users();
         foreach ($acUsers as $acUser) {
-            return $acUser->getAc();
+            $ac = $acUser->getAc();
+            if ($ac->getEaEntityType()->getId() === 1) {
+                return $ac;
+            }
         }
         return null;
-    }
-    
-    function hasRegisteredWithAnyAC() {
-        $acUsers = $this->getAssessment_center_users();
-        return count($acUsers) > 0 ? true : false;
     }
 
     function getAssessment_center_users() {

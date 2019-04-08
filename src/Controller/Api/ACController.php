@@ -113,7 +113,7 @@ class ACController extends MyRestController {
                 if ($user->isDO()) {
                     return new JsonResponse(['code' => 'error', 'msg' => 'Access denied.', 'data' => []], Response::HTTP_OK);
                 }
-                if ($user->hasRegisteredWithAnyAC() && !$user->hasRegisteredWith($ac)) {
+                if ($user->getAC() && !$user->hasRegisteredWith($ac)) {
                     return new JsonResponse(['code' => 'warning', 'msg' => 'You need to cancel your registration with your current Centre before accessing another one.', 'data' => []], Response::HTTP_OK);
                 }
                 $userRole = $user->getRoles()[0];
@@ -1006,12 +1006,13 @@ class ACController extends MyRestController {
             if ($userInfo['code'] !== 'success') {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
-            $ac = $user->getAC();
             $token = $request->get('token');
+            $userAux = $user->isStudent() ? $user : $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
+            $ac = $userAux->getAC();
             if (!$ac || !($ac->getAdmin() === $user || (($user->isNA() || ($user->isStudent() && $user->getToken() === $token)) && $user->hasRegisteredWith($ac)) )) {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid AC', 'data' => []], Response::HTTP_OK);
             }
-            $userAux = $user->isStudent() ? $user : $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $token]);
+            
             $preRegisterInfo = $userAux->getPre_register();
             $acFormProgress = $preRegisterInfo['ac_form'];
             $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
@@ -1137,6 +1138,67 @@ class ACController extends MyRestController {
             }
 
             return new JsonResponse(['code' => 'success', 'msg' => 'Students loaded', 'data' => $data], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
+        }
+    }
+    
+    /**
+     * Submits an NA report form
+     * @FOSRest\Post(path="/api/submit-na-report")
+     */
+    public function submitNAReport(Request $request) {
+        try {
+            $userInfo = $this->getRequestUser($request);
+            $user = $userInfo['user'];
+            $student = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $request->get('token')]);
+            if ($userInfo['code'] !== 'success' || !$user->isNA() || !$student || !$student->isStudent()) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+            
+            $ac = $student->getAC();
+            
+            if (!$ac || !$user->hasRegisteredWith($ac)) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+            
+            $preRegister = $student->getPre_register();
+            unset($preRegister['na_report']);
+            $report = $request->get('report');
+            $preRegister['na_report'] = $report;
+            $student->setPre_register($preRegister);
+            $this->getEntityManager()->persist($user);
+            
+            $headline = date('Y/m/d H:i:s', time());
+            $this->createNotification('You have submitted an Assessment Report', 'Your report about ' . $student->getFullname() . ' has been submitted to ' . $ac->getName() . '.', $headline, $user, 1, 2);
+            $this->createNotification('New Assessment Report submitted', 'An Assessment Report about ' . $student->getFullname() . ' has been submitted by ' . $user->getFullname() . '.', $headline, $ac->getAdmin(), 1, 1);
+            
+            $this->getEntityManager()->flush();
+            return new JsonResponse(['code' => 'success', 'msg' => 'Report saved', 'data' => true], Response::HTTP_OK);
+        } catch (Exception $exc) {
+            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
+        }
+    }
+    
+    /**
+     * Returns the NA report for a given student
+     * @FOSRest\Get(path="/api/get-na-report-by-student")
+     */
+    public function getNAReportByStudent(Request $request) {
+        try {
+            $userInfo = $this->getRequestUser($request);
+            $user = $userInfo['user'];
+            $student = $this->getEntityManager()->getRepository(User::class)->findOneBy(['token' => $request->get('token')]);
+            if ($userInfo['code'] !== 'success' || !$user->isNA() || !$student || !$student->isStudent()) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+            $ac = $student->getAC();
+            if (!$ac || !$user->hasRegisteredWith($ac)) {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
+            }
+            $preRegister = $student->getPre_register();
+            $data = isset($preRegister['na_report']) ? $preRegister['na_report'] : ['status' => 0, 'content' => ['venue_address' => '', 'reason_isr' => '', 'disclosure' => '']];
+            return new JsonResponse(['code' => 'success', 'msg' => 'Report loaded', 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
