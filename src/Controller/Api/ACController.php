@@ -1014,7 +1014,7 @@ class ACController extends MyRestController {
             }
             
             $preRegisterInfo = $userAux->getPre_register();
-            $acFormProgress = $preRegisterInfo['ac_form'];
+            $acFormProgress = isset($preRegisterInfo['ac_form']) ? $preRegisterInfo['ac_form'] : [];
             $starAssessmentForm = $this->getStarAssessmentForm($acFormProgress);
             $data = $starAssessmentForm[1];
             return new JsonResponse(['code' => 'success', 'msg' => 'AC form loaded', 'data' => $data], Response::HTTP_OK);

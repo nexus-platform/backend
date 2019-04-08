@@ -55,41 +55,68 @@ class ApiController extends MyRestController {
      * @FOSRest\Get(path="/api/get-my-bookings")
      */
     public function getMyBookings(Request $request) {
-        $code = 'error';
-        $msg = 'Invalid user.';
-        $data = null;
-
         try {
-            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            $payload = $this->decodeJWT($jwt);
-
-            if ($payload) {
-                $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
-
-                if ($user) {
-                    $appointments = $this->getEntityManager()->getRepository(EaAppointments::class)->findBy($user->isStudent() ? ['student' => $user] : ['provider' => $user, 'is_unavailable' => false]);
-                    $data = [];
-                    foreach ($appointments as $appointment) {
-                        $student = $appointment->getStudent();
-                        $data[] = [
-                            'id' => $appointment->getId(),
-                            'student' => $student->getFullname(),
-                            'institute' => $student->getUniversity()->getName(),
-                            'provider' => $appointment->getProvider()->getFullname(),
-                            'service' => $appointment->getService()->getName(),
-                            'start' => $appointment->getStart_datetime()->format('Y-m-d H:i'),
-                            'end' => $appointment->getEnd_datetime()->format('Y-m-d H:i'),
-                        ];
-                    }
-                    $code = 'success';
-                    $msg = 'Appointments loaded.';
-                }
+            $userInfo = $this->getRequestUser($request);
+            $user = $userInfo['user'];
+            if ($userInfo['code'] !== 'success') {
+                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
-            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+            $appointments = $this->getEntityManager()->getRepository(EaAppointments::class)->findBy($user->isStudent() ? ['idUsersCustomer' => $user] : ['idUsersProvider' => $user, 'is_unavailable' => false]);
+            $data = [];
+            foreach ($appointments as $appointment) {
+                $student = $appointment->getStudent();
+                $data[] = [
+                    'id' => $appointment->getId(),
+                    'student' => $student->getFullname(),
+                    'institute' => $student->getUniversity()->getName(),
+                    'provider' => $appointment->getProvider()->getFullname(),
+                    'service' => $appointment->getService()->getName(),
+                    'start' => $appointment->getStart_datetime()->format('Y-m-d H:i'),
+                    'end' => $appointment->getEnd_datetime()->format('Y-m-d H:i'),
+                ];
+            }
+            return new JsonResponse(['code' => 'success', 'msg' => 'Bookings loaded', 'data' => $data], Response::HTTP_OK);
         } catch (Exception $exc) {
             return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
         }
     }
+
+    /* public function getMyBookings(Request $request) {
+      $code = 'error';
+      $msg = 'Invalid user.';
+      $data = null;
+
+      try {
+      $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
+      $payload = $this->decodeJWT($jwt);
+
+      if ($payload) {
+      $user = $this->getEntityManager()->getRepository(User::class)->find($payload->user_id);
+
+      if ($user) {
+      $appointments = $this->getEntityManager()->getRepository(EaAppointments::class)->findBy($user->isStudent() ? ['student' => $user] : ['provider' => $user, 'is_unavailable' => false]);
+      $data = [];
+      foreach ($appointments as $appointment) {
+      $student = $appointment->getStudent();
+      $data[] = [
+      'id' => $appointment->getId(),
+      'student' => $student->getFullname(),
+      'institute' => $student->getUniversity()->getName(),
+      'provider' => $appointment->getProvider()->getFullname(),
+      'service' => $appointment->getService()->getName(),
+      'start' => $appointment->getStart_datetime()->format('Y-m-d H:i'),
+      'end' => $appointment->getEnd_datetime()->format('Y-m-d H:i'),
+      ];
+      }
+      $code = 'success';
+      $msg = 'Appointments loaded.';
+      }
+      }
+      return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => $data], Response::HTTP_OK);
+      } catch (Exception $exc) {
+      return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
+      }
+      } */
 
     /**
      * Cancels a booking.

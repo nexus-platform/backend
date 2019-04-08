@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="ea_appointments", indexes={@ORM\Index(name="id_users_customer", columns={"id_users_customer"}), @ORM\Index(name="id_services", columns={"id_services"}), @ORM\Index(name="id_users_provider", columns={"id_users_provider"})})
  * @ORM\Entity(repositoryClass="App\Repository\EA\EaAppointmentsRepository")
  */
-class EaAppointments
-{
+class EaAppointments {
+
     /**
      * @var int
      *
@@ -100,5 +100,48 @@ class EaAppointments
      */
     private $idUsersProvider;
 
+    function getId() {
+        return $this->id;
+    }
+
+    function getBookDatetime(): \DateTime {
+        return $this->bookDatetime;
+    }
+
+    function getStartDatetime(): \DateTime {
+        return $this->startDatetime;
+    }
+
+    function getEndDatetime(): \DateTime {
+        return $this->endDatetime;
+    }
+
+    function getNotes() {
+        return $this->notes;
+    }
+
+    function getHash() {
+        return $this->hash;
+    }
+
+    function getIsUnavailable() {
+        return $this->isUnavailable;
+    }
+
+    function getIdGoogleCalendar() {
+        return $this->idGoogleCalendar;
+    }
+
+    function getIdServices(): \EaServices {
+        return $this->idServices;
+    }
+
+    function getIdUsersCustomer(): \User {
+        return $this->idUsersCustomer;
+    }
+
+    function getIdUsersProvider(): \User {
+        return $this->idUsersProvider;
+    }
 
 }
