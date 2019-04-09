@@ -132,15 +132,15 @@ class EaAppointments {
         return $this->idGoogleCalendar;
     }
 
-    function getIdServices(): \EaServices {
+    function getIdServices(): \App\Entity\EA\EaServices {
         return $this->idServices;
     }
 
-    function getIdUsersCustomer(): \User {
+    function getIdUsersCustomer(): \App\Entity\User {
         return $this->idUsersCustomer;
     }
 
-    function getIdUsersProvider(): \User {
+    function getIdUsersProvider(): \App\Entity\User {
         return $this->idUsersProvider;
     }
 

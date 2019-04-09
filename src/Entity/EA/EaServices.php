@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="ea_services", indexes={@ORM\Index(name="id_service_categories", columns={"id_service_categories"}), @ORM\Index(name="services_assessment_center", columns={"id_assessment_center"})})
  * @ORM\Entity
  */
-class EaServices
-{
+class EaServices {
+
     /**
      * @var int
      *
@@ -100,9 +100,52 @@ class EaServices
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->idUsers = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    function getId() {
+        return $this->id;
+    }
+
+    function getName() {
+        return $this->name;
+    }
+
+    function getDuration() {
+        return $this->duration;
+    }
+
+    function getPrice() {
+        return $this->price;
+    }
+
+    function getCurrency() {
+        return $this->currency;
+    }
+
+    function getDescription() {
+        return $this->description;
+    }
+
+    function getAvailabilitiesType() {
+        return $this->availabilitiesType;
+    }
+
+    function getAttendantsNumber() {
+        return $this->attendantsNumber;
+    }
+
+    function getIdAssessmentCenter(): \App\Entity\AssessmentCenter {
+        return $this->idAssessmentCenter;
+    }
+
+    function getIdServiceCategories(): \App\Entity\EA\EaServiceCategories {
+        return $this->idServiceCategories;
+    }
+
+    function getIdUsers(): \Doctrine\Common\Collections\Collection {
+        return $this->idUsers;
     }
 
 }
