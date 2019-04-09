@@ -69,6 +69,7 @@ class ApiController extends MyRestController {
                     'id' => $appointment->getId(),
                     'student' => $student->getFullname(),
                     'institute' => $student->getUniversity()->getName(),
+                    'target_type' => $appointment->getUniversity()->getName(),
                     'provider' => $appointment->getIdUsersProvider()->getFullname(),
                     'service' => $appointment->getIdServices()->getName(),
                     'start' => $appointment->getStartDatetime()->format('Y-m-d H:i'),
