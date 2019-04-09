@@ -61,15 +61,18 @@ class ApiController extends MyRestController {
             if ($userInfo['code'] !== 'success') {
                 return new JsonResponse(['code' => 'error', 'msg' => 'Invalid parameters', 'data' => []], Response::HTTP_OK);
             }
-            $appointments = $this->getEntityManager()->getRepository(EaAppointments::class)->findBy($user->isStudent() ? ['idUsersCustomer' => $user] : ['idUsersProvider' => $user, 'is_unavailable' => false]);
+            $showAll = $request->get('show_all');
+            //$appointments = $this->getEntityManager()->getRepository(EaAppointments::class)->findBy($user->isStudent() ? ['idUsersCustomer' => $user] : ['idUsersProvider' => $user, 'is_unavailable' => false]);
+            $appointments = $this->getEntityManager()->getRepository(EaAppointments::class)->getAppointmentsByUser($user, $showAll === 'true');
             $data = [];
             foreach ($appointments as $appointment) {
                 $student = $appointment->getIdUsersCustomer();
+                $target = $appointment->getIdServices()->getIdAssessmentCenter();
                 $data[] = [
                     'id' => $appointment->getId(),
                     'student' => $student->getFullname(),
-                    'institute' => $student->getUniversity()->getName(),
-                    'target_type' => $appointment->getUniversity()->getName(),
+                    'institute' => $target->getName(),
+                    'target_type' => $target->getEaEntityType()->getId(),
                     'provider' => $appointment->getIdUsersProvider()->getFullname(),
                     'service' => $appointment->getIdServices()->getName(),
                     'start' => $appointment->getStartDatetime()->format('Y-m-d H:i'),

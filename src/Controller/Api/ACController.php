@@ -245,7 +245,7 @@ class ACController extends MyRestController {
     private function removeUserFromAC($acUser) {
         $user = $acUser->getUser();
         $ac = $acUser->getAc();
-        $arrayAux = $this->getEntityManager()->getRepository(EaAppointment::class)->getAppointmentsByUser($user);
+        $arrayAux = $this->getEntityManager()->getRepository(EaAppointment::class)->getAppointmentsByUser($user, true);
         foreach ($arrayAux as $item) {
             if ($item->getService()->getAc() === $ac) {
                 $this->getEntityManager()->remove($item);

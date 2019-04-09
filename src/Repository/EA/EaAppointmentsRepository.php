@@ -25,12 +25,13 @@ class EaAppointmentsRepository extends ServiceEntityRepository {
         return $res;
     }
 
-    public function getAppointmentsByUser($user) {
-        $res = $this->createQueryBuilder('t')
-                ->where('t.provider = :user')->setParameter('user', $user)
-                ->orWhere('t.student = :user')->setParameter('user', $user)
-                ->getQuery()
-                ->getResult();
+    public function getAppointmentsByUser($user, $all) {
+        $qb = $this->createQueryBuilder('t');
+        $qb->where('t.idUsersProvider = :user or t.idUsersCustomer = :user')->setParameter('user', $user);
+        if (!$all) {
+            $qb->andWhere('t.startDatetime >= :now')->setParameter('now', date('Y-m-d H:i:s', time()));
+        }
+        $res = $qb->getQuery()->getResult();
         return $res;
     }
 
