@@ -35,6 +35,22 @@ class EaAppointmentsRepository extends ServiceEntityRepository {
         return $res;
     }
 
+    public function getAppointmentsByAC($ac, $all) {
+        $qb = $this->createQueryBuilder('t');
+        $qb->join('t.idServices', 'serv');
+        $qb->where('serv.idAssessmentCenter = :ac')->setParameter('ac', $ac);
+        if (!$all) {
+            $qb->andWhere('t.startDatetime >= :now')->setParameter('now', date('Y-m-d H:i:s', time()));
+        }
+        $res = $qb->getQuery()->getResult();
+        return $res;
+        /*$res = $this->createQueryBuilder('t')
+                        ->join('t.idServices', 'serv')
+                        ->where('serv.idAssessmentCenter = :ac')->setParameter('ac', $ac)
+                        ->andWhere('t.startDatetime >= :now')->setParameter('now', date('Y-m-d H:i:s', time()))
+                        ->getQuery()->getResult();*/
+    }
+
     public function isAssessorAvailableByDate(User $assessor, DateTime $date) {
         $startDate = $date->format('Y-m-d H:i');
         return StaticMembers::executeRawSQL($this->_em, "select * from `ea_appointment` `t` where `provider_id` = " . $assessor->getId() . " and '$startDate' BETWEEN `t`.`start_datetime` and DATE_ADD(`t`.`end_datetime`, INTERVAL -1 second)", true);

@@ -46,5 +46,22 @@ class AssessmentCenterUserRepository extends ServiceEntityRepository {
         $res = $this->matching($criteria)->toArray();
         return $res;
     }
+    
+    public function getUsersByAC($ac) {
+        $res = $this->createQueryBuilder('t')
+                        ->join('t.user', 'user')
+                        ->where('t.ac = :ac')->setParameter('ac', $ac)
+                        ->getQuery()->getResult();
+        return $res;
+    }
+    
+    public function getStudentsByAC($ac) {
+        $res = $this->createQueryBuilder('t')
+                        //->join('t.user', 'user')
+                        ->where('t.ac = :ac')->setParameter('ac', $ac)
+                        //->andWhere('user.isStudent = :isStudent')->setParameter('isStudent', true)
+                        ->getQuery()->getResult();
+        return $res;
+    }
 
 }

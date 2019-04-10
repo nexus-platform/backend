@@ -87,14 +87,14 @@
 		"components": [
 			[
 				{
-					"class": "md6",
+					"class": "md12",
 					"content_type": "html",
 					"html": "If you have applied for student finance before, please provide your Customer Reference Number."
 				}
 			],
 			[
 				{
-					"class": "md3",
+					"class": "md4",
 					"content_type": "input",
 					"input": {
 						"title": "Customer Reference Number",
