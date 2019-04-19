@@ -86,6 +86,9 @@
     "egulias/email-validator": {
         "version": "2.1.4"
     },
+    "fig/link-util": {
+        "version": "1.0.0"
+    },
     "firebase/php-jwt": {
         "version": "v5.0.0"
     },
@@ -179,6 +182,9 @@
     "phpspec/prophecy": {
         "version": "1.8.0"
     },
+    "phpunit/dbunit": {
+        "version": "4.0.0"
+    },
     "phpunit/php-code-coverage": {
         "version": "6.0.5"
     },
@@ -207,6 +213,9 @@
         "version": "1.0.1"
     },
     "psr/container": {
+        "version": "1.0.0"
+    },
+    "psr/link": {
         "version": "1.0.0"
     },
     "psr/log": {
@@ -296,6 +305,9 @@
             "ref": "e3868d2f4a5104f19f844fe551099a00c6562527"
         }
     },
+    "symfony/contracts": {
+        "version": "v1.0.2"
+    },
     "symfony/debug": {
         "version": "v4.0.9"
     },
@@ -356,8 +368,14 @@
     "symfony/polyfill-ctype": {
         "version": "v1.8.0"
     },
+    "symfony/polyfill-intl-idn": {
+        "version": "v1.11.0"
+    },
     "symfony/polyfill-mbstring": {
         "version": "v1.8.0"
+    },
+    "symfony/polyfill-php72": {
+        "version": "v1.11.0"
     },
     "symfony/process": {
         "version": "v4.0.10"
@@ -389,8 +407,20 @@
     "symfony/security-core": {
         "version": "v4.0.9"
     },
+    "symfony/security-csrf": {
+        "version": "v4.2.7"
+    },
+    "symfony/security-guard": {
+        "version": "v4.2.7"
+    },
+    "symfony/security-http": {
+        "version": "v4.2.7"
+    },
     "symfony/serializer": {
         "version": "v4.0.9"
+    },
+    "symfony/stopwatch": {
+        "version": "v4.2.7"
     },
     "symfony/swiftmailer-bundle": {
         "version": "2.5",
@@ -410,8 +440,12 @@
             "repo": "github.com/symfony/recipes",
             "branch": "master",
             "version": "3.3",
-            "ref": "6bcd6c570c017ea6ae5a7a6a027c929fd3542cd8"
-        }
+            "ref": "1fb02a6e1c8f3d4232cce485c9afa868d63b115a"
+        },
+        "files": [
+            "./config/packages/translation.yaml",
+            "./translations/.gitignore"
+        ]
     },
     "symfony/twig-bridge": {
         "version": "v4.0.9"
@@ -427,6 +461,12 @@
     },
     "symfony/validator": {
         "version": "v4.0.9"
+    },
+    "symfony/var-exporter": {
+        "version": "v4.2.7"
+    },
+    "symfony/web-link": {
+        "version": "v4.2.7"
     },
     "symfony/web-server-bundle": {
         "version": "3.3",

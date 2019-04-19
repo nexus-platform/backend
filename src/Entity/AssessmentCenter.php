@@ -74,6 +74,11 @@ class AssessmentCenter {
      * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterUser", mappedBy="ac")
      * */
     private $assessment_center_users;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\File", mappedBy="ac")
+     * */
+    private $assessment_center_files;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\AssessmentCenterService", mappedBy="ac")

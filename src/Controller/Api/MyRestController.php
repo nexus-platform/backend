@@ -64,12 +64,24 @@ class MyRestController extends FOSRestController {
       return $date;
       } */
 
+    private function verifyPath($path) {
+        $fullPath = $this->container->getParameter('kernel.project_dir') . "/app_data/$path/";
+        if (!file_exists($fullPath)) {
+            mkdir($fullPath);
+        }
+        return $fullPath;
+    }
+
     public function getDSALettersDir() {
-        return $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_letters/';
+        return $this->verifyPath('dsa_letters');
+    }
+
+    public function getAttachedFilesDir() {
+        return $this->verifyPath('attached_files');
     }
 
     public function getDSAFilledFormsDir() {
-        return $this->container->getParameter('kernel.project_dir') . '/app_data/dsa_forms_filled/';
+        return $this->verifyPath('dsa_forms_filled');
     }
 
     public function encodeJWT($payload) {
@@ -164,40 +176,6 @@ class MyRestController extends FOSRestController {
         array_splice($times, 1);
         // Return string with times
         return implode(", ", $times);
-    }
-
-    /**
-     * Returns a filled PDF.
-     * @FOSRest\Get(path="/api/get-file")
-     */
-    public function getFileAction(Request $request) {
-        try {
-            $fileId = $request->get('file');
-            $jwt = str_replace('Bearer ', '', $request->headers->get('authorization'));
-            $payload = $this->decodeJWT($jwt);
-            if (!$payload) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Invalid request', 'data' => null], Response::HTTP_OK);
-            }
-            
-            $entityManager = $this->getDoctrine()->getManager();
-            $filledForm = $entityManager->getRepository(DsaFormFilled::class)->find($fileId);
-            if (!$filledForm) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'File not found', 'data' => null], Response::HTTP_OK);
-            }
-            
-            $user = $entityManager->getRepository(User::class)->find($payload->user_id);
-            $formFiller = $filledForm->getUser();
-            
-            if (!($formFiller === $user || ($formFiller->getUniversity() === $user->getUniversity() && $user->isDO()))) {
-                return new JsonResponse(['code' => 'error', 'msg' => 'Access denied', 'data' => null], Response::HTTP_OK);
-            }
-            
-            $filename = $filledForm->getFilename();
-            $file = new File($this->getDSAFilledFormsDir() . $filename);
-            return $this->file($file, $filename);
-        } catch (Exception $exc) {
-            return new JsonResponse(['code' => 'error', 'msg' => $exc->getMessage(), 'data' => []], Response::HTTP_OK);
-        }
     }
 
     public function updateEaUser(User $user, $action) {

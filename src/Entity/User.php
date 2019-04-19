@@ -105,6 +105,11 @@ class User implements UserInterface, Serializable {
      * @ORM\OneToMany(targetEntity="AssessmentCenterUser", mappedBy="user")
      * */
     private $assessment_center_users;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AssessmentCenterUser", mappedBy="user")
+     * */
+    private $user_files;
 
     /**
      * @ORM\OneToMany(targetEntity="AssessmentCenterServiceAssessor", mappedBy="assessor")

@@ -28,7 +28,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * @Route("/")
  */
 class DOController extends MyRestController {
-    
+
     private $hashTag = '#/';
 
     /**
@@ -186,7 +186,7 @@ class DOController extends MyRestController {
                 if ($univFromSlug === $univFromUser && $univForm) {
                     $dsaForm = $univForm->getDsa_form();
                     $formsDir = $this->container->getParameter('kernel.project_dir') . '/public/dsa_forms/';
-                    $formPath = $formsDir . $dsaForm->getBase();
+                    //$formPath = $formsDir . $dsaForm->getBase();
                     $formId = $request->get('entity_id', null);
                     $data = $dsaForm->getContent();
 
@@ -208,7 +208,7 @@ class DOController extends MyRestController {
                                             $col = $data[$i]['components'][$j][$k];
                                             if ($col['content_type'] === 'input') {
                                                 $name = $col['input']['name'];
-                                                if ($filledForm->getStatus() == 1 || $filledForm->getStatus() == 2 || $user !== $filledFormUser) {
+                                                if ($filledForm->getStatus() == 1 || /* $filledForm->getStatus() == 2 || */ $user !== $filledFormUser) {
                                                     $data[$i]['components'][$j][$k]['input']['disabled'] = true;
                                                     $data[$i]['components'][$j][$k]['input']['read_only'] = true;
                                                 }
@@ -428,7 +428,7 @@ class DOController extends MyRestController {
                 $code = 'warning';
                 $msg = 'Your request did not include any data';
             }
-        return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => ['form_id' => $filledForm->getId(), 'full_submit' => $data['full_submit']]], Response::HTTP_OK);
+            return new JsonResponse(['code' => $code, 'msg' => $msg, 'data' => ['form_id' => $filledForm->getId(), 'full_submit' => $data['full_submit']]], Response::HTTP_OK);
         } catch (Exception $exc) {
             $code = 'error';
             $msg = $exc->getMessage();
@@ -807,7 +807,9 @@ class DOController extends MyRestController {
                                                         $image = $cropped;
                                                     }
                                                     $signatureTemp = $destinationDir . '_signature_temp.png';
-                                                    imagepng($image, $signatureTemp, 0);
+                                                    imagealphablending($image, false);
+                                                    imagesavealpha($image, true);
+                                                    imagepng($image, $signatureTemp);
                                                     $imgdata = file_get_contents($signatureTemp);
                                                     //$encoded = base64_encode($imgdata);
                                                     /* $imgdata = base64_decode(str_replace('data:image/png;base64,', '', $signatureInfo['value']));

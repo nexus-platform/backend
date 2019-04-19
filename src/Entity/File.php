@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\FileRepository")
  */
-class File
-{
+class File {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -17,73 +17,100 @@ class File
     private $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=false)
      */
-    private $uid;
+    private $original_filename;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=false)
      */
-    private $original;
+    private $new_filename;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=false)
      */
-    private $extension;
+    private $name;
 
     /**
-     * @return mixed
+     * @ORM\Column(type="string", nullable=true)
      */
-    public function getId()
-    {
+    private $description;
+
+    /**
+     * @ORM\Column(type="date", nullable=false)
+     */
+    private $date;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\AssessmentCenter", inversedBy="assessment_center_files")
+     * @ORM\JoinColumn(name="ac_id", referencedColumnName="id", onDelete="CASCADE")
+     * */
+    private $ac;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="user_files")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     * */
+    private $user;
+
+    function getId() {
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUid()
-    {
-        return $this->uid;
+    function getName() {
+        return $this->name;
     }
 
-    /**
-     * @param mixed $uid
-     */
-    public function setUid($uid)
-    {
-        $this->uid = $uid;
+    function getDescription() {
+        return $this->description;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getOriginal()
-    {
-        return $this->original;
+    function getAc() {
+        return $this->ac;
     }
 
-    /**
-     * @param mixed $original
-     */
-    public function setOriginal($original)
-    {
-        $this->original = $original;
+    function setName($name) {
+        $this->name = $name;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getExtension()
-    {
-        return $this->extension;
+    function setDescription($description) {
+        $this->description = $description;
     }
 
-    /**
-     * @param mixed $extension
-     */
-    public function setExtension($extension)
-    {
-        $this->extension = $extension;
+    function getUser() {
+        return $this->user;
     }
+
+    function getOriginal_filename() {
+        return $this->original_filename;
+    }
+
+    function getNew_filename() {
+        return $this->new_filename;
+    }
+
+    function setOriginal_filename($original_filename) {
+        $this->original_filename = $original_filename;
+    }
+
+    function setNew_filename($new_filename) {
+        $this->new_filename = $new_filename;
+    }
+
+    function setAc($ac) {
+        $this->ac = $ac;
+    }
+
+    function setUser($user) {
+        $this->user = $user;
+    }
+
+    function getDate() {
+        return $this->date;
+    }
+
+    function setDate($date) {
+        $this->date = $date;
+    }
+
 }
